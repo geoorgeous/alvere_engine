@@ -1,0 +1,425 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{CD0B2F96-A65D-44AB-A427-7A3782A0E0F9}</ProjectGuid>
+    <RootNamespace>alvere</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)bin\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)temp\$(Configuration)\$(Platform)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)bin\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)temp\$(Configuration)\$(Platform)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)bin\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)temp\$(Configuration)\$(Platform)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)bin\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(ProjectDir)temp\$(Configuration)\$(Platform)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)src\;$(SolutionDir)gml\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_ENFORCE_MATCHING_ALLOCATORS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib\;$(SolutionDir)gml\bin\$(Configuration)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;gml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;glfw3.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib;$(ProjectDir)dependencies\lib\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)src\;$(SolutionDir)gml\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_ENFORCE_MATCHING_ALLOCATORS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib\;$(SolutionDir)gml\bin\$(Configuration)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;gml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;glfw3x64.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib;$(ProjectDir)dependencies\lib\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)src\;$(SolutionDir)gml\include\;$(ProjectDir)dependencies\include\luaplus\lua53-luaplus\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_ENFORCE_MATCHING_ALLOCATORS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib\;$(SolutionDir)gml\bin\$(Configuration)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;gml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;glfw3.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib;$(ProjectDir)dependencies\lib\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)src\;$(SolutionDir)gml\include\;$(ProjectDir)dependencies\include\luaplus\lua53-luaplus\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_ENFORCE_MATCHING_ALLOCATORS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib\;$(SolutionDir)gml\bin\$(Configuration)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;gml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;glfw3x64.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib;$(ProjectDir)dependencies\lib\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lapi.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lauxlib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lbaselib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lbitlib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lcode.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lcorolib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lctype.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\ldblib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\ldebug.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\ldo.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\ldump.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lfunc.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lgc.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\linit.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\liolib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\llex.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lmathlib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lmem.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\loadlib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lobject.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lopcodes.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\loslib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lparser.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lstate.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lstring.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lstrlib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\ltable.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\ltablib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\ltm.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lua.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\luac.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lundump.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lutf8lib.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lvm.c" />
+    <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lzio.c" />
+    <ClCompile Include="dependencies\include\luaplus\LuaPlus.cpp" />
+    <ClCompile Include="dependencies\include\luaplus\LuaPlusAddons.c" />
+    <ClCompile Include="dependencies\include\luaplus\LuaState_DumpObject.cpp" />
+    <ClCompile Include="dependencies\include\luaplus\tilde\HostConfig.cpp" />
+    <ClCompile Include="dependencies\include\luaplus\tilde\LuaDebugger.cpp" />
+    <ClCompile Include="dependencies\include\luaplus\tilde\LuaDebuggerComms.cpp" />
+    <ClCompile Include="dependencies\include\luaplus\tilde\LuaHostWindows.cpp" />
+    <ClCompile Include="dependencies\include\luaplus\tilde\LuaTilde.cpp" />
+    <ClCompile Include="src\alvere\application\application.cpp" />
+    <ClCompile Include="src\alvere\application\window.cpp" />
+    <ClCompile Include="src\alvere\graphics\buffers.cpp" />
+    <ClCompile Include="src\alvere\graphics\camera.cpp" />
+    <ClCompile Include="src\alvere\graphics\material.cpp" />
+    <ClCompile Include="src\alvere\graphics\material_instance.cpp" />
+    <ClCompile Include="src\alvere\graphics\mesh.cpp" />
+    <ClCompile Include="src\alvere\graphics\renderer.cpp" />
+    <ClCompile Include="src\alvere\graphics\renderer_api.cpp" />
+    <ClCompile Include="src\alvere\graphics\render_commands.cpp" />
+    <ClCompile Include="src\alvere\graphics\shader.cpp" />
+    <ClCompile Include="src\alvere\graphics\shader_program.cpp" />
+    <ClCompile Include="src\alvere\graphics\sprite_batcher.cpp" />
+    <ClCompile Include="src\alvere\graphics\texture.cpp" />
+    <ClCompile Include="src\alvere\math\matrix\matrix_2.cpp" />
+    <ClCompile Include="src\alvere\math\matrix\matrix_3.cpp" />
+    <ClCompile Include="src\alvere\math\matrix\matrix_4.cpp" />
+    <ClCompile Include="src\alvere\math\matrix\transformations.cpp" />
+    <ClCompile Include="src\alvere\math\quaternion.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\circle.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\cuboid.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\intersections.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\line_2d.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\line_3d.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\point_2d.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\point_3d.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\rect.cpp" />
+    <ClCompile Include="src\alvere\math\shapes\sphere.cpp" />
+    <ClCompile Include="src\alvere\scene\transform.cpp" />
+    <ClCompile Include="src\alvere\math\vector\vector_2.cpp" />
+    <ClCompile Include="src\alvere\math\vector\vector_3.cpp" />
+    <ClCompile Include="src\alvere\math\vector\vector_4.cpp" />
+    <ClCompile Include="src\alvere\graphics\renderer_light.cpp" />
+    <ClCompile Include="src\alvere\graphics\renderer_scene_graph.cpp" />
+    <ClCompile Include="src\alvere\utils\exceptions.cpp" />
+    <ClCompile Include="src\alvere\utils\file_reader.cpp" />
+    <ClCompile Include="src\alvere\utils\logging.cpp" />
+    <ClCompile Include="src\alvere\utils\random.cpp" />
+    <ClCompile Include="src\alvere\utils\shapes.cpp" />
+    <ClCompile Include="src\alvere\utils\utilities.cpp" />
+    <ClCompile Include="src\alvere\utils\uuid.cpp" />
+    <ClCompile Include="src\alvere\world\entity.cpp" />
+    <ClCompile Include="src\alvere\world\entity_component_systems\ecs_scene_renderer.cpp" />
+    <ClCompile Include="src\alvere\world\scene.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_buffers.cpp" />
+    <ClCompile Include="src\alvere\events\application_events.cpp" />
+    <ClCompile Include="src\alvere\events\event.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_context.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_errors.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_renderer.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_renderer_api.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_shader.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_shader_program.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_sprite_batcher.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_vertex_array.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_texture.cpp" />
+    <ClCompile Include="src\platform\windows\windows_window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lapi.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lauxlib.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lcode.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lctype.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\ldebug.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\ldo.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lfunc.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lgc.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\llex.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\llimits.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lmem.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lobject.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lopcodes.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lparser.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lprefix.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lstate.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lstring.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\ltable.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\ltm.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lua.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lua.hpp" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\luaconf.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lualib.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lundump.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lvm.h" />
+    <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lzio.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaAutoBlock.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaCall.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaFunction.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaHelper.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaHelper_Object.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaHelper_StackObject.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaObject.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaPlus.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaPlusCD.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaPlusConfig.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaPlusInternal.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaStackObject.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaStackTableIterator.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaState.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaStateCD.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaStateOutFile.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaStateOutString.h" />
+    <ClInclude Include="dependencies\include\luaplus\LuaTableIterator.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\HostConfig.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\LuaDebugger.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\LuaDebuggerComms.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\LuaDebuggerHost.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\LuaDebuggerProtocol.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\LuaHostWindows.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\LuaTilde.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\ReceiveMessageBuffer.h" />
+    <ClInclude Include="dependencies\include\luaplus\tilde\SendMessageBuffer.h" />
+    <ClInclude Include="src\alvere\alvere.hpp" />
+    <ClInclude Include="src\alvere\application\application.hpp" />
+    <ClInclude Include="src\alvere\assets.hpp" />
+    <ClInclude Include="src\alvere\entry.hpp" />
+    <ClInclude Include="src\alvere\graphics\buffers.hpp" />
+    <ClInclude Include="src\alvere\graphics\camera.hpp" />
+    <ClInclude Include="src\alvere\graphics\material.hpp" />
+    <ClInclude Include="src\alvere\graphics\material_instance.hpp" />
+    <ClInclude Include="src\alvere\graphics\mesh.hpp" />
+    <ClInclude Include="src\alvere\graphics\renderer.hpp" />
+    <ClInclude Include="src\alvere\graphics\renderer_api.hpp" />
+    <ClInclude Include="src\alvere\graphics\render_commands.hpp" />
+    <ClInclude Include="src\alvere\graphics\shader.hpp" />
+    <ClInclude Include="src\alvere\graphics\shader_program.hpp" />
+    <ClInclude Include="src\alvere\graphics\sprite_batcher.hpp" />
+    <ClInclude Include="src\alvere\graphics\texture.hpp" />
+    <ClInclude Include="src\alvere\math\constants.hpp" />
+    <ClInclude Include="src\alvere\math\math.hpp" />
+    <ClInclude Include="src\alvere\math\matrices.hpp" />
+    <ClInclude Include="src\alvere\math\matrix\matrix_2.hpp" />
+    <ClInclude Include="src\alvere\math\matrix\matrix_3.hpp" />
+    <ClInclude Include="src\alvere\math\matrix\matrix_4.hpp" />
+    <ClInclude Include="src\alvere\math\matrix\matrix_x.hpp" />
+    <ClInclude Include="src\alvere\math\matrix\transformations.hpp" />
+    <ClInclude Include="src\alvere\math\quaternion.hpp" />
+    <ClInclude Include="src\alvere\math\shapes.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\circle.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\cuboid.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\intersections.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\line_2d.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\line_3d.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\point_2d.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\point_3d.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\rect.hpp" />
+    <ClInclude Include="src\alvere\math\shapes\sphere.hpp" />
+    <ClInclude Include="src\alvere\utils\random.hpp" />
+    <ClInclude Include="src\alvere\utils\uuid.hpp" />
+    <ClInclude Include="src\alvere\world\entity.hpp" />
+    <ClInclude Include="src\alvere\world\entity_components\ec_camera.hpp" />
+    <ClInclude Include="src\alvere\world\entity_components\ec_rendered_mesh.hpp" />
+    <ClInclude Include="src\alvere\world\entity_components\ec_scene_light.hpp" />
+    <ClInclude Include="src\alvere\world\entity_components\ec_transform.hpp" />
+    <ClInclude Include="src\alvere\world\entity_component.hpp" />
+    <ClInclude Include="src\alvere\world\entity_component_systems\ecs_scene_renderer.hpp" />
+    <ClInclude Include="src\alvere\scene\transform.hpp" />
+    <ClInclude Include="src\alvere\math\vectors.hpp" />
+    <ClInclude Include="src\alvere\math\vector\vector_2.hpp" />
+    <ClInclude Include="src\alvere\math\vector\vector_3.hpp" />
+    <ClInclude Include="src\alvere\math\vector\vector_4.hpp" />
+    <ClInclude Include="src\alvere\math\vector\vector_x.hpp" />
+    <ClInclude Include="src\alvere\graphics\renderer_light.hpp" />
+    <ClInclude Include="src\alvere\graphics\renderer_scene_graph.hpp" />
+    <ClInclude Include="src\alvere\utils\exceptions.hpp" />
+    <ClInclude Include="src\alvere\utils\file_reader.hpp" />
+    <ClInclude Include="src\alvere\utils\logging.hpp" />
+    <ClInclude Include="src\alvere\events\application_events.hpp" />
+    <ClInclude Include="src\alvere\events\event.hpp" />
+    <ClInclude Include="src\alvere\graphics\rendering_context.hpp" />
+    <ClInclude Include="src\alvere\utils\shapes.hpp" />
+    <ClInclude Include="src\alvere\utils\utilities.hpp" />
+    <ClInclude Include="src\alvere\world\entity_component_system.hpp" />
+    <ClInclude Include="src\alvere\world\scene.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_context.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_buffers.hpp" />
+    <ClInclude Include="src\alvere\application\window.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_errors.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_renderer.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_renderer_api.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_shader.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_shader_program.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_texture.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_vertex_array.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_sprite_batcher.hpp" />
+    <ClInclude Include="src\platform\windows\windows_window.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dependencies\include\luaplus\LuaCall.inl" />
+    <None Include="dependencies\include\luaplus\LuaObject.inl" />
+    <None Include="dependencies\include\luaplus\LuaStackObject.inl" />
+    <None Include="dependencies\include\luaplus\LuaStackTableIterator.inl" />
+    <None Include="dependencies\include\luaplus\LuaState.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
