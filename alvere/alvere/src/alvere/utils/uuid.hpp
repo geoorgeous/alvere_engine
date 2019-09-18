@@ -34,6 +34,6 @@ namespace alvere
 
 		UUID();
 
-		unsigned char m_bytes[16];
+		unsigned char m_bytes[16] = {};
 	};
 }

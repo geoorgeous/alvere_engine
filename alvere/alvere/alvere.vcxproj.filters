@@ -162,9 +162,6 @@
     <ClCompile Include="src\alvere\utils\utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\alvere\scene\transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dependencies\include\luaplus\lua53-luaplus\lapi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -313,6 +310,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\alvere\world\scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\world\transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -495,9 +495,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\assets.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\alvere\scene\transform.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lapi.h">
@@ -696,6 +693,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\world\scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\world\transform.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

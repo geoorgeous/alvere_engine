@@ -1,6 +1,6 @@
 #include "alvere/utils/uuid.hpp"
 
-#include <ios>
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -16,14 +16,9 @@ namespace alvere
 		std::mt19937 rng(dev());
 		std::uniform_int_distribution<uint64_t> dist;
 
-		for (int i = 0; i < 2; ++i)
-		{
-			uint64_t n = dist(rng);
-			unsigned char * nc = (unsigned char *)&n;
+		uint64_t data[2] = { dist(dev), dist(dev) };
 
-			for (int j = 0; j < 8; ++j)
-				uuid.m_bytes[i * 8 + j] = *(nc + j);
-		}
+		std::memcpy(uuid.m_bytes, data, 16);
 
 		return uuid;
 	}
@@ -32,14 +27,9 @@ namespace alvere
 	{
 		std::stringstream ss;
 		for (int i = 0; i < 16; ++i)
-			ss << std::hex << (int)m_bytes[i];
+			ss << std::setfill('0') << std::setw(2) << std::hex << (int)m_bytes[i];
 		return ss.str();
 	}
 
-	UUID::UUID()
-		: m_bytes()
-	{
-		for (int i = 0; i < 16; ++i)
-			m_bytes[i] = 0;
-	}
+	UUID::UUID() { }
 }

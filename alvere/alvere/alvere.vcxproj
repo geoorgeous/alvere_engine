@@ -253,7 +253,7 @@
     <ClCompile Include="src\alvere\math\shapes\point_3d.cpp" />
     <ClCompile Include="src\alvere\math\shapes\rect.cpp" />
     <ClCompile Include="src\alvere\math\shapes\sphere.cpp" />
-    <ClCompile Include="src\alvere\scene\transform.cpp" />
+    <ClCompile Include="src\alvere\world\transform.cpp" />
     <ClCompile Include="src\alvere\math\vector\vector_2.cpp" />
     <ClCompile Include="src\alvere\math\vector\vector_3.cpp" />
     <ClCompile Include="src\alvere\math\vector\vector_4.cpp" />
@@ -381,7 +381,7 @@
     <ClInclude Include="src\alvere\world\entity_components\ec_transform.hpp" />
     <ClInclude Include="src\alvere\world\entity_component.hpp" />
     <ClInclude Include="src\alvere\world\entity_component_systems\ecs_scene_renderer.hpp" />
-    <ClInclude Include="src\alvere\scene\transform.hpp" />
+    <ClInclude Include="src\alvere\world\transform.hpp" />
     <ClInclude Include="src\alvere\math\vectors.hpp" />
     <ClInclude Include="src\alvere\math\vector\vector_2.hpp" />
     <ClInclude Include="src\alvere\math\vector\vector_3.hpp" />

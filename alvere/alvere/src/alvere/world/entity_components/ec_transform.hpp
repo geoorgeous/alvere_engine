@@ -1,7 +1,7 @@
 #pragma once
 
-#include "alvere/scene/transform.hpp"
 #include "alvere/world/entity_component.hpp"
+#include "alvere/world/transform.hpp"
 
 namespace alvere
 {

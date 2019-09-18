@@ -8,7 +8,7 @@
 #include "alvere/graphics/renderer_light.hpp"
 #include "alvere/math/matrix/matrix_4.hpp"
 #include "alvere/math/matrix/transformations.hpp"
-#include "alvere/scene/transform.hpp"
+#include "alvere/world/transform.hpp"
 
 namespace alvere
 {

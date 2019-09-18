@@ -20,7 +20,7 @@ namespace alvere
 		delete m_renderer;
 	}
 
-	void ECSSceneRenderer::update(std::unordered_map<std::type_index, std::pair<unsigned int, EntityComponent *>> & components, float timeStep)
+	void ECSSceneRenderer::updateSystems(std::unordered_map<std::type_index, std::pair<unsigned int, EntityComponent *>> & components, float timeStep)
 	{
 		auto cameras = components.find(typeid(ECCamera));
 

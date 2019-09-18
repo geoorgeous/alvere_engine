@@ -8,7 +8,9 @@
 #include <alvere/math/constants.hpp>
 #include <alvere/math/matrix/transformations.hpp>
 #include <alvere/utils/file_reader.hpp>
-#include <alvere/utils/uuid.hpp>
+#include <alvere/world/scene.hpp>
+#include <alvere/world/entity_components/ec_camera.hpp>
+#include <alvere/world/entity_components/ec_rendered_mesh.hpp>
 
 #include "tile_drawer.hpp"
 #include "world_cell.hpp"
@@ -27,6 +29,7 @@ struct AlvereApplication : public Application
 	Material * m_material;
 	MaterialInstance * m_materialInstance;
 
+	Scene scene;
 	Camera camera;
 	Asset<SpriteBatcher> m_spriteBatcher;
 	Renderer * m_renderer;
@@ -63,10 +66,14 @@ struct AlvereApplication : public Application
 
 		m_renderer = Renderer::New();
 
-		for (int i = 0; i < 100; ++i)
-		{
-			LogInfo("%s\n", UUID::create().toString().c_str());
-		}
+		Entity * entity = scene.createEntity();
+
+		ECCamera * ec_camera = scene.createEntityComponent<ECCamera>(entity);
+		ec_camera->camera = camera;
+
+		ECRenderedMesh * ec_renderedMesh = scene.createEntityComponent<ECRenderedMesh>(entity);
+		ec_renderedMesh->m_mesh = m_mesh;
+		ec_renderedMesh->m_material = m_materialInstance;
 	}
 
 	~AlvereApplication()
@@ -118,6 +125,8 @@ struct AlvereApplication : public Application
 		if (m_window->GetKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
 		camera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
+
+		scene.updateSystems(deltaTime);
 	}
 
 	void render() override

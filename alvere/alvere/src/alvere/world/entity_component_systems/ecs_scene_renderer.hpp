@@ -14,7 +14,7 @@ namespace alvere
 
 		~ECSSceneRenderer();
 
-		void update(std::unordered_map<std::type_index, std::pair<unsigned int, EntityComponent *>> & components, float timeStep) override;
+		void updateSystems(std::unordered_map<std::type_index, std::pair<unsigned int, EntityComponent *>> & components, float timeStep) override;
 
 	private:
 
