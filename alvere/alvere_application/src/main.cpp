@@ -25,14 +25,16 @@ struct AlvereApplication : public Application
 	Asset<Shader> m_fragmentShader;
 	Asset<ShaderProgram> m_shaderProgram;
 	Asset<Texture> m_texture;
-	Mesh * m_mesh;
-	Material * m_material;
+	Mesh * mesh;
+	Material * material;
 	MaterialInstance * m_materialInstance;
 
 	Scene scene;
-	Camera camera;
+	Camera * camera;
 	Asset<SpriteBatcher> m_spriteBatcher;
 	Renderer * m_renderer;
+	Entity * entity1;
+	Entity * entity2;
 
 	TileDrawer m_tileDrawer;
 	WorldCellArea * m_worldCellArea;
@@ -41,9 +43,6 @@ struct AlvereApplication : public Application
 		m_tileDrawer("res/img/tilesheet.png")
 	{
 		m_spriteBatcher = SpriteBatcher::New();
-
-		camera.SetPosition(0, 0, 10);
-		camera.SetPerspective(67.0f * _TAU_OVR_360, 1.0f, 0.01f, 1000.0f);
 
 		world_generation::Generate(m_worldCellArea, 0);
 
@@ -56,31 +55,49 @@ struct AlvereApplication : public Application
 
 		m_texture = Texture::New("res/img/falcon.jpg");
 
-		m_mesh = new Mesh("res/meshes/teapot2.obj");
+		mesh = new Mesh("res/meshes/teapot2.obj");
 		
-		m_material = new Material(m_shaderProgram.get());
+		material = new Material(m_shaderProgram.get());
 
-		m_materialInstance = new MaterialInstance(m_material);
+		m_materialInstance = new MaterialInstance(material);
 		m_materialInstance->get<Shader::DataType::Float3>("u_colour")->m_value = Vector3(0.8f, 0.1f, 0.3f);
 		m_materialInstance->get<Shader::DataType::Sampler2D>("u_albedo")->m_value = m_texture.get();
 
 		m_renderer = Renderer::New();
 
-		Entity * entity = scene.createEntity();
+		entity1 = scene.createEntity();
 
-		ECCamera * ec_camera = scene.createEntityComponent<ECCamera>(entity);
-		ec_camera->camera = camera;
+		{
+			ECCamera * ec_camera = scene.createEntityComponent<ECCamera>(entity1);
+			camera = &ec_camera->camera;
+			camera->SetPosition(0, 0, 10);
+			camera->SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
 
-		ECRenderedMesh * ec_renderedMesh = scene.createEntityComponent<ECRenderedMesh>(entity);
-		ec_renderedMesh->m_mesh = m_mesh;
-		ec_renderedMesh->m_material = m_materialInstance;
+			ECRenderedMesh * ec_renderedMesh = scene.createEntityComponent<ECRenderedMesh>(entity1);
+			ec_renderedMesh->mesh = mesh;
+			ec_renderedMesh->material = m_materialInstance;
+
+			entity1->transform().transform.setScale(Vector3(0.1f));
+		}
+
+		{
+			entity2 = scene.createEntity();
+
+			ECRenderedMesh * ec_renderedMesh = scene.createEntityComponent<ECRenderedMesh>(entity2);
+			ec_renderedMesh->mesh = mesh;
+			ec_renderedMesh->material = m_materialInstance;
+
+			scene.setEntityParent(entity2, entity1);
+
+			entity2->transform().transform.setPosition(Vector3(1.0f));
+		}
 	}
 
 	~AlvereApplication()
 	{
 		delete m_worldCellArea;
-		delete m_mesh;
-		delete m_material;
+		delete mesh;
+		delete material;
 		delete m_materialInstance;
 		delete m_renderer;
 	}
@@ -102,7 +119,7 @@ struct AlvereApplication : public Application
 		if (m_window->GetKey(Key::LeftShift)) velocity -= Camera::up * moveSpeed;
 
 		velocity *= deltaTime;
-		camera.Move(velocity * camera.GetRotation());
+		camera->Move(velocity * camera->GetRotation());
 
 		if (m_window->GetMouse().GetButton(MouseButton::Left))
 		{
@@ -124,14 +141,12 @@ struct AlvereApplication : public Application
 		if (m_window->GetKey(Key::E)) rotation += Camera::forward * turnSpeed;
 		if (m_window->GetKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
-		camera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
-
-		scene.updateSystems(deltaTime);
+		camera->Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
 	}
 
 	void render() override
 	{
-		m_spriteBatcher->Begin(camera.GetProjectionViewMatrix());
+		m_spriteBatcher->Begin(camera->GetProjectionViewMatrix());
 		 
 		for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
 		{
@@ -143,6 +158,8 @@ struct AlvereApplication : public Application
 		}
 
 		m_spriteBatcher->end();
+
+		scene.updateSystems(0.0f);
 	}
 };
 

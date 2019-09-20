@@ -6,36 +6,46 @@
 
 #include "alvere/world/entity.hpp"
 #include "alvere/world/entity_component.hpp"
+#include "alvere/world/entity_component_map.hpp"
 #include "alvere/world/entity_component_system.hpp"
 #include "alvere/world/entity_component_systems/ecs_scene_renderer.hpp"
 
 namespace alvere
 {
-	class ECSSceneRenderer;
+	class EntityHandle;
 
 	class Scene
 	{
 	public:
 
+		friend class EntityHandle;
+
 		Scene();
 
-		Entity * createEntity();
+		EntityHandle createEntity();
 
-		void destroyEntity(Entity * entity);
+		void destroyEntity(EntityHandle & entity);
 
 		template <typename EntityComponentType>
-		EntityComponentType * createEntityComponent(Entity * entity)
+		EntityComponentType * createEntityComponent(EntityHandle & entity)
+		{
+			if (!entity.isValid())
+				return;
+
+			ComponentCollection<EntityComponentType> * collection = m_entityComponentMap.getOrCreate<EntityComponentType>();
+
+			return &collection->newEntityComponent(entity);
+		}
+
+		template <typename EntityComponentType>
+		void destroyEntityComponent(EntityHandle & entity)
 		{
 
 		}
 
-		template <typename EntityComponentType>
-		void destroyEntityComponent(Entity * entity)
-		{
+		void setEntityParent(EntityHandle & entity, EntityHandle & parent);
 
-		}
-
-		void setEntityParent(Entity * entity, Entity * parent);
+		void orphanEntity(EntityHandle & entity);
 
 		void addSystem(EntityComponentSystem * system);
 
@@ -49,9 +59,11 @@ namespace alvere
 
 		std::vector<Entity> m_entities;
 
-		std::unordered_map<std::type_index, std::pair<unsigned int, EntityComponent *>> m_components;
+		EntityComponentMap m_entityComponentMap;
 
 		ECSSceneRenderer m_sceneRenderer;
 
 	};
+
+	
 }

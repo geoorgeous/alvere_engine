@@ -1,19 +1,58 @@
 #pragma once
 
+#include <typeindex>
+#include <unordered_map>
+
 #include "alvere/world/entity_component.hpp"
 #include "alvere/world/entity_components/ec_transform.hpp"
 #include "alvere/utils/uuid.hpp"
 
-#include <typeindex>
-#include <unordered_map>
-
 namespace alvere
 {
+	class Scene;
+
+	class EntityHandle
+	{
+	public:
+
+		EntityHandle(int index, Scene & scene)
+			: m_entityIndex(index), m_scene(scene)
+		{ }
+
+		inline void invalidate()
+		{
+			m_entityIndex = k_invalidEntityIndex;
+		}
+
+		inline const Entity * get() const
+		{
+			return &m_scene.m_entities[m_entityIndex];
+		}
+
+		inline Entity * get()
+		{
+			return &m_scene.m_entities[m_entityIndex];
+		}
+
+		inline bool isValid() const
+		{
+			return m_entityIndex != k_invalidEntityIndex;
+		}
+
+	private:
+
+		const int k_invalidEntityIndex = -1;
+
+		int m_entityIndex = k_invalidEntityIndex;
+
+		Scene & m_scene;
+	};
+
 	class Entity
 	{
 	public:
 
-		Entity(UUID guid);
+		Entity(UUID guid, Scene & scene);
 
 		inline ECTransform & transform()
 		{
@@ -23,36 +62,6 @@ namespace alvere
 		inline const ECTransform & transform() const
 		{
 			return *m_transform;
-		}
-
-		template <class EntityComponentType>
-		void addComponent()
-		{
-			static_assert(std::is_base_of<EntityComponent, EntityComponentType>::value);
-
-			auto it = m_components.find(typeid(EntityComponent));
-
-			if (it != m_components.end())
-			{
-				return;
-			}
-
-			return m_components[EntityComponentType];
-		}
-
-		template <class EntityComponentType>
-		const EntityComponent * getComponent()
-		{
-			static_assert(std::is_base_of<EntityComponent, EntityComponentType>::value);
-
-			auto it = m_components.find(typeid(EntityComponent));
-
-			if (it == m_components.end())
-			{
-				return nullptr;
-			}
-
-			return it->second;
 		}
 
 		inline bool operator==(const Entity & rhs) const

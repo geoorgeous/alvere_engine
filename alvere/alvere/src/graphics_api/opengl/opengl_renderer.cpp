@@ -25,22 +25,22 @@ namespace alvere::graphics_api::opengl
 	{
 		glEnable(GL_DEPTH_TEST);
 
-		command.m_material->bind();
+		command.material->bind();
 
-		command.m_material->getBaseMaterial()->getShaderProgram()->sendUniformMat4x4("u_projectionMatrix", *m_projectionMatrix);
-		command.m_material->getBaseMaterial()->getShaderProgram()->sendUniformMat4x4("u_viewMatrix", *m_viewMatrix);
-		command.m_material->getBaseMaterial()->getShaderProgram()->sendUniformMat4x4("u_modelMatrix", command.m_localTransform);
+		command.material->getBaseMaterial()->getShaderProgram()->sendUniformMat4x4("u_projectionMatrix", *m_projectionMatrix);
+		command.material->getBaseMaterial()->getShaderProgram()->sendUniformMat4x4("u_viewMatrix", *m_viewMatrix);
+		command.material->getBaseMaterial()->getShaderProgram()->sendUniformMat4x4("u_modelMatrix", command.m_localTransform);
 
 		glActiveTexture(GL_TEXTURE0);
-		command.m_material->sendPropertiesToShader();
+		command.material->sendPropertiesToShader();
 
-		m_VAO.AddVertexBuffer(command.m_mesh->GetVertexBuffer());
-		m_VAO.SetIndexBuffer(command.m_mesh->GetElementBuffer());
+		m_VAO.AddVertexBuffer(command.mesh->GetVertexBuffer());
+		m_VAO.SetIndexBuffer(command.mesh->GetElementBuffer());
 		m_VAO.Bind();
 
-		ALV_LOG_OPENGL_CALL(glDrawElements(GL_TRIANGLES, command.m_mesh->GetElementBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr));
+		ALV_LOG_OPENGL_CALL(glDrawElements(GL_TRIANGLES, command.mesh->GetElementBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr));
 
-		command.m_material->unbind();
+		command.material->unbind();
 	}
 }
 

@@ -23,9 +23,9 @@ namespace alvere
 
 		struct DrawCommand
 		{
-			const Mesh * m_mesh;
+			const Mesh * mesh;
 
-			const MaterialInstance * m_material;
+			const MaterialInstance * material;
 
 			Matrix4 m_localTransform;
 

@@ -25,8 +25,8 @@ namespace alvere
 
 	Renderer::DrawCommand & Renderer::DrawCommand::operator=(const DrawCommand & rhs)
 	{
-		m_mesh = rhs.m_mesh;
-		m_material = rhs.m_material;
+		mesh = rhs.mesh;
+		material = rhs.material;
 		m_localTransform = rhs.m_localTransform;
 		return *this;
 	}
@@ -35,7 +35,7 @@ namespace alvere
 	{
 		std::sort(m_drawCommands.begin(), m_drawCommands.end(), [](const DrawCommand & lhs, const DrawCommand & rhs)
 			{
-				return (intptr_t)lhs.m_mesh < (intptr_t)rhs.m_mesh;
+				return (intptr_t)lhs.mesh < (intptr_t)rhs.mesh;
 			});
 	}
 }

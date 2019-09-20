@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "alvere/utils/uuid.hpp"
+#include "alvere/world/entity_component_map.hpp"
 
 namespace alvere
 {
@@ -11,6 +12,6 @@ namespace alvere
 	{
 	public:
 
-		virtual void updateSystems(std::unordered_map<std::type_index, std::pair<unsigned int, EntityComponent *>> & components, float timeStep) = 0;
+		virtual void updateSystems(EntityComponentMap & entityComponentMap, float timeStep) = 0;
 	};
 }

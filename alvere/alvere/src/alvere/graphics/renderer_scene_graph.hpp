@@ -43,36 +43,36 @@ namespace alvere
 
 			inline const AssetRef<Mesh> getMesh() const
 			{
-				return m_mesh;
+				return mesh;
 			}
 
 			inline const AssetRef<MaterialInstance> getMaterial() const
 			{
-				return m_material;
+				return material;
 			}
 
 			inline void setMesh(AssetRef<Mesh> mesh)
 			{
-				m_mesh = mesh;
+				mesh = mesh;
 			}
 
 			inline void setMaterial(AssetRef<MaterialInstance> material)
 			{
-				m_material = material;
+				material = material;
 			}
 
 		private:
 
-			AssetRef<Mesh> m_mesh;
+			AssetRef<Mesh> mesh;
 
-			AssetRef<MaterialInstance> m_material;
+			AssetRef<MaterialInstance> material;
 
 			inline bool isEqual(const Node & other) const override
 			{
 				const ObjectNode & otherObjectNode = static_cast<const ObjectNode &>(other);
 				return
-					m_mesh == otherObjectNode.m_mesh &&
-					m_material == otherObjectNode.m_material;
+					mesh == otherObjectNode.mesh &&
+					material == otherObjectNode.material;
 			}
 		};
 

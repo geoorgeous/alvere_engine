@@ -1,3 +1,5 @@
+#include <typeinfo>
+
 #include "alvere/world/entity_component_systems/ecs_scene_renderer.hpp"
 
 #include "alvere/utils/logging.hpp"
@@ -5,8 +7,6 @@
 #include "alvere/world/entity_components/ec_camera.hpp"
 #include "alvere/world/entity_components/ec_rendered_mesh.hpp"
 #include "alvere/world/entity_components/ec_transform.hpp"
-
-#include <typeinfo>
 
 namespace alvere
 {
@@ -20,33 +20,33 @@ namespace alvere
 		delete m_renderer;
 	}
 
-	void ECSSceneRenderer::updateSystems(std::unordered_map<std::type_index, std::pair<unsigned int, EntityComponent *>> & components, float timeStep)
+	void ECSSceneRenderer::updateSystems(EntityComponentMap & entityComponentMap, float timeStep)
 	{
-		auto cameras = components.find(typeid(ECCamera));
+		ComponentCollection<ECCamera> * cameras = entityComponentMap.get<ECCamera>();
 
-		if (cameras == components.end())
+		if (cameras == nullptr)
 		{
 			return;
 		}
 
-		const ECCamera & ec_camera = static_cast<ECCamera *>(cameras->second.second)[0];
+		const ECCamera & ec_camera = cameras->components()[0];
 
 		m_renderer->begin(ec_camera.camera);
 
-		auto renderedMeshes = components.find(typeid(ECRenderedMesh));
+		ComponentCollection<ECRenderedMesh> * renderedMeshesCollection = entityComponentMap.get<ECRenderedMesh>();
 
-		if (renderedMeshes != components.end())
+		if (renderedMeshesCollection != nullptr)
 		{
-			std::pair<unsigned int, EntityComponent *> & pair = renderedMeshes->second;
+			const std::vector<ECRenderedMesh> & renderedMeshes = renderedMeshesCollection->components();
 
-			unsigned int count = components[typeid(ECRenderedMesh)].first;
+			size_t count = renderedMeshes.size();
 
-			for (unsigned int i = 0; i < count; ++i)
+			for (size_t i = 0; i < count; ++i)
 			{
-				const ECRenderedMesh & ec_renderedMesh = *static_cast<ECRenderedMesh *>(pair.second + i);
-				const ECTransform & ec_transform = ec_renderedMesh.entity.transform();
+				const ECRenderedMesh & ec_renderedMesh = renderedMeshes[i];
+				const ECTransform & ec_transform = ec_renderedMesh.entity->transform();
 
-				m_renderer->submit(ec_renderedMesh.m_mesh, ec_renderedMesh.m_material, ec_transform.transform.getWorldMatrix());
+				m_renderer->submit(ec_renderedMesh.mesh, ec_renderedMesh.material, ec_transform.transform.getWorldMatrix());
 			}
 		}
 

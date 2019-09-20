@@ -9,8 +9,8 @@ namespace alvere
 {
 	struct ECRenderedMesh : public EntityComponent
 	{
-		AssetRef<Mesh> m_mesh;
+		AssetRef<Mesh> mesh;
 		
-		AssetRef<MaterialInstance> m_material;
+		AssetRef<MaterialInstance> material;
 	};
 }

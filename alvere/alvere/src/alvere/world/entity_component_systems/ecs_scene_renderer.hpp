@@ -1,7 +1,8 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "alvere/graphics/renderer.hpp"
-#include "alvere/world/entity_component.hpp"
 #include "alvere/world/entity_component_system.hpp"
 
 namespace alvere
@@ -14,7 +15,7 @@ namespace alvere
 
 		~ECSSceneRenderer();
 
-		void updateSystems(std::unordered_map<std::type_index, std::pair<unsigned int, EntityComponent *>> & components, float timeStep) override;
+		void updateSystems(EntityComponentMap & entityComponentMap, float timeStep) override;
 
 	private:
 
