@@ -95,7 +95,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)src\;$(SolutionDir)gml\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)dependencies\include\freetype\;$(ProjectDir)src\;$(SolutionDir)gml\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_ENFORCE_MATCHING_ALLOCATORS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -104,7 +104,7 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;gml.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;glfw3.lib</AdditionalDependencies>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;freetype.lib;glfw3.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib;$(ProjectDir)dependencies\lib\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -116,7 +116,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)src\;$(SolutionDir)gml\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)dependencies\include\freetype\;$(ProjectDir)src\;$(SolutionDir)gml\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_ENFORCE_MATCHING_ALLOCATORS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -125,7 +125,7 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;gml.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;glfw3x64.lib</AdditionalDependencies>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;freetype.lib;glfw3x64.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib;$(ProjectDir)dependencies\lib\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -139,7 +139,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)src\;$(SolutionDir)gml\include\;$(ProjectDir)dependencies\include\luaplus\lua53-luaplus\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)dependencies\include\freetype\;$(ProjectDir)src\;$(SolutionDir)gml\include\;$(ProjectDir)dependencies\include\luaplus\lua53-luaplus\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_ENFORCE_MATCHING_ALLOCATORS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -150,7 +150,7 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;gml.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;glfw3.lib</AdditionalDependencies>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;freetype.lib;glfw3.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib;$(ProjectDir)dependencies\lib\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -164,7 +164,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)src\;$(SolutionDir)gml\include\;$(ProjectDir)dependencies\include\luaplus\lua53-luaplus\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dependencies\include\;$(ProjectDir)dependencies\include\freetype\;$(ProjectDir)src\;$(SolutionDir)gml\include\;$(ProjectDir)dependencies\include\luaplus\lua53-luaplus\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_ENFORCE_MATCHING_ALLOCATORS=0;_WINSOCK_DEPRECATED_NO_WARNINGS;ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -175,7 +175,7 @@
       <AdditionalDependencies>opengl32.lib;glfw3.lib;gml.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;glfw3x64.lib</AdditionalDependencies>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;freetype.lib;glfw3x64.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)dependencies\lib;$(ProjectDir)dependencies\lib\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -239,6 +239,7 @@
     <ClCompile Include="src\alvere\graphics\shader_program.cpp" />
     <ClCompile Include="src\alvere\graphics\sprite_batcher.cpp" />
     <ClCompile Include="src\alvere\graphics\texture.cpp" />
+    <ClCompile Include="src\alvere\graphics\text\text_renderer.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_2.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_3.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_4.cpp" />
@@ -355,6 +356,7 @@
     <ClInclude Include="src\alvere\graphics\shader_program.hpp" />
     <ClInclude Include="src\alvere\graphics\sprite_batcher.hpp" />
     <ClInclude Include="src\alvere\graphics\texture.hpp" />
+    <ClInclude Include="src\alvere\graphics\text\text_renderer.hpp" />
     <ClInclude Include="src\alvere\math\constants.hpp" />
     <ClInclude Include="src\alvere\math\math.hpp" />
     <ClInclude Include="src\alvere\math\matrices.hpp" />
