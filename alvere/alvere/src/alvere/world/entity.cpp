@@ -4,9 +4,14 @@
 
 namespace alvere
 {
+	Entity::Entity()
+		: m_uuid(UUID::k_invalidUUID), m_transform(nullptr)
+	{ }
+
 	Entity::Entity(UUID uuid, Scene & scene)
 		: m_uuid(uuid), m_transform(nullptr)
 	{
-		m_transform = scene.createEntityComponent<ECTransform>(this);
+		EntityHandle handle(*this, scene);
+		m_transform = &scene.createEntityComponent<ECTransform>(handle)->transform;
 	}
 }

@@ -1,11 +1,13 @@
 #pragma once
 
+#include "alvere/world/entity_handle.hpp"
+
 namespace alvere
 {
 	class Entity;
 
 	struct EntityComponent
 	{
-		const Entity * entity;
+		EntityHandle entityHandle;
 	};
 }

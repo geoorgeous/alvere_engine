@@ -3,98 +3,108 @@
 namespace alvere
 {
 	Rect::Rect()
-		: m_X(0), m_Y(0), m_Width(0), m_Height(0)
+		: m_x(0), m_y(0), m_width(0), m_height(0)
 	{ }
 
 	Rect::Rect(float x, float y, float width, float height)
-		: m_X(x), m_Y(y), m_Width(width), m_Height(height)
+		: m_x(x), m_y(y), m_width(width), m_height(height)
 	{ }
 
-	float Rect::GetLeft() const
+	float Rect::getLeft() const
 	{
-		return m_X;
+		return m_x;
 	}
 
-	float Rect::GetRight() const
+	float Rect::getRight() const
 	{
-		return m_X + m_Width;
+		return m_x + m_width;
 	}
 
-	float Rect::GetTop() const
+	float Rect::getTop() const
 	{
-		return m_Y + m_Height;
+		return m_y + m_height;
 	}
 
-	float Rect::GetBottom() const
+	float Rect::getBottom() const
 	{
-		return m_Y;
+		return m_y;
 	}
 
-	alvere::Vector2 Rect::GetTopLeft() const
+	Vector2 Rect::getTopLeft() const
 	{
-		return alvere::Vector2{ GetLeft(), GetTop() };
+		return alvere::Vector2{ getLeft(), getTop() };
 	}
 
-	alvere::Vector2 Rect::GetBottomLeft() const
+	Vector2 Rect::getBottomLeft() const
 	{
-		return alvere::Vector2{ GetLeft(), GetBottom() };
+		return alvere::Vector2{ getLeft(), getBottom() };
 	}
 
-	alvere::Vector2 Rect::GetTopRight() const
+	Vector2 Rect::getTopRight() const
 	{
-		return alvere::Vector2{ GetRight(), GetTop() };
+		return alvere::Vector2{ getRight(), getTop() };
 	}
 
-	alvere::Vector2 Rect::GetBottomRight() const
+	Vector2 Rect::getBottomRight() const
 	{
-		return alvere::Vector2{ GetRight(), GetBottom() };
+		return alvere::Vector2{ getRight(), getBottom() };
+	}
+
+	float Rect::getArea() const
+	{
+		return m_width * m_height;
 	}
 
 	RectI::RectI()
-		: m_X(0), m_Y(0), m_Width(0), m_Height(0)
+		: m_x(0), m_y(0), m_width(0), m_height(0)
 	{ }
 
 	RectI::RectI(int x, int y, int width, int height)
-		: m_X(x), m_Y(y), m_Width(width), m_Height(height)
+		: m_x(x), m_y(y), m_width(width), m_height(height)
 	{ }
 
-	int RectI::GetLeft() const
+	int RectI::getLeft() const
 	{
-		return m_X;
+		return m_x;
 	}
 
-	int RectI::GetRight() const
+	int RectI::getRight() const
 	{
-		return m_X + m_Width;
+		return m_x + m_width;
 	}
 
-	int RectI::GetTop() const
+	int RectI::getTop() const
 	{
-		return m_Y + m_Height;
+		return m_y + m_height;
 	}
 
-	int RectI::GetBottom() const
+	int RectI::getBottom() const
 	{
-		return m_Y;
+		return m_y;
 	}
 
-	alvere::Vector2i RectI::GetTopLeft() const
+	Vector2i RectI::getTopLeft() const
 	{
-		return alvere::Vector2i{ GetLeft(), GetTop() };
+		return alvere::Vector2i{ getLeft(), getTop() };
 	}
 
-	alvere::Vector2i RectI::GetBottomLeft() const
+	Vector2i RectI::getBottomLeft() const
 	{
-		return alvere::Vector2i{ GetLeft(), GetBottom() };
+		return alvere::Vector2i{ getLeft(), getBottom() };
 	}
 
-	alvere::Vector2i RectI::GetTopRight() const
+	Vector2i RectI::getTopRight() const
 	{
-		return alvere::Vector2i{ GetRight(), GetTop() };
+		return alvere::Vector2i{ getRight(), getTop() };
 	}
 
-	alvere::Vector2i RectI::GetBottomRight() const
+	Vector2i RectI::getBottomRight() const
 	{
-		return alvere::Vector2i{ GetRight(), GetBottom() };
+		return alvere::Vector2i{ getRight(), getBottom() };
+	}
+
+	int RectI::getArea() const
+	{
+		return m_width * m_height;
 	}
 }

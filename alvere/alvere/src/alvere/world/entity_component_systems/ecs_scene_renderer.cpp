@@ -44,9 +44,9 @@ namespace alvere
 			for (size_t i = 0; i < count; ++i)
 			{
 				const ECRenderedMesh & ec_renderedMesh = renderedMeshes[i];
-				const ECTransform & ec_transform = ec_renderedMesh.entity->transform();
+				const Transform & ec_transform = ec_renderedMesh.entityHandle.get()->transform();
 
-				m_renderer->submit(ec_renderedMesh.mesh, ec_renderedMesh.material, ec_transform.transform.getWorldMatrix());
+				m_renderer->submit(ec_renderedMesh.mesh, ec_renderedMesh.material, ec_transform.getWorldMatrix());
 			}
 		}
 

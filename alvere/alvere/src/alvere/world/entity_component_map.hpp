@@ -3,6 +3,8 @@
 #include <typeindex>
 #include <unordered_map>
 
+#include "alvere/world/entity_handle.hpp"
+
 namespace alvere
 {
 	class Entity;
@@ -17,9 +19,9 @@ namespace alvere
 	{
 	public:
 
-		EntityComponentType & newEntityComponent(Entity * entity)
+		EntityComponentType & newEntityComponent(EntityHandle & entityHandle)
 		{
-			m_components.emplace_back(EntityComponentType()).entity = entity;
+			m_components.emplace_back(EntityComponentType()).entityHandle = entityHandle;
 
 			return m_components.back();
 		}

@@ -4,6 +4,7 @@
 #include <alvere/graphics/mesh.hpp>
 #include <alvere/graphics/renderer.hpp>
 #include <alvere/graphics/sprite_batcher.hpp>
+#include <alvere/graphics/text/font.hpp>
 #include <alvere/graphics/texture.hpp>
 #include <alvere/math/constants.hpp>
 #include <alvere/math/matrix/transformations.hpp>
@@ -30,14 +31,16 @@ struct AlvereApplication : public Application
 	MaterialInstance * m_materialInstance;
 
 	Scene scene;
-	Camera * camera;
+	Camera camera;
 	Asset<SpriteBatcher> m_spriteBatcher;
 	Renderer * m_renderer;
-	Entity * entity1;
-	Entity * entity2;
+	EntityHandle entity1;
+	EntityHandle entity2;
 
 	TileDrawer m_tileDrawer;
 	WorldCellArea * m_worldCellArea;
+
+	Font::FontFaceBitmap * m_fontFaceBitmap;
 
 	AlvereApplication() : Application(),
 		m_tileDrawer("res/img/tilesheet.png")
@@ -65,9 +68,13 @@ struct AlvereApplication : public Application
 
 		m_renderer = Renderer::New();
 
-		entity1 = scene.createEntity();
+		camera.SetPosition(0, 0, 20);
+		camera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
 
+		/*
 		{
+			entity1 = scene.createEntity();
+
 			ECCamera * ec_camera = scene.createEntityComponent<ECCamera>(entity1);
 			camera = &ec_camera->camera;
 			camera->SetPosition(0, 0, 10);
@@ -77,7 +84,7 @@ struct AlvereApplication : public Application
 			ec_renderedMesh->mesh = mesh;
 			ec_renderedMesh->material = m_materialInstance;
 
-			entity1->transform().transform.setScale(Vector3(0.1f));
+			entity1.get()->transform().setScale(Vector3(0.1f));
 		}
 
 		{
@@ -89,8 +96,11 @@ struct AlvereApplication : public Application
 
 			scene.setEntityParent(entity2, entity1);
 
-			entity2->transform().transform.setPosition(Vector3(1.0f));
+			entity2.get()->transform().setPosition(Vector3(1.0f));
 		}
+		*/
+
+		m_fontFaceBitmap = new Font::FontFaceBitmap("res/fonts/arial/arial.ttf", 102);
 	}
 
 	~AlvereApplication()
@@ -100,6 +110,7 @@ struct AlvereApplication : public Application
 		delete material;
 		delete m_materialInstance;
 		delete m_renderer;
+		delete m_fontFaceBitmap;
 	}
 
 	void update(float deltaTime) override
@@ -119,7 +130,7 @@ struct AlvereApplication : public Application
 		if (m_window->GetKey(Key::LeftShift)) velocity -= Camera::up * moveSpeed;
 
 		velocity *= deltaTime;
-		camera->Move(velocity * camera->GetRotation());
+		camera.Move(velocity * camera.GetRotation());
 
 		if (m_window->GetMouse().GetButton(MouseButton::Left))
 		{
@@ -141,21 +152,25 @@ struct AlvereApplication : public Application
 		if (m_window->GetKey(Key::E)) rotation += Camera::forward * turnSpeed;
 		if (m_window->GetKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
-		camera->Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
+		camera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
 	}
 
 	void render() override
 	{
-		m_spriteBatcher->Begin(camera->GetProjectionViewMatrix());
+		m_spriteBatcher->Begin(camera.GetProjectionViewMatrix());
 		 
-		for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
+		/*for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
 		{
 			for (unsigned int y = 0; y < m_worldCellArea->GetHeight(); y++)
 			{
 				WorldCell& cell = m_worldCellArea->At(x, y);
-				m_tileDrawer.DrawTile(*m_spriteBatcher, cell.m_X, cell.m_Y, cell.m_Type);
+				m_tileDrawer.DrawTile(*m_spriteBatcher, cell.m_x, cell.m_y, cell.m_Type);
 			}
-		}
+		}*/
+
+		Texture * fontBitmap = m_fontFaceBitmap->getBitmapTexture();
+
+		m_spriteBatcher->Submit(fontBitmap, Rect(-10, -10, 20, 20 * ((float)fontBitmap->height() / fontBitmap->width())));
 
 		m_spriteBatcher->end();
 

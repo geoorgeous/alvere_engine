@@ -8,6 +8,8 @@ namespace alvere
 	{
 	public:
 
+		static const UUID k_invalidUUID;
+
 		static UUID create();
 
 		std::string toString() const;
@@ -20,6 +22,11 @@ namespace alvere
 			return true;
 		}
 
+		inline bool operator!=(const UUID & rhs) const
+		{
+			return !operator==(rhs);
+		}
+
 		inline bool operator<(const UUID & rhs) const
 		{
 			for (int i = 0; i < 16; ++i)
@@ -30,10 +37,24 @@ namespace alvere
 			return false;
 		}
 
+		std::size_t createHash() const;
+
 	private:
 
 		UUID();
 
 		unsigned char m_bytes[16] = {};
+	};
+}
+
+namespace std
+{
+	template<>
+	struct hash<alvere::UUID>
+	{
+		std::size_t operator()(const alvere::UUID & uuid) const
+		{
+			return uuid.createHash();
+		}
 	};
 }

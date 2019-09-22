@@ -1304,7 +1304,7 @@ extern "C" int luaplus_ls_LuaDumpObject( lua_State* L )
 
 	LuaPlus::LuaStack args(state);
 	LuaPlus::LuaStackObject fileObj = args[1];
-	if (fileObj.IsTable()  &&  state->GetTop() == 1)
+	if (fileObj.IsTable()  &&  state->getTop() == 1)
 	{
 		LuaPlus::LuaObject valueObj(fileObj);
 		LuaPlus::LuaObject nameObj;

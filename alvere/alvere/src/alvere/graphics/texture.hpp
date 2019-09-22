@@ -19,6 +19,8 @@ namespace alvere
 
 		static Asset<Texture> New(const char * filename, Channels channels = Channels::RGBAlpha);
 
+		static Asset<Texture> New(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
+
 		virtual ~Texture();
 
 		int width() const;
@@ -48,5 +50,7 @@ namespace alvere
 		unsigned char * m_pixelData;
 
 		Texture(const char * filename, Channels channels = Channels::RGBAlpha);
+
+		Texture(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
 	};
 }

@@ -58,4 +58,19 @@ namespace alvere
 			LogError("Failed to load image '%s': %s\n", filename, stbi_failure_reason());
 		}
 	}
+
+	Texture::Texture(const unsigned char * data, int width, int height, Channels channels)
+		: m_resWidth(width), m_resHeight(height), m_channelCount((int)channels)
+	{
+		m_pixelData = (unsigned char *)std::malloc((size_t)m_resWidth * m_resHeight * m_channelCount);
+
+		std::memcpy(m_pixelData, data, (size_t)m_resWidth * m_resHeight * m_channelCount);
+
+		if (m_pixelData == nullptr)
+		{
+			m_resWidth =
+			m_resHeight =
+			m_channelCount = 0;
+		}
+	}
 }

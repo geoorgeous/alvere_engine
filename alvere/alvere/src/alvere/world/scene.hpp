@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "alvere/world/entity.hpp"
+#include "alvere/world/entity_handle.hpp"
 #include "alvere/world/entity_component.hpp"
 #include "alvere/world/entity_component_map.hpp"
 #include "alvere/world/entity_component_system.hpp"
@@ -12,8 +13,6 @@
 
 namespace alvere
 {
-	class EntityHandle;
-
 	class Scene
 	{
 	public:
@@ -24,28 +23,47 @@ namespace alvere
 
 		EntityHandle createEntity();
 
-		void destroyEntity(EntityHandle & entity);
+		void destroyEntity(EntityHandle & entityHandle);
 
 		template <typename EntityComponentType>
-		EntityComponentType * createEntityComponent(EntityHandle & entity)
+		EntityComponentType * createEntityComponent(EntityHandle & entityHandle)
 		{
-			if (!entity.isValid())
-				return;
+			static_assert(std::is_base_of<EntityComponent, EntityComponentType>::value);
+
+			if (!entityHandle.isValid())
+				return nullptr;
 
 			ComponentCollection<EntityComponentType> * collection = m_entityComponentMap.getOrCreate<EntityComponentType>();
 
-			return &collection->newEntityComponent(entity);
+			return &collection->newEntityComponent(entityHandle);
 		}
 
 		template <typename EntityComponentType>
-		void destroyEntityComponent(EntityHandle & entity)
+		void destroyEntityComponent(EntityHandle & entityHandle)
 		{
+			static_assert(std::is_base_of<EntityComponent, EntityComponentType>::value);
 
+			if (!entityHandle.isValid())
+				return;
+
+			ComponentCollection<EntityComponentType> * collection = m_entityComponentMap.get<EntityComponentType>();
+
+			if (collection == nullptr)
+				return;
+
+			auto iter = collection->components.begin();
+			for (; iter != collection->components().end();)
+			{
+				if (iter->entityHandle == entityHandle)
+					iter = collection->components().erase(iter);
+				else
+					++iter;
+			}
 		}
 
-		void setEntityParent(EntityHandle & entity, EntityHandle & parent);
+		void setEntityParent(EntityHandle & entityHandle, EntityHandle & parentHandle);
 
-		void orphanEntity(EntityHandle & entity);
+		void orphanEntity(EntityHandle & entityHandle);
 
 		void addSystem(EntityComponentSystem * system);
 
@@ -57,13 +75,11 @@ namespace alvere
 
 		std::vector<EntityComponentSystem *> m_systems;
 
-		std::vector<Entity> m_entities;
+		std::unordered_map<UUID, Entity> m_entities;
 
 		EntityComponentMap m_entityComponentMap;
 
 		ECSSceneRenderer m_sceneRenderer;
 
 	};
-
-	
 }

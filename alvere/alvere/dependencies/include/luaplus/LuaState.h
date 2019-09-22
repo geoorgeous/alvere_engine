@@ -48,7 +48,7 @@ public:
 	LuaStackObject StackTop();
 
 	int AbsIndex(int index);
-	int GetTop();
+	int getTop();
 	void SetTop(int index);
 	void PushGlobalTable();
 	void PushValue(int index);

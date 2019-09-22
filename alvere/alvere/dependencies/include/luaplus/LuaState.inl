@@ -81,7 +81,7 @@ LUAPLUS_INLINE LuaStackObject LuaState::Stack(int index)
 
 LUAPLUS_INLINE LuaStackObject LuaState::StackTop()
 {
-    return LuaStackObject(this, GetTop());
+    return LuaStackObject(this, getTop());
 }
 
 // Basic stack manipulation.
@@ -95,7 +95,7 @@ LUAPLUS_INLINE int LuaState::AbsIndex(int index)
 #endif
 }
 
-LUAPLUS_INLINE int LuaState::GetTop()
+LUAPLUS_INLINE int LuaState::getTop()
 {
 	return lua_gettop(LuaState_to_lua_State(this));
 }
@@ -606,13 +606,13 @@ LUAPLUS_INLINE void LuaState::RawGetP(int index, const void* p)
 
 LUAPLUS_INLINE LuaStackObject LuaState::CreateTable(int narr, int nrec) {
 	lua_createtable(LuaState_to_lua_State(this), narr, nrec);
-	return LuaStackObject(*this, GetTop());
+	return LuaStackObject(*this, getTop());
 }
 
 
 LUAPLUS_INLINE LuaStackObject LuaState::NewUserdata(size_t size) {
 	lua_newuserdata(LuaState_to_lua_State(this), size);
-	return LuaStackObject(*this, GetTop());
+	return LuaStackObject(*this, getTop());
 }
 
 
@@ -667,13 +667,13 @@ LUAPLUS_INLINE LuaStackObject LuaState::GetGlobals_Stack() {
 	return LuaStackObject( this, LUA_GLOBALSINDEX );
 #elif LUA_VERSION_NUM >= 502
 	lua_pushglobaltable(LuaState_to_lua_State(this));
-	return LuaStackObject(*this, GetTop());
+	return LuaStackObject(*this, getTop());
 #endif
 }
 
 LUAPLUS_INLINE LuaStackObject LuaState::GetGlobal_Stack(const char *name)
 {
-	lua_getglobal(LuaState_to_lua_State(this), name);  return LuaStackObject(*this, GetTop());
+	lua_getglobal(LuaState_to_lua_State(this), name);  return LuaStackObject(*this, getTop());
 }
 
 LUAPLUS_INLINE LuaStackObject LuaState::GetRegistry_Stack()

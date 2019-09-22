@@ -20,8 +20,8 @@ public:
 		Floor
 	};
 
-	int m_X;
-	int m_Y;
+	int m_x;
+	int m_y;
 	bool m_IsWalkable;
 	Type m_Type;
 };

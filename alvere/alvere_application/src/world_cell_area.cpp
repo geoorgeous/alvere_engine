@@ -1,28 +1,28 @@
 #include "world_cell_area.hpp"
 
 WorldCellArea::WorldCellArea()
-	: m_Cells(nullptr), m_Width(0), m_Height(0)
+	: m_Cells(nullptr), m_width(0), m_height(0)
 { }
 
 WorldCellArea::WorldCellArea(WorldCell** cells, unsigned int width, unsigned int height)
-	: m_Cells(cells), m_Width(width), m_Height(height)
+	: m_Cells(cells), m_width(width), m_height(height)
 { }
 
 WorldCellArea::~WorldCellArea()
 {
-	for (int x = 0; x < m_Width; x++)
+	for (int x = 0; x < m_width; x++)
 		delete[] m_Cells[x];
 	delete[] m_Cells;
 }
 
 unsigned int WorldCellArea::GetWidth() const
 {
-	return m_Width;
+	return m_width;
 }
 
 unsigned int WorldCellArea::GetHeight() const
 {
-	return m_Height;
+	return m_height;
 }
 
 WorldCell& WorldCellArea::At(unsigned int xIdx, unsigned int yIdx)

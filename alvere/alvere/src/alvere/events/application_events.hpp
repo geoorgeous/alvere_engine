@@ -23,16 +23,16 @@ namespace alvere
 
 		inline unsigned int GetWidth() const
 		{
-			return m_Width;
+			return m_width;
 		}
 
 		inline unsigned int GetHeight() const
 		{
-			return m_Height;
+			return m_height;
 		}
 
 	private:
-		unsigned int m_Width;
-		unsigned int m_Height;
+		unsigned int m_width;
+		unsigned int m_height;
 	};
 }

@@ -11,55 +11,25 @@ namespace alvere
 {
 	class Scene;
 
-	class EntityHandle
-	{
-	public:
-
-		EntityHandle(int index, Scene & scene)
-			: m_entityIndex(index), m_scene(scene)
-		{ }
-
-		inline void invalidate()
-		{
-			m_entityIndex = k_invalidEntityIndex;
-		}
-
-		inline const Entity * get() const
-		{
-			return &m_scene.m_entities[m_entityIndex];
-		}
-
-		inline Entity * get()
-		{
-			return &m_scene.m_entities[m_entityIndex];
-		}
-
-		inline bool isValid() const
-		{
-			return m_entityIndex != k_invalidEntityIndex;
-		}
-
-	private:
-
-		const int k_invalidEntityIndex = -1;
-
-		int m_entityIndex = k_invalidEntityIndex;
-
-		Scene & m_scene;
-	};
-
 	class Entity
 	{
 	public:
 
+		Entity();
+
 		Entity(UUID guid, Scene & scene);
 
-		inline ECTransform & transform()
+		inline const UUID & getUUID() const
+		{
+			return m_uuid;
+		}
+
+		inline Transform & transform()
 		{
 			return *m_transform;
 		}
 
-		inline const ECTransform & transform() const
+		inline const Transform & transform() const
 		{
 			return *m_transform;
 		}
@@ -73,8 +43,6 @@ namespace alvere
 
 		UUID m_uuid;
 
-		ECTransform * m_transform;
-
-		std::unordered_map<std::type_index, EntityComponent *> m_components;
+		Transform * m_transform;
 	};
 }

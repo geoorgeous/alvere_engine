@@ -8,6 +8,8 @@
 
 namespace alvere
 {
+	const UUID UUID::k_invalidUUID = UUID();
+
 	UUID UUID::create()
 	{
 		UUID uuid;
@@ -32,4 +34,13 @@ namespace alvere
 	}
 
 	UUID::UUID() { }
+
+	std::size_t UUID::createHash() const
+	{
+		uint64_t * first = (uint64_t *)m_bytes;
+		uint64_t * second = (uint64_t *)(m_bytes + 8);
+
+		std::size_t hash = 17 * 31 + std::hash<uint64_t>()(*first);
+		return hash *= 31 + std::hash<uint64_t>()(*second);
+	}
 }

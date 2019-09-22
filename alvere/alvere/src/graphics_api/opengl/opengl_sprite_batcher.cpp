@@ -73,9 +73,9 @@ namespace alvere::graphics_api::opengl
 			m_TexturesCount++;
 		}
 
-		alvere::Vector2 topLeftTexCoords = command.texture->texCoords(command.source.GetTopLeft());
-		*m_VPtr = command.destination.GetLeft();
-		*++m_VPtr = command.destination.GetTop();
+		alvere::Vector2 topLeftTexCoords = command.texture->texCoords(command.source.getTopLeft());
+		*m_VPtr = command.destination.getLeft();
+		*++m_VPtr = command.destination.getTop();
 		*++m_VPtr = command.sortLayer;
 		*++m_VPtr = topLeftTexCoords.x;
 		*++m_VPtr = topLeftTexCoords.y;
@@ -85,9 +85,9 @@ namespace alvere::graphics_api::opengl
 		*++m_VPtr = command.tint.w;
 		*((int*)++m_VPtr) = textureIndex;
 
-		alvere::Vector2 bottomLeftTexCoords = command.texture->texCoords(command.source.GetBottomLeft());
-		*++m_VPtr = command.destination.GetLeft();
-		*++m_VPtr = command.destination.GetBottom();
+		alvere::Vector2 bottomLeftTexCoords = command.texture->texCoords(command.source.getBottomLeft());
+		*++m_VPtr = command.destination.getLeft();
+		*++m_VPtr = command.destination.getBottom();
 		*++m_VPtr = command.sortLayer;
 		*++m_VPtr = bottomLeftTexCoords.x;
 		*++m_VPtr = bottomLeftTexCoords.y;
@@ -97,9 +97,9 @@ namespace alvere::graphics_api::opengl
 		*++m_VPtr = command.tint.w;
 		*((int*)++m_VPtr) = textureIndex;
 
-		alvere::Vector2 topRightTexCoords = command.texture->texCoords(command.source.GetTopRight());
-		*++m_VPtr = command.destination.GetRight();
-		*++m_VPtr = command.destination.GetTop();
+		alvere::Vector2 topRightTexCoords = command.texture->texCoords(command.source.getTopRight());
+		*++m_VPtr = command.destination.getRight();
+		*++m_VPtr = command.destination.getTop();
 		*++m_VPtr = command.sortLayer;
 		*++m_VPtr = topRightTexCoords.x;
 		*++m_VPtr = topRightTexCoords.y;
@@ -109,9 +109,9 @@ namespace alvere::graphics_api::opengl
 		*++m_VPtr = command.tint.w;
 		*((int*)++m_VPtr) = textureIndex;
 
-		alvere::Vector2 bottomRightTexCoords = command.texture->texCoords(command.source.GetBottomRight());
-		*++m_VPtr = command.destination.GetRight();
-		*++m_VPtr = command.destination.GetBottom();
+		alvere::Vector2 bottomRightTexCoords = command.texture->texCoords(command.source.getBottomRight());
+		*++m_VPtr = command.destination.getRight();
+		*++m_VPtr = command.destination.getBottom();
 		*++m_VPtr = command.sortLayer;
 		*++m_VPtr = bottomRightTexCoords.x;
 		*++m_VPtr = bottomRightTexCoords.y;

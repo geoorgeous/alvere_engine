@@ -18,6 +18,6 @@ public:
 
 private:
 	WorldCell ** m_Cells;
-	unsigned int m_Width;
-	unsigned int m_Height;
+	unsigned int m_width;
+	unsigned int m_height;
 };
