@@ -16,13 +16,14 @@ namespace alvere
 {
 	struct GlyphInternal : Font::Glyph
 	{
-		GlyphInternal(FT_UInt glyphIndex, FT_ULong charcode, std::string name, RectI bitmapSource, RectI bounds, unsigned int advance)
+		GlyphInternal(FT_UInt glyphIndex, FT_ULong charcode, std::string name, RectI bitmapSource, Vector2i bairings, Vector2i size, unsigned int advance)
 		{
 			this->glyphIndex = glyphIndex;
 			this->charcode = charcode;
 			this->name = name;
 			this->bitmapSource = bitmapSource;
-			this->bounds = bounds;
+			this->bairings = bairings;
+			this->size = size;
 			this->advance = advance;
 		}
 
@@ -80,24 +81,17 @@ namespace alvere
 				glyphIndex,
 				charcode,
 				glyphName,
-				RectI{
-					0,
-					0,
-					(int)face->glyph->bitmap.width,
-					(int)face->glyph->bitmap.rows },
-					RectI{ // glyph bounds
-						face->glyph->bitmap_left,
-						face->glyph->bitmap_top,
-						(int)face->glyph->bitmap.width,
-						(int)face->glyph->bitmap.rows },
-						face->glyph->advance.x);
+				RectI{ 0, 0, (int)face->glyph->bitmap.width, (int)face->glyph->bitmap.rows },
+				Vector2i{ face->glyph->bitmap_left, face->glyph->bitmap_top },
+				Vector2i{ (int)face->glyph->bitmap.width, (int)face->glyph->bitmap.rows },
+				face->glyph->advance.x >> 6);
 		}
 
 		// sort the glyphs from largest to smallest
 		std::sort(sortedGlyphs.begin(), sortedGlyphs.end(),
 			[](const GlyphInternal & lhs, const GlyphInternal & rhs) -> bool
 			{
-				return lhs.bounds.getArea() > rhs.bounds.getArea();
+				return lhs.size[0] * lhs.size[1] > rhs.size[0] * lhs.size[1];
 			});
 
 		GlyphInternal * glyphPlacing = nullptr;
@@ -213,28 +207,14 @@ namespace alvere
 		FT_Done_Library(ft);
 	}
 
-	unsigned int Font::Face::Bitmap::getGlyphHeightPixels() const
-	{
-		return m_glyphHeightPixels;
-	}
-
-	AssetRef<Texture> Font::Face::Bitmap::getTexture() const
-	{
-		return m_bitmapTexture.get();
-	}
-
-	bool Font::Face::Bitmap::getGlyph(const Font::Glyph * & glyph, unsigned long charCode) const
+	const Font::Glyph * Font::Face::Bitmap::getGlyph(unsigned long charCode) const
 	{
 		auto iter = m_glyphs.find(charCode);
 
 		if (iter == m_glyphs.end())
-		{
-			glyph = nullptr;
-			return false;
-		}
+			return nullptr;
 
-		glyph = &iter->second;
-		return true;
+		return &iter->second;
 	}
 
 	Font::Face::Face(const char * fontFilepath)

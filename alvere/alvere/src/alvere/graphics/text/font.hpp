@@ -6,6 +6,7 @@
 
 #include "alvere/assets.hpp"
 #include "alvere/utils/shapes.hpp"
+#include "alvere/math/vectors.hpp"
 
 namespace alvere
 {
@@ -29,7 +30,9 @@ namespace alvere
 
 			RectI bitmapSource;
 
-			RectI bounds;
+			Vector2i bairings;
+
+			Vector2i size;
 
 			unsigned int advance;
 		};
@@ -44,11 +47,27 @@ namespace alvere
 
 				Bitmap(const char * filepath, unsigned int fontHeightPixels);
 
-				unsigned int getGlyphHeightPixels() const;
+				inline unsigned int getGlyphHeightPixels() const
+				{
+					return m_glyphHeightPixels;
+				}
 
-				AssetRef<Texture> getTexture() const;
+				inline AssetRef<Texture> getTexture() const
+				{
+					return m_bitmapTexture.get();
+				}
 
-				bool getGlyph(const Glyph * & glyph, unsigned long charCode) const;
+				const Glyph * getGlyph(unsigned long charCode) const;
+
+				inline float getFontFaceHeight() const
+				{
+					return m_fontFaceHeight;
+				}
+
+				inline float getFontFaceMaxAdvance() const
+				{
+					return m_fontFaceMaxAdvance;
+				}
 
 			private:
 

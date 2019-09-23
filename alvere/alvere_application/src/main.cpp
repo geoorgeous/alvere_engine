@@ -102,7 +102,7 @@ struct AlvereApplication : public Application
 		}
 		*/
 
-		m_fontFace = new Font::Face("res/fonts/arial/arialbd.ttf");
+		m_fontFace = new Font::Face("res/fonts/arial/arial.ttf");
 	}
 
 	~AlvereApplication()
@@ -161,20 +161,29 @@ struct AlvereApplication : public Application
 	{
 		m_spriteBatcher->Begin(camera.GetProjectionViewMatrix());
 		 
-		/*for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
+		for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
 		{
 			for (unsigned int y = 0; y < m_worldCellArea->GetHeight(); y++)
 			{
 				WorldCell& cell = m_worldCellArea->At(x, y);
 				m_tileDrawer.DrawTile(*m_spriteBatcher, cell.m_x, cell.m_y, cell.m_Type);
 			}
-		}*/
+		}
 
 		Texture * fontBitmap = m_fontFace->getBitmap(102)->getTexture();
 
 		//m_spriteBatcher->Submit(fontBitmap, Rect(-10, -10, 20, 20 * ((float)fontBitmap->height() / fontBitmap->width())));
 
-		m_textRenderer.drawText(*m_spriteBatcher, m_fontFace, "hello_world my name is george", Vector2(100, 100), 62.0f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+		m_textRenderer.drawText(*m_spriteBatcher, m_fontFace, 
+			R"(
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+				Dolor sed viverra ipsum nunc aliquet bibendum enim. In massa tempor nec feugiat.
+				Nunc aliquet bibendum enim facilisis gravida. Nisl nunc mi ipsum faucibus vitae aliquet nec ullamcorper.
+				Amet luctus venenatis lectus magna fringilla. Volutpat maecenas volutpat blandit aliquam etiam erat velit scelerisque in.
+				Egestas egestas fringilla phasellus faucibus scelerisque eleifend. Sagittis orci a scelerisque purus semper eget duis.
+				Nulla pharetra diam sit amet nisl suscipit. Sed adipiscing diam donec adipiscing tristique risus nec feugiat in.
+				Fusce ut placerat orci nulla. Pharetra vel turpis nunc eget lorem dolor.
+				Tristique senectus et netus et malesuada.)", Vector2(0, 800), 18, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 		m_spriteBatcher->end();
 

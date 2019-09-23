@@ -3,9 +3,9 @@
 
 namespace alvere
 {
-	void TextRenderer::drawText(SpriteBatcher & spriteBatcher, const AssetRef<Font::Face> fontface, std::string text, Vector2 position, float lineHeight, Vector4 colour)
+	void TextRenderer::drawText(SpriteBatcher & spriteBatcher, const AssetRef<Font::Face> fontface, std::string text, Vector2 position, unsigned int size, Vector4 colour)
 	{
-		const Font::Face::Bitmap * bitmap = fontface->getBitmap(48);
+		const Font::Face::Bitmap * bitmap = fontface->getBitmap(size);
 		const Texture * texture = bitmap->getTexture();
 
 		Vector2 pen = {
@@ -21,17 +21,24 @@ namespace alvere
 		{
 			unsigned long c = text[i];
 
-			if (!bitmap->getGlyph(glyph, c))
+			if (c == '\n')
+			{
+				pen.x = position.x;
+				pen.y -= bitmap->getFontFaceHeight();
+				continue;
+			}
+
+			if ((glyph = bitmap->getGlyph(c)) == nullptr)
 				continue;
 
-			destination.m_x = pen.x;
-			destination.m_y = pen.y + glyph->bounds.m_y;
-			destination.m_width = glyph->bounds.m_width;
-			destination.m_height = glyph->bounds.m_height;
+			destination.m_x = pen.x + glyph->bairings[0];
+			destination.m_y = pen.y - (glyph->size[1] - glyph->bairings[1]);
+			destination.m_width = glyph->size[0];
+			destination.m_height = glyph->size[1];
 
 			spriteBatcher.Submit(texture, destination, glyph->bitmapSource, colour);
 
-			pen.x += (glyph->advance >> 6);
+			pen.x += glyph->advance;
 		}
 	}
 }
