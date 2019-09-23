@@ -47,13 +47,23 @@ namespace alvere::graphics_api::opengl
 			case 4: format = GL_RGBA; break;
 		}
 
+		GLenum internalFormat = GL_RGBA8;
+
+		switch (m_channelCount)
+		{
+			case 1: internalFormat = GL_R8; break;
+			case 2: internalFormat = GL_RG8; break;
+			case 3: internalFormat = GL_RGB8; break;
+			case 4: internalFormat = GL_RGBA8; break;
+		}
+
 		glGenTextures(1, &m_Handle);
 		glBindTexture(GL_TEXTURE_2D, m_Handle);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, format, m_resWidth, m_resHeight, 0, format, GL_UNSIGNED_BYTE, m_pixelData));
+		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_resWidth, m_resHeight, 0, format, GL_UNSIGNED_BYTE, m_pixelData));
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 }

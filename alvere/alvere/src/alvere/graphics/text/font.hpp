@@ -34,31 +34,52 @@ namespace alvere
 			unsigned int advance;
 		};
 
-		class FontFaceBitmap
+		class Face
 		{
 		public:
 
-			FontFaceBitmap(const char * fontFilepath, unsigned int height);
+			class Bitmap
+			{
+			public:
 
-			FontFaceBitmap(const char * fontFilepath, unsigned int fontWidthPixels, unsigned int fontHeightPixels);
+				Bitmap(const char * filepath, unsigned int fontHeightPixels);
 
-			AssetRef<Texture> getBitmapTexture() const;
+				unsigned int getGlyphHeightPixels() const;
 
-			bool getGlyph(const Font::Glyph *& glyph, unsigned int charCode) const;
+				AssetRef<Texture> getTexture() const;
+
+				bool getGlyph(const Glyph * & glyph, unsigned long charCode) const;
+
+			private:
+
+				unsigned int m_glyphHeightPixels;
+
+				Asset<Texture> m_bitmapTexture;
+
+				std::map<unsigned long, Glyph> m_glyphs;
+
+				float m_fontFaceHeight;
+
+				float m_fontFaceMaxAdvance;
+			};
+
+			Face(const char * fontFilepath);
+
+			const Bitmap * getBitmap(unsigned int fontHeightPixels);
 
 		private:
 
 			std::string m_name;
 
+			std::string m_resourceFilepath;
+
 			Style m_fontStyle;
 
-			std::map<unsigned long, Glyph> m_glyphs;
-
-			Asset<Texture> m_bitmap;
+			std::vector<Bitmap> m_bitmaps;
 		};
 
 	private:
 
-		std::unordered_map<Style, Texture> m_bitmaps;
+		std::unordered_map<Style, Face> m_faces;
 	};
 }

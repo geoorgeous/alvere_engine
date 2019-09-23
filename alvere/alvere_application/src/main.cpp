@@ -4,7 +4,7 @@
 #include <alvere/graphics/mesh.hpp>
 #include <alvere/graphics/renderer.hpp>
 #include <alvere/graphics/sprite_batcher.hpp>
-#include <alvere/graphics/text/font.hpp>
+#include <alvere/graphics/text/text_renderer.hpp>
 #include <alvere/graphics/texture.hpp>
 #include <alvere/math/constants.hpp>
 #include <alvere/math/matrix/transformations.hpp>
@@ -40,7 +40,8 @@ struct AlvereApplication : public Application
 	TileDrawer m_tileDrawer;
 	WorldCellArea * m_worldCellArea;
 
-	Font::FontFaceBitmap * m_fontFaceBitmap;
+	TextRenderer m_textRenderer;
+	Font::Face * m_fontFace;
 
 	AlvereApplication() : Application(),
 		m_tileDrawer("res/img/tilesheet.png")
@@ -68,8 +69,9 @@ struct AlvereApplication : public Application
 
 		m_renderer = Renderer::New();
 
-		camera.SetPosition(0, 0, 20);
-		camera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
+		camera.SetPosition(0, 0, 0);
+		//camera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
+		camera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
 		/*
 		{
@@ -100,7 +102,7 @@ struct AlvereApplication : public Application
 		}
 		*/
 
-		m_fontFaceBitmap = new Font::FontFaceBitmap("res/fonts/arial/arial.ttf", 102);
+		m_fontFace = new Font::Face("res/fonts/arial/arialbd.ttf");
 	}
 
 	~AlvereApplication()
@@ -110,7 +112,7 @@ struct AlvereApplication : public Application
 		delete material;
 		delete m_materialInstance;
 		delete m_renderer;
-		delete m_fontFaceBitmap;
+		delete m_fontFace;
 	}
 
 	void update(float deltaTime) override
@@ -168,9 +170,11 @@ struct AlvereApplication : public Application
 			}
 		}*/
 
-		Texture * fontBitmap = m_fontFaceBitmap->getBitmapTexture();
+		Texture * fontBitmap = m_fontFace->getBitmap(102)->getTexture();
 
-		m_spriteBatcher->Submit(fontBitmap, Rect(-10, -10, 20, 20 * ((float)fontBitmap->height() / fontBitmap->width())));
+		//m_spriteBatcher->Submit(fontBitmap, Rect(-10, -10, 20, 20 * ((float)fontBitmap->height() / fontBitmap->width())));
+
+		m_textRenderer.drawText(*m_spriteBatcher, m_fontFace, "hello_world my name is george", Vector2(100, 100), 62.0f, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 		m_spriteBatcher->end();
 

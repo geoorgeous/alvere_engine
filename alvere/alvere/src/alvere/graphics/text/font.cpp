@@ -6,6 +6,7 @@
 #include <freetype/ft2build.h>
 #include FT_FREETYPE_H  
 #include <freetype/freetype/ftbitmap.h>
+#include <freetype/freetype/ftmodapi.h>
 
 #include "alvere/graphics/texture.hpp"
 #include "alvere/utils/shapes.hpp"
@@ -30,39 +31,42 @@ namespace alvere
 		FT_ULong charcode;
 	};
 
-	Font::FontFaceBitmap::FontFaceBitmap(const char * fontFilepath, unsigned int fontWidthPixels, unsigned int fontHeightPixels)
-		: m_fontStyle(Font::Style::Regular), m_bitmap(nullptr)
+	Font::Face::Bitmap::Bitmap(const char * filepath, unsigned int fontHeightPixels)
 	{
 		FT_Library ft;
+
 		if (FT_Init_FreeType(&ft))
-			LogInfo("Could not init FreeType Library\n");
+		{
+			LogError("Failed to initialise font loading library!\n");
+			return;
+		}
 
 		FT_Face face;
-		if (FT_New_Face(ft, fontFilepath, fontWidthPixels, &face))
-			LogInfo("Failed to load font\n");
 
-		m_name = std::string(face->family_name) + " " + face->style_name;
+		if (FT_New_Face(ft, filepath, 0, &face))
+		{
+			LogWarning("Failed to load font\n");
+			return;
+		}
 
-		if (face->style_flags & FT_STYLE_FLAG_BOLD && face->style_flags & FT_STYLE_FLAG_ITALIC)
-			m_fontStyle = Font::Style::BoldItalic;
-		else if (face->style_flags & FT_STYLE_FLAG_BOLD)
-			m_fontStyle = Font::Style::Bold;
-		else if (face->style_flags & FT_STYLE_FLAG_ITALIC)
-			m_fontStyle = Font::Style::Italic;
+		m_glyphHeightPixels = fontHeightPixels;
 
-		FT_Set_Pixel_Sizes(face, fontWidthPixels, fontHeightPixels);
+		FT_Set_Pixel_Sizes(face, 0, fontHeightPixels);
+
+		const unsigned char charCount = 128;
 
 		std::vector<GlyphInternal> sortedGlyphs;
-		sortedGlyphs.reserve(face->num_glyphs);
+		sortedGlyphs.reserve(charCount);
 
+		FT_ULong charcode = 0;;
 		FT_UInt glyphIndex = 0;
-		char glyphName[128];
+		char glyphName[charCount];
 
-		for (unsigned char c = 0; c < 128; ++c)
+		for (unsigned char c = 0; c < charCount; ++c)
 		{
-			FT_ULong charcode = (FT_ULong)c;
+			charcode = (FT_ULong)c;
 
-			glyphIndex = FT_Get_Char_Index(face, (FT_ULong)c);
+			glyphIndex = FT_Get_Char_Index(face, charcode);
 
 			if (glyphIndex == 0)
 				continue;
@@ -73,29 +77,33 @@ namespace alvere
 
 			// new glyph
 			sortedGlyphs.emplace_back(
-					glyphIndex,
-					charcode,
-					glyphName,
-					RectI{
-						0,
-						0,
-						(int)face->glyph->bitmap.width,
-						(int)face->glyph->bitmap.rows },
+				glyphIndex,
+				charcode,
+				glyphName,
+				RectI{
+					0,
+					0,
+					(int)face->glyph->bitmap.width,
+					(int)face->glyph->bitmap.rows },
 					RectI{ // glyph bounds
 						face->glyph->bitmap_left,
 						face->glyph->bitmap_top,
 						(int)face->glyph->bitmap.width,
 						(int)face->glyph->bitmap.rows },
-					face->glyph->advance.x);
+						face->glyph->advance.x);
 		}
 
 		// sort the glyphs from largest to smallest
 		std::sort(sortedGlyphs.begin(), sortedGlyphs.end(),
 			[](const GlyphInternal & lhs, const GlyphInternal & rhs) -> bool
-		{
-			return lhs.bounds.getArea() > rhs.bounds.getArea();
-		});
+			{
+				return lhs.bounds.getArea() > rhs.bounds.getArea();
+			});
 
+		GlyphInternal * glyphPlacing = nullptr;
+		GlyphInternal * placedGlyph = nullptr;
+		RectI potentialBounds;
+		bool intersects = false;
 		bool glyphPlacementSuccess = false;
 		int maxX = 512;
 		int maxY = 1;
@@ -104,7 +112,7 @@ namespace alvere
 
 		for (int i = 0; i < sortedGlyphs.size(); ++i)
 		{
-			GlyphInternal & glyphPlacing = sortedGlyphs[i];
+			glyphPlacing = &sortedGlyphs[i];
 			glyphPlacementSuccess = false;
 
 			// Step through each row of pixels... from left to right.
@@ -120,22 +128,25 @@ namespace alvere
 
 					// Must proceed to next row if we've run out of room on this row
 
-					if (x + glyphPlacing.bitmapSource.m_width > maxX)
+					if (x + glyphPlacing->bitmapSource.m_width > maxX)
 						break;
 
-					bool intersects = false;
+					intersects = false;
 
 					for (int j = 0; j < i && !intersects; ++j)
 					{
-						const GlyphInternal & glyphPlaced = sortedGlyphs[j];
+						placedGlyph = &sortedGlyphs[j];
 
 						// check if they would intersect
 
-						RectI candidateBounds{ x, y, glyphPlacing.bitmapSource.m_width, glyphPlacing.bitmapSource.m_height };
+						potentialBounds.m_x = x;
+						potentialBounds.m_y = y;
+						potentialBounds.m_width = glyphPlacing->bitmapSource.m_width;
+						potentialBounds.m_height = glyphPlacing->bitmapSource.m_height;
 
-						if (candidateBounds.intersects(glyphPlaced.bitmapSource))
+						if (potentialBounds.intersects(placedGlyph->bitmapSource))
 						{
-							x = glyphPlaced.bitmapSource.m_x + glyphPlaced.bitmapSource.m_width;
+							x = placedGlyph->bitmapSource.m_x + placedGlyph->bitmapSource.m_width;
 							intersects = true;
 						}
 					}
@@ -145,18 +156,18 @@ namespace alvere
 
 					// good placement
 
-					glyphPlacing.bitmapSource.m_x = x;
-					glyphPlacing.bitmapSource.m_y = y;
+					glyphPlacing->bitmapSource.m_x = x;
+					glyphPlacing->bitmapSource.m_y = y;
 					glyphPlacementSuccess = true;
 
 					// Resize the height of the bitmap if the new placed glyph overflows the bottom
 
-					if (glyphPlacing.bitmapSource.m_y + glyphPlacing.bitmapSource.m_height > maxY)
+					if (glyphPlacing->bitmapSource.m_y + glyphPlacing->bitmapSource.m_height > maxY)
 					{
-						maxY = glyphPlacing.bitmapSource.m_y + glyphPlacing.bitmapSource.m_height;
+						maxY = glyphPlacing->bitmapSource.m_y + glyphPlacing->bitmapSource.m_height;
 					}
 
-					m_glyphs[glyphPlacing.charcode] = (Glyph)glyphPlacing;
+					m_glyphs[glyphPlacing->charcode] = (Glyph)* glyphPlacing;
 				}
 			}
 		}
@@ -166,7 +177,7 @@ namespace alvere
 		unsigned char * pixels = new unsigned char[(size_t)maxX * maxY]();
 
 		const GlyphInternal * glyph;
-		FT_Bitmap * bitmap;
+		const FT_Bitmap * bitmap;
 		unsigned int xOffset = 0;
 		unsigned int yOffset = 0;
 
@@ -180,36 +191,39 @@ namespace alvere
 
 			xOffset = glyph->bitmapSource.m_x;
 
+			m_glyphs[glyph->charcode].bitmapSource.m_y = (maxY) - glyph->bitmapSource.m_y - glyph->bitmapSource.m_height;
+
 			for (unsigned int y = 0; y < bitmap->rows; ++y)
 			{
-				yOffset = (glyph->bitmapSource.m_y + y) * maxX;
+				yOffset = (maxY - 1) - (glyph->bitmapSource.m_y + y);
 
-				std::memcpy(&pixels[yOffset + xOffset], &bitmap->buffer[bitmap->pitch * y], bitmap->pitch);
+				std::memcpy(&pixels[yOffset * maxX + xOffset], &bitmap->buffer[bitmap->pitch * y], bitmap->pitch);
 			}
 		}
 
-		m_bitmap = Texture::New(pixels, maxX, maxY, Texture::Channels::Grey);
+		m_bitmapTexture = Texture::New(pixels, maxX, maxY, Texture::Channels::Grey);
 
 		delete[] pixels;
 
+		m_fontFaceHeight = face->size->metrics.y_ppem;
+		m_fontFaceMaxAdvance = face->size->metrics.y_ppem;
+
 		FT_Done_Face(face);
 
-		LogInfo("Successfully created Font bitmap texture '%s'\n", m_name.c_str());
-		LogContinue("\tFont line height (pixels): %i\n", fontHeightPixels);
-		LogContinue("\tDimensions: %i x %i\n", m_bitmap->width(), m_bitmap->height());
-		LogContinue("\tSize: %.3fKB\n", (float)(m_bitmap->width() * m_bitmap->height()) / 1024.0f);
+		FT_Done_Library(ft);
 	}
 
-	Font::FontFaceBitmap::FontFaceBitmap(const char * fontFilepath, unsigned int fontHeightPixels)
-		: Font::FontFaceBitmap::FontFaceBitmap(fontFilepath, 0, fontHeightPixels)
-	{ }
-
-	AssetRef<Texture> Font::FontFaceBitmap::getBitmapTexture() const
+	unsigned int Font::Face::Bitmap::getGlyphHeightPixels() const
 	{
-		return m_bitmap.get();
+		return m_glyphHeightPixels;
 	}
 
-	bool Font::FontFaceBitmap::getGlyph(const Font::Glyph * & glyph, unsigned int charCode) const
+	AssetRef<Texture> Font::Face::Bitmap::getTexture() const
+	{
+		return m_bitmapTexture.get();
+	}
+
+	bool Font::Face::Bitmap::getGlyph(const Font::Glyph * & glyph, unsigned long charCode) const
 	{
 		auto iter = m_glyphs.find(charCode);
 
@@ -221,5 +235,55 @@ namespace alvere
 
 		glyph = &iter->second;
 		return true;
+	}
+
+	Font::Face::Face(const char * fontFilepath)
+		: m_name("INVALID FONT"), m_resourceFilepath(fontFilepath), m_fontStyle(Font::Style::Regular)
+	{
+		FT_Library ft;
+
+		if (FT_Init_FreeType(&ft))
+		{
+			LogError("Failed to initialise font loading library!\n");
+			return;
+		}
+
+		FT_Face face;
+
+		if (FT_New_Face(ft, fontFilepath, 0, &face))
+		{
+			LogWarning("Failed to open font file '%s'.\n", fontFilepath);
+			return;
+		}
+
+		m_name = std::string(face->family_name) + " " + face->style_name;
+
+		if (face->style_flags & FT_STYLE_FLAG_BOLD && face->style_flags & FT_STYLE_FLAG_ITALIC)
+			m_fontStyle = Font::Style::BoldItalic;
+		else if (face->style_flags & FT_STYLE_FLAG_BOLD)
+			m_fontStyle = Font::Style::Bold;
+		else if (face->style_flags & FT_STYLE_FLAG_ITALIC)
+			m_fontStyle = Font::Style::Italic;
+
+		FT_Done_Face(face);
+
+		FT_Done_Library(ft);
+	}
+
+	const Font::Face::Bitmap * Font::Face::getBitmap(unsigned int fontHeightPixels)
+	{
+		for (const Bitmap & bitmap : m_bitmaps)
+			if (bitmap.getGlyphHeightPixels() == fontHeightPixels)
+				return &bitmap;
+
+		m_bitmaps.emplace_back(m_resourceFilepath.c_str(), fontHeightPixels);
+
+		if (m_bitmaps.back().getGlyphHeightPixels() == 0)
+		{
+			m_bitmaps.pop_back();
+			return nullptr;
+		}
+
+		return &m_bitmaps.back();
 	}
 }

@@ -11,6 +11,6 @@ namespace alvere
 	{
 	public:
 
-		void drawText(const AssetRef<Font> font, std::string text, Vector2 position, unsigned int size, Vector4 colour);
+		void drawText(SpriteBatcher & spriteBatcher, const AssetRef<Font::Face> fontface, std::string text, Vector2 position, float lineHeight, Vector4 colour);
 	};
 }
