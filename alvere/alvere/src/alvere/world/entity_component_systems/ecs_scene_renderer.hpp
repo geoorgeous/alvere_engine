@@ -7,7 +7,7 @@
 
 namespace alvere
 {
-	class ECSSceneRenderer : public EntityComponentSystem
+	class ECSSceneRenderer : public SceneSystem
 	{
 	public:
 

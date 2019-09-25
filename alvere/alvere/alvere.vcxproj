@@ -254,7 +254,6 @@
     <ClCompile Include="src\alvere\math\shapes\point_3d.cpp" />
     <ClCompile Include="src\alvere\math\shapes\rect.cpp" />
     <ClCompile Include="src\alvere\math\shapes\sphere.cpp" />
-    <ClCompile Include="src\alvere\world\entity_component_map.cpp" />
     <ClCompile Include="src\alvere\world\entity_handle.cpp" />
     <ClCompile Include="src\alvere\world\transform.cpp" />
     <ClCompile Include="src\alvere\math\vector\vector_2.cpp" />
@@ -270,7 +269,7 @@
     <ClCompile Include="src\alvere\utils\utilities.cpp" />
     <ClCompile Include="src\alvere\utils\uuid.cpp" />
     <ClCompile Include="src\alvere\world\entity.cpp" />
-    <ClCompile Include="src\alvere\world\entity_component_systems\ecs_scene_renderer.cpp" />
+    <ClCompile Include="src\alvere\world\entity_component_systems\scene_renderer.cpp" />
     <ClCompile Include="src\alvere\world\scene.cpp" />
     <ClCompile Include="src\graphics_api\opengl\opengl_buffers.cpp" />
     <ClCompile Include="src\alvere\events\application_events.cpp" />
@@ -378,14 +377,15 @@
     <ClInclude Include="src\alvere\math\shapes\sphere.hpp" />
     <ClInclude Include="src\alvere\utils\random.hpp" />
     <ClInclude Include="src\alvere\utils\uuid.hpp" />
+    <ClInclude Include="src\alvere\world\drawable_scene_system.hpp" />
     <ClInclude Include="src\alvere\world\entity.hpp" />
     <ClInclude Include="src\alvere\world\entity_components\ec_camera.hpp" />
     <ClInclude Include="src\alvere\world\entity_components\ec_rendered_mesh.hpp" />
     <ClInclude Include="src\alvere\world\entity_components\ec_scene_light.hpp" />
     <ClInclude Include="src\alvere\world\entity_components\ec_transform.hpp" />
     <ClInclude Include="src\alvere\world\entity_component.hpp" />
-    <ClInclude Include="src\alvere\world\entity_component_map.hpp" />
-    <ClInclude Include="src\alvere\world\entity_component_systems\ecs_scene_renderer.hpp" />
+    <ClInclude Include="src\alvere\world\updated_scene_system.hpp" />
+    <ClInclude Include="src\alvere\world\entity_component_systems\scene_renderer.hpp" />
     <ClInclude Include="src\alvere\world\entity_handle.hpp" />
     <ClInclude Include="src\alvere\world\transform.hpp" />
     <ClInclude Include="src\alvere\math\vectors.hpp" />
@@ -403,7 +403,7 @@
     <ClInclude Include="src\alvere\graphics\rendering_context.hpp" />
     <ClInclude Include="src\alvere\utils\shapes.hpp" />
     <ClInclude Include="src\alvere\utils\utilities.hpp" />
-    <ClInclude Include="src\alvere\world\entity_component_system.hpp" />
+    <ClInclude Include="src\alvere\world\scene_system.hpp" />
     <ClInclude Include="src\alvere\world\scene.hpp" />
     <ClInclude Include="src\graphics_api\opengl\opengl_context.hpp" />
     <ClInclude Include="src\graphics_api\opengl\opengl_buffers.hpp" />

@@ -2,14 +2,15 @@
 
 #include <typeindex>
 #include <unordered_map>
-#include <vector>
 
-#include "alvere/world/entity.hpp"
+#include "alvere/world/drawable_scene_system.hpp"
 #include "alvere/world/entity_handle.hpp"
-#include "alvere/world/entity_component.hpp"
-#include "alvere/world/entity_component_map.hpp"
-#include "alvere/world/entity_component_system.hpp"
-#include "alvere/world/entity_component_systems/ecs_scene_renderer.hpp"
+#include "alvere/world/scene_system.hpp"
+#include "alvere/world/updated_scene_system.hpp"
+
+
+#include "alvere/world/entity_component_systems/scene_renderer.hpp"
+
 
 namespace alvere
 {
@@ -17,69 +18,72 @@ namespace alvere
 	{
 	public:
 
-		friend class EntityHandle;
+		template <typename SceneSystemType>
+		void addSystem()
+		{
+			static_assert(
+				std::is_base_of<SceneSystem, SceneSystemType>::value && (
+					std::is_base_of<UpdatedSceneSystem, SceneSystemType>::value ||
+					std::is_base_of<DrawableSceneSystem, SceneSystemType>::value));
 
-		Scene();
+			std::type_index systemTypeIndex = typeid(SceneSystemType);
+
+			if (m_systems.find(systemTypeIndex) != m_systems.end())
+				return;
+
+			SceneSystemType * newSceneSystem = new SceneSystemType();
+
+			UpdatedSceneSystem * newUpdatedSceneSystem = dynamic_cast<UpdatedSceneSystem *>(newSceneSystem);
+
+			if (newUpdatedSceneSystem != nullptr)
+				m_updatedSystems[systemTypeIndex] = newUpdatedSceneSystem;
+
+			DrawableSceneSystem * newDrawableSceneSystem = dynamic_cast<DrawableSceneSystem *>(newSceneSystem);
+
+			if (newDrawableSceneSystem != nullptr)
+				m_drawableSystems[systemTypeIndex] = newDrawableSceneSystem;
+
+			m_systems[systemTypeIndex] = newSceneSystem;
+		}
+
+		template <typename SceneSystemType>
+		void removeSystem()
+		{
+			static_assert(
+				std::is_base_of<SceneSystem, SceneRenderer>::value && (
+					std::is_base_of<UpdatedSceneSystem, SceneRenderer>::value ||
+					std::is_base_of<DrawableSceneSystem, SceneRenderer>::value));
+
+			std::type_index systemTypeIndex = typeid(SceneRenderer);
+
+			auto iter = m_systems.find(systemTypeIndex);
+
+			if (iter == m_systems.end())
+				return;
+
+			delete iter->second;
+
+			m_systems.erase(iter);
+
+			if (iter != m_updatedSystems.end())
+				m_updatedSystems.erase(iter);
+
+			if (iter != m_drawableSystems.end())
+				m_drawableSystems.erase(iter);
+		}
 
 		EntityHandle createEntity();
 
 		void destroyEntity(EntityHandle & entityHandle);
 
-		template <typename EntityComponentType>
-		EntityComponentType * createEntityComponent(EntityHandle & entityHandle)
-		{
-			static_assert(std::is_base_of<EntityComponent, EntityComponentType>::value);
+		void update(float deltaTime);
 
-			if (!entityHandle.isValid())
-				return nullptr;
-
-			ComponentCollection<EntityComponentType> * collection = m_entityComponentMap.getOrCreate<EntityComponentType>();
-
-			return &collection->newEntityComponent(entityHandle);
-		}
-
-		template <typename EntityComponentType>
-		void destroyEntityComponent(EntityHandle & entityHandle)
-		{
-			static_assert(std::is_base_of<EntityComponent, EntityComponentType>::value);
-
-			if (!entityHandle.isValid())
-				return;
-
-			ComponentCollection<EntityComponentType> * collection = m_entityComponentMap.get<EntityComponentType>();
-
-			if (collection == nullptr)
-				return;
-
-			auto iter = collection->components.begin();
-			for (; iter != collection->components().end();)
-			{
-				if (iter->entityHandle == entityHandle)
-					iter = collection->components().erase(iter);
-				else
-					++iter;
-			}
-		}
-
-		void setEntityParent(EntityHandle & entityHandle, EntityHandle & parentHandle);
-
-		void orphanEntity(EntityHandle & entityHandle);
-
-		void addSystem(EntityComponentSystem * system);
-
-		void removeSystem(EntityComponentSystem * system);
-
-		void updateSystems(float timeStep);
+		void draw();
 
 	private:
 
-		std::vector<EntityComponentSystem *> m_systems;
-
-		std::unordered_map<UUID, Entity> m_entities;
-
-		EntityComponentMap m_entityComponentMap;
-
-		ECSSceneRenderer m_sceneRenderer;
-
+		std::unordered_map<std::type_index, SceneSystem *> m_systems;
+		std::unordered_map<std::type_index, UpdatedSceneSystem *> m_updatedSystems;
+		std::unordered_map<std::type_index, DrawableSceneSystem *> m_drawableSystems;
 	};
 }

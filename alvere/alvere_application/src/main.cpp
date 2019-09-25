@@ -9,8 +9,7 @@
 #include <alvere/math/matrix/transformations.hpp>
 #include <alvere/utils/file_reader.hpp>
 #include <alvere/world/scene.hpp>
-#include <alvere/world/entity_components/ec_camera.hpp>
-#include <alvere/world/entity_components/ec_rendered_mesh.hpp>
+#include <alvere/world/entity_component_systems/scene_renderer.hpp>
 
 #include "tile_drawer.hpp"
 #include "world_cell.hpp"
@@ -34,8 +33,6 @@ struct AlvereApplication : public Application
 	Camera uiCamera;
 	Asset<SpriteBatcher> m_spriteBatcher;
 	Renderer * m_renderer;
-	EntityHandle entity1;
-	EntityHandle entity2;
 
 	TileDrawer m_tileDrawer;
 	WorldCellArea * m_worldCellArea;
@@ -73,8 +70,36 @@ struct AlvereApplication : public Application
 
 		uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
+		scene.addSystem<SceneRenderer>();
+
 		/*
 		{
+			Scene scene;
+			scene.addSystem<RendererSystem>();
+			scene.addSystem<TransformMoverSystem>();
+
+			EntityHandle entity = scene.createEntity();
+			entity.addComponent<Mesh>();
+
+			EntityHandle cameraEntity = scene.createEntity();
+			cameraEntity.addComponent<Camera>();
+			cameraEntity.addComponent<Mesh>();
+			cameraEntity.addComponent<TransformMover>();
+
+			Camera::Handle camera = cameraEntity.getComponent<Camera>();
+
+			cameraEntity.removeComponent<Mesh>();
+
+			scene.destroyEntity(entity);
+
+			...
+
+			scene.update(deltaTime);
+
+			scene.draw();
+
+
+
 			entity1 = scene.createEntity();
 
 			ECCamera * ec_camera = scene.createEntityComponent<ECCamera>(entity1);
@@ -155,10 +180,14 @@ struct AlvereApplication : public Application
 		if (m_window->GetKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
 		sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
+
+		scene.update(deltaTime);
 	}
 
 	void render() override
 	{
+		scene.draw();
+
 		m_spriteBatcher->Begin(sceneCamera.GetProjectionViewMatrix());
 		 
 		for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
@@ -179,8 +208,6 @@ struct AlvereApplication : public Application
 		m_spriteBatcher->submit(*m_fontFace->getBitmap(18), cameraPositionString, Vector2(0, 800 - 18), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 		m_spriteBatcher->end();
-
-		scene.updateSystems(0.0f);
 	}
 };
 

@@ -300,9 +300,6 @@
     <ClCompile Include="src\alvere\world\entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\alvere\world\entity_component_systems\ecs_scene_renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\alvere\utils\uuid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -315,13 +312,13 @@
     <ClCompile Include="src\alvere\world\transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\alvere\world\entity_component_map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\alvere\world\entity_handle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\alvere\graphics\text\font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\world\entity_component_systems\scene_renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -683,13 +680,7 @@
     <ClInclude Include="src\alvere\world\entity_components\ec_scene_light.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\alvere\world\entity_component_systems\ecs_scene_renderer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\alvere\world\entity_component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\alvere\world\entity_component_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\utils\uuid.hpp">
@@ -707,13 +698,22 @@
     <ClInclude Include="src\alvere\world\transform.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\alvere\world\entity_component_map.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\alvere\world\entity_handle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\graphics\text\font.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\world\scene_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\world\entity_component_systems\scene_renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\world\updated_scene_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\world\drawable_scene_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

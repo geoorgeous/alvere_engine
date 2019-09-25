@@ -1,42 +1,24 @@
 #pragma once
 
-#include <typeindex>
-#include <unordered_map>
-
-#include "alvere/world/entity_component.hpp"
-#include "alvere/world/entity_components/ec_transform.hpp"
 #include "alvere/utils/uuid.hpp"
+#include "alvere/world/transform.hpp"
 
 namespace alvere
 {
-	class Scene;
-
 	class Entity
 	{
 	public:
 
-		Entity();
-
-		Entity(UUID guid, Scene & scene);
-
-		inline const UUID & getUUID() const
+		/*template <typename EntityComponentType>
+		EntityComponentType::Handle addComponent()
 		{
-			return m_uuid;
-		}
 
-		inline Transform & transform()
-		{
-			return *m_transform;
-		}
+		}*/
 
-		inline const Transform & transform() const
+		template <typename EntityComponentType>
+		void removeComponent()
 		{
-			return *m_transform;
-		}
 
-		inline bool operator==(const Entity & rhs) const
-		{
-			return m_uuid == rhs.m_uuid;
 		}
 
 	private:
