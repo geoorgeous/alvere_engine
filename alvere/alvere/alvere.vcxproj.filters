@@ -321,9 +321,6 @@
     <ClCompile Include="src\alvere\world\entity_handle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\alvere\graphics\text\text_renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\alvere\graphics\text\font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -714,9 +711,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\world\entity_handle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\alvere\graphics\text\text_renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\graphics\text\font.hpp">

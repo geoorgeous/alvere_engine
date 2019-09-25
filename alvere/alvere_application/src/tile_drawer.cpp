@@ -29,5 +29,5 @@ TileDrawer::~TileDrawer()
 
 void TileDrawer::DrawTile(alvere::SpriteBatcher& spriteBatcher, int x, int y, WorldCell::Type cellType)
 {
-	spriteBatcher.Submit(m_TileSheet.get(), alvere::Rect{ (float)x, (float)y, 1, 1 }, m_TileSources[(int)cellType]);
+	spriteBatcher.submit(m_TileSheet.get(), alvere::Rect{ (float)x, (float)y, 1, 1 }, m_TileSources[(int)cellType]);
 }

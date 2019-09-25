@@ -4,7 +4,6 @@
 #include <alvere/graphics/mesh.hpp>
 #include <alvere/graphics/renderer.hpp>
 #include <alvere/graphics/sprite_batcher.hpp>
-#include <alvere/graphics/text/text_renderer.hpp>
 #include <alvere/graphics/texture.hpp>
 #include <alvere/math/constants.hpp>
 #include <alvere/math/matrix/transformations.hpp>
@@ -31,7 +30,8 @@ struct AlvereApplication : public Application
 	MaterialInstance * m_materialInstance;
 
 	Scene scene;
-	Camera camera;
+	Camera sceneCamera;
+	Camera uiCamera;
 	Asset<SpriteBatcher> m_spriteBatcher;
 	Renderer * m_renderer;
 	EntityHandle entity1;
@@ -40,7 +40,6 @@ struct AlvereApplication : public Application
 	TileDrawer m_tileDrawer;
 	WorldCellArea * m_worldCellArea;
 
-	TextRenderer m_textRenderer;
 	Font::Face * m_fontFace;
 
 	AlvereApplication() : Application(),
@@ -69,9 +68,10 @@ struct AlvereApplication : public Application
 
 		m_renderer = Renderer::New();
 
-		camera.SetPosition(0, 0, 0);
-		//camera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
-		camera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
+		sceneCamera.SetPosition(0, 0, 10);
+		sceneCamera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
+
+		uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
 		/*
 		{
@@ -132,7 +132,7 @@ struct AlvereApplication : public Application
 		if (m_window->GetKey(Key::LeftShift)) velocity -= Camera::up * moveSpeed;
 
 		velocity *= deltaTime;
-		camera.Move(velocity * camera.GetRotation());
+		sceneCamera.Move(velocity * sceneCamera.GetRotation());
 
 		if (m_window->GetMouse().GetButton(MouseButton::Left))
 		{
@@ -154,12 +154,12 @@ struct AlvereApplication : public Application
 		if (m_window->GetKey(Key::E)) rotation += Camera::forward * turnSpeed;
 		if (m_window->GetKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
-		camera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
+		sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
 	}
 
 	void render() override
 	{
-		m_spriteBatcher->Begin(camera.GetProjectionViewMatrix());
+		m_spriteBatcher->Begin(sceneCamera.GetProjectionViewMatrix());
 		 
 		for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
 		{
@@ -170,20 +170,13 @@ struct AlvereApplication : public Application
 			}
 		}
 
-		Texture * fontBitmap = m_fontFace->getBitmap(102)->getTexture();
+		m_spriteBatcher->end();
 
-		//m_spriteBatcher->Submit(fontBitmap, Rect(-10, -10, 20, 20 * ((float)fontBitmap->height() / fontBitmap->width())));
+		m_spriteBatcher->Begin(uiCamera.GetProjectionViewMatrix());
 
-		m_textRenderer.drawText(*m_spriteBatcher, m_fontFace, 
-			R"(
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-				Dolor sed viverra ipsum nunc aliquet bibendum enim. In massa tempor nec feugiat.
-				Nunc aliquet bibendum enim facilisis gravida. Nisl nunc mi ipsum faucibus vitae aliquet nec ullamcorper.
-				Amet luctus venenatis lectus magna fringilla. Volutpat maecenas volutpat blandit aliquam etiam erat velit scelerisque in.
-				Egestas egestas fringilla phasellus faucibus scelerisque eleifend. Sagittis orci a scelerisque purus semper eget duis.
-				Nulla pharetra diam sit amet nisl suscipit. Sed adipiscing diam donec adipiscing tristique risus nec feugiat in.
-				Fusce ut placerat orci nulla. Pharetra vel turpis nunc eget lorem dolor.
-				Tristique senectus et netus et malesuada.)", Vector2(0, 800), 18, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+		std::string cameraPositionString = "x: " + std::to_string(sceneCamera.GetPosition().x) + "\ny: " + std::to_string(sceneCamera.GetPosition().y) + "\nz: " + std::to_string(sceneCamera.GetPosition().z);
+
+		m_spriteBatcher->submit(*m_fontFace->getBitmap(18), cameraPositionString, Vector2(0, 800 - 18), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 		m_spriteBatcher->end();
 
