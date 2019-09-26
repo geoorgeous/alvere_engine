@@ -1,6 +1,7 @@
 #pragma once
 
 #include "alvere/utils/uuid.hpp"
+#include "alvere/world/entity_archetype.hpp"
 #include "alvere/world/transform.hpp"
 
 namespace alvere
@@ -9,21 +10,16 @@ namespace alvere
 	{
 	public:
 
-		/*template <typename EntityComponentType>
-		EntityComponentType::Handle addComponent()
+		inline EntityArchetype getArchetype() const
 		{
-
-		}*/
-
-		template <typename EntityComponentType>
-		void removeComponent()
-		{
-
+			return m_archetype;
 		}
 
 	private:
 
 		UUID m_uuid;
+
+		EntityArchetype m_archetype;
 
 		Transform * m_transform;
 	};

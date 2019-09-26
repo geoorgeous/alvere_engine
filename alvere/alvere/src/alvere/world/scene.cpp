@@ -2,16 +2,6 @@
 
 namespace alvere
 {
-	EntityHandle Scene::createEntity()
-	{
-
-	}
-
-	void Scene::destroyEntity(EntityHandle & entityHandle)
-	{
-
-	}
-
 	void Scene::update(float deltaTime)
 	{
 		for (auto & pair : m_updatedSystems)

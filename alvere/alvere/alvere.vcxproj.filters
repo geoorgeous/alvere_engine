@@ -312,13 +312,16 @@
     <ClCompile Include="src\alvere\world\transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\alvere\world\entity_handle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\alvere\graphics\text\font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\alvere\world\entity_component_systems\scene_renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\world\entity_archetype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\world\entity_archetype_collection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -698,9 +701,6 @@
     <ClInclude Include="src\alvere\world\transform.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\alvere\world\entity_handle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\alvere\graphics\text\font.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -714,6 +714,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\world\drawable_scene_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\world\entity_archetype.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\world\entity_archetype_collection.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\world\entity_component_collection.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

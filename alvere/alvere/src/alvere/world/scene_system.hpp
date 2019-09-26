@@ -6,6 +6,6 @@ namespace alvere
 	{
 	public:
 
-		virtual ~SceneSystem() = 0;
+		virtual ~SceneSystem() = 0 { };
 	};
 }

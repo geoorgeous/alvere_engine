@@ -4,7 +4,8 @@
 #include <unordered_map>
 
 #include "alvere/world/drawable_scene_system.hpp"
-#include "alvere/world/entity_handle.hpp"
+#include "alvere/world/entity_archetype_collection.hpp"
+#include "alvere/world/entity.hpp"
 #include "alvere/world/scene_system.hpp"
 #include "alvere/world/updated_scene_system.hpp"
 
@@ -72,9 +73,9 @@ namespace alvere
 				m_drawableSystems.erase(iter);
 		}
 
-		EntityHandle createEntity();
+		//EntityHandle createEntity();
 
-		void destroyEntity(EntityHandle & entityHandle);
+		//void destroyEntity(EntityHandle & entityHandle);
 
 		void update(float deltaTime);
 
@@ -85,5 +86,15 @@ namespace alvere
 		std::unordered_map<std::type_index, SceneSystem *> m_systems;
 		std::unordered_map<std::type_index, UpdatedSceneSystem *> m_updatedSystems;
 		std::unordered_map<std::type_index, DrawableSceneSystem *> m_drawableSystems;
+
+		std::vector<EntityArchetypeCollection> m_entityArchetypeCollections;
+
+		template <typename EntityComponentType>
+		void addEntityComponent(Entity * entity)
+		{
+			EntityArchetype originalArchetype = entity->getArchetype();
+
+
+		}
 	};
 }
