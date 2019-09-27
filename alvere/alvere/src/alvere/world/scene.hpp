@@ -19,6 +19,15 @@ namespace alvere
 	{
 	public:
 
+		friend class Entity;
+
+		~Scene()
+		{
+			for (auto & pair : m_entityArchetypeCollections)
+				for (auto & pair2 : pair.second.m_componentCollections)
+					delete pair2.second;
+		}
+
 		template <typename SceneSystemType>
 		void addSystem()
 		{
@@ -82,7 +91,7 @@ namespace alvere
 		{
 			EntityArchetypeHashCode originalArchetypeHashCode = entity.getArchetypeHashCode();
 
-			EntityArchetypeHashCode destinationArchetypeHashCode = originalArchetypeHashCode * 31 + std::hash<std::type_index>()(typeid(EntityComponentType));
+			EntityArchetypeHashCode destinationArchetypeHashCode = originalArchetypeHashCode ^ std::hash<std::type_index>()(typeid(EntityComponentType));
 
 			EntityArchetypeCollection & originalArchetypeCollection = m_entityArchetypeCollections.find(originalArchetypeHashCode)->second;
 

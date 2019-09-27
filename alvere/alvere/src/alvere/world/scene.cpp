@@ -10,7 +10,7 @@ namespace alvere
 
 		std::type_index transformComponentTypeIndex = typeid(ECTransform);
 
-		EntityArchetypeHashCode transformArchetypeHashCode = 17 * 31 + std::hash<std::type_index>()(transformComponentTypeIndex);
+		EntityArchetypeHashCode transformArchetypeHashCode = std::hash<std::type_index>()(transformComponentTypeIndex);
 
 		auto iter = m_entityArchetypeCollections.find(transformArchetypeHashCode);
 

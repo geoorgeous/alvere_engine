@@ -5,13 +5,12 @@
 namespace alvere
 {
 	EntityArchetypeCollection::EntityArchetypeCollection()
-		: m_archetypeHashCode(17)
+		: m_archetypeHashCode(0)
 	{ }
 
 	EntityArchetypeCollection::~EntityArchetypeCollection()
 	{
-		for (auto & pair : m_componentCollections)
-			delete pair.second;
+		// todo: make copy constructor that copys collections so we can delete pointers in here
 	}
 
 	unsigned int EntityArchetypeCollection::allocate()

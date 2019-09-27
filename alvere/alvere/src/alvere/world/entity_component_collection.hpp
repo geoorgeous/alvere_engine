@@ -33,6 +33,16 @@ namespace alvere
 			return m_components.size() - 1;
 		}
 
+		void transferComponent(unsigned int index, EntityComponentCollectionBase * destination, unsigned int destinationIndex) override
+		{
+			EntityComponentCollection<EntityComponentType> & dest = *static_cast<EntityComponentCollection<EntityComponentType> *>(destination);
+
+			dest.m_components[destinationIndex] = m_components[index];
+
+			auto sourceIter = std::move(m_components.back());
+			m_components.pop_back();
+		}
+
 		inline unsigned int getCount() override
 		{
 			return m_components.size();

@@ -26,7 +26,7 @@ namespace alvere
 		{
 			m_componentCollections[entityComponentTypeIndex] = collection;
 
-			m_archetypeHashCode = m_archetypeHashCode * 31 + std::hash<std::type_index>()(entityComponentTypeIndex);
+			m_archetypeHashCode ^= std::hash<std::type_index>()(entityComponentTypeIndex);
 		}
 
 		inline EntityArchetypeHashCode getHashCode() const
