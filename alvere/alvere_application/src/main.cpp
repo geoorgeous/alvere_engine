@@ -10,6 +10,7 @@
 #include <alvere/utils/file_reader.hpp>
 #include <alvere/world/scene.hpp>
 #include <alvere/world/entity_component_systems/scene_renderer.hpp>
+#include <alvere/world/entity_components/ec_rendered_mesh.hpp>
 
 #include "tile_drawer.hpp"
 #include "world_cell.hpp"
@@ -71,6 +72,9 @@ struct AlvereApplication : public Application
 		uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
 		scene.addSystem<SceneRenderer>();
+
+		Entity newEntity = scene.createEntity();
+		scene.addEntityComponent<ECRenderedMesh>(newEntity);
 
 		/*
 		{

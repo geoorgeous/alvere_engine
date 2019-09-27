@@ -254,8 +254,9 @@
     <ClCompile Include="src\alvere\math\shapes\point_3d.cpp" />
     <ClCompile Include="src\alvere\math\shapes\rect.cpp" />
     <ClCompile Include="src\alvere\math\shapes\sphere.cpp" />
-    <ClCompile Include="src\alvere\world\entity_archetype.cpp" />
     <ClCompile Include="src\alvere\world\entity_archetype_collection.cpp" />
+    <ClCompile Include="src\alvere\world\entity_component_collection.cpp" />
+    <ClCompile Include="src\alvere\world\entity_handle.cpp" />
     <ClCompile Include="src\alvere\world\transform.cpp" />
     <ClCompile Include="src\alvere\math\vector\vector_2.cpp" />
     <ClCompile Include="src\alvere\math\vector\vector_3.cpp" />
@@ -380,7 +381,7 @@
     <ClInclude Include="src\alvere\utils\uuid.hpp" />
     <ClInclude Include="src\alvere\world\drawable_scene_system.hpp" />
     <ClInclude Include="src\alvere\world\entity.hpp" />
-    <ClInclude Include="src\alvere\world\entity_archetype.hpp" />
+    <ClInclude Include="src\alvere\world\entity_handle.hpp" />
     <ClInclude Include="src\alvere\world\entity_archetype_collection.hpp" />
     <ClInclude Include="src\alvere\world\entity_components\ec_camera.hpp" />
     <ClInclude Include="src\alvere\world\entity_components\ec_rendered_mesh.hpp" />

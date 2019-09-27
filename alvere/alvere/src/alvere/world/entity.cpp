@@ -2,4 +2,8 @@
 
 namespace alvere
 {
+	Entity::Entity()
+	{
+		
+	}
 }

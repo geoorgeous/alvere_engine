@@ -8,7 +8,13 @@ namespace alvere
 	{
 	public:
 
-		virtual EntityComponentCollectionBase getEmptyClone() const;
+		virtual EntityComponentCollectionBase * createNew() const { return nullptr; }
+
+		virtual unsigned int allocate() { return 0; }
+
+		virtual void transferComponent(unsigned int index, EntityComponentCollectionBase * destination, unsigned int destinationIndex) { }
+
+		virtual unsigned int getCount() { return 0; }
 	};
 
 	template <typename EntityComponentType>
@@ -16,9 +22,25 @@ namespace alvere
 	{
 	public:
 
-		EntityComponentCollection<EntityComponentType> getEmptyClone() const override
+		inline EntityComponentCollection<EntityComponentType> * createNew() const override
 		{
-			return EntityComponentCollection<EntityComponentType>();
+			return new EntityComponentCollection<EntityComponentType>;
+		}
+
+		unsigned int allocate() override
+		{
+			m_components.emplace_back(EntityComponentType());
+			return m_components.size() - 1;
+		}
+
+		inline unsigned int getCount() override
+		{
+			return m_components.size();
+		}
+
+		inline EntityComponentType & operator[](unsigned int index)
+		{
+			m_components[index];
 		}
 
 	private:

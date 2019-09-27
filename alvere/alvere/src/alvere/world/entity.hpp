@@ -1,7 +1,7 @@
 #pragma once
 
 #include "alvere/utils/uuid.hpp"
-#include "alvere/world/entity_archetype.hpp"
+#include "alvere/world/entity_archetype_collection.hpp"
 #include "alvere/world/transform.hpp"
 
 namespace alvere
@@ -10,16 +10,37 @@ namespace alvere
 	{
 	public:
 
-		inline EntityArchetype getArchetype() const
+		friend class Scene;
+
+		friend class EntityArchetypeCollection;
+
+		Entity();
+
+		inline EntityArchetypeHashCode getArchetypeHashCode() const
 		{
-			return m_archetype;
+			return m_archetypeHashCode;
+		}
+
+		inline unsigned int getAchetypeCollectionIndex() const
+		{
+			return m_archetypeCollectionIndex;
+		}
+
+		inline const Transform & getTransform() const
+		{
+			return *m_transform;
+		}
+
+		inline Transform & transform()
+		{
+			return *m_transform;
 		}
 
 	private:
 
-		UUID m_uuid;
+		EntityArchetypeHashCode m_archetypeHashCode;
 
-		EntityArchetype m_archetype;
+		unsigned int m_archetypeCollectionIndex;
 
 		Transform * m_transform;
 	};

@@ -1,27 +1,32 @@
 #pragma once
 
-#include <unordered_map>
 #include <memory>
+#include <typeindex>
+#include <unordered_map>
 
-#include "alvere/world/entity_archetype.hpp"
 #include "alvere/world/entity_component_collection.hpp"
 
 namespace alvere
 {
+	class Entity;
+
 	using EntityArchetypeHashCode = std::size_t;
 
 	class EntityArchetypeCollection
 	{
 	public:
 
+		friend class Scene;
+
 		EntityArchetypeCollection();
 
-		template <typename EntityComponentType>
-		void addCollectionType(EntityComponentCollection<EntityComponentType> newCollection)
-		{
-			m_componentCollections[typeid(EntityComponentType)] = std::make_unique<EntityComponentCollection<EntityComponentType>>(newCollection);
+		~EntityArchetypeCollection();
 
-			m_archetypeHashCode *= 31 + std::hash<std::type_index>(typeid(EntityComponentType));
+		void addCollectionType(std::type_index entityComponentTypeIndex, EntityComponentCollectionBase * collection)
+		{
+			m_componentCollections[entityComponentTypeIndex] = collection;
+
+			m_archetypeHashCode = m_archetypeHashCode * 31 + std::hash<std::type_index>()(entityComponentTypeIndex);
 		}
 
 		inline EntityArchetypeHashCode getHashCode() const
@@ -29,18 +34,16 @@ namespace alvere
 			return m_archetypeHashCode;
 		}
 
+		unsigned int allocate();
+
+		unsigned int transferEntity(unsigned int index, EntityArchetypeCollection & destination);
+
+		unsigned int getEntityCount() const;
+
 	private:
 
 		EntityArchetypeHashCode m_archetypeHashCode;
 
-		std::unordered_map<std::type_index, std::unique_ptr<EntityComponentCollectionBase>> m_componentCollections;
-	};
-
-	struct EntityArchetypeCollectionHasher
-	{
-		std::size_t operator()(const EntityArchetypeCollection & entityArchetypeCollection) const
-		{
-			return entityArchetypeCollection.getHashCode();
-		}
+		std::unordered_map<std::type_index, EntityComponentCollectionBase *> m_componentCollections;
 	};
 }

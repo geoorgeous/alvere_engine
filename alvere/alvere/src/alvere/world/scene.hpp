@@ -73,9 +73,35 @@ namespace alvere
 				m_drawableSystems.erase(iter);
 		}
 
-		//EntityHandle createEntity();
+		Entity createEntity();
 
 		//void destroyEntity(EntityHandle & entityHandle);
+
+		template <typename EntityComponentType>
+		void addEntityComponent(Entity & entity)
+		{
+			EntityArchetypeHashCode originalArchetypeHashCode = entity.getArchetypeHashCode();
+
+			EntityArchetypeHashCode destinationArchetypeHashCode = originalArchetypeHashCode * 31 + std::hash<std::type_index>()(typeid(EntityComponentType));
+
+			EntityArchetypeCollection & originalArchetypeCollection = m_entityArchetypeCollections.find(originalArchetypeHashCode)->second;
+
+			auto iter = m_entityArchetypeCollections.find(destinationArchetypeHashCode);
+
+			if (iter == m_entityArchetypeCollections.end())
+			{
+				EntityArchetypeCollection destinationArchetypeCollection;
+
+				for (auto & pair : originalArchetypeCollection.m_componentCollections)
+					destinationArchetypeCollection.addCollectionType(pair.first, pair.second->createNew());
+
+				destinationArchetypeCollection.addCollectionType(typeid(EntityComponentType), new EntityComponentCollection<EntityComponentType>);
+
+				iter = m_entityArchetypeCollections.emplace(destinationArchetypeHashCode, destinationArchetypeCollection).first;
+			}
+
+			originalArchetypeCollection.transferEntity(entity.getAchetypeCollectionIndex(), iter->second);
+		}
 
 		void update(float deltaTime);
 
@@ -87,14 +113,6 @@ namespace alvere
 		std::unordered_map<std::type_index, UpdatedSceneSystem *> m_updatedSystems;
 		std::unordered_map<std::type_index, DrawableSceneSystem *> m_drawableSystems;
 
-		std::vector<EntityArchetypeCollection> m_entityArchetypeCollections;
-
-		template <typename EntityComponentType>
-		void addEntityComponent(Entity * entity)
-		{
-			EntityArchetype originalArchetype = entity->getArchetype();
-
-
-		}
+		std::unordered_map<EntityArchetypeHashCode, EntityArchetypeCollection> m_entityArchetypeCollections;
 	};
 }
