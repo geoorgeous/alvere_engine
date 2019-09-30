@@ -11,6 +11,7 @@
 #include <alvere/world/scene.hpp>
 #include <alvere/world/entity_component_systems/scene_renderer.hpp>
 #include <alvere/world/entity_components/ec_rendered_mesh.hpp>
+#include <alvere/world/entity_components/ec_camera.hpp>
 
 #include "tile_drawer.hpp"
 #include "world_cell.hpp"
@@ -73,8 +74,13 @@ struct AlvereApplication : public Application
 
 		scene.addSystem<SceneRenderer>();
 
-		Entity newEntity = scene.createEntity();
-		scene.addEntityComponent<ECRenderedMesh>(newEntity);
+		Entity sceneObject = scene.createEntity();
+		scene.addEntityComponent<ECRenderedMesh>(sceneObject);
+
+		Entity cameraEntity = scene.createEntity();
+		scene.addEntityComponent<ECCamera>(cameraEntity);
+
+		scene.destroyEntity(sceneObject);
 
 		/*
 		{

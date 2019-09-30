@@ -327,6 +327,9 @@
     <ClCompile Include="src\alvere\world\entity_component_systems\scene_renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\alvere\utils\console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\platform\windows\windows_window.hpp">
@@ -726,6 +729,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\world\entity_component_systems\scene_renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\utils\console.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

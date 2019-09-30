@@ -12,6 +12,8 @@ namespace alvere
 
 		virtual unsigned int allocate() { return 0; }
 
+		virtual void removeAt(unsigned int index) { }
+
 		virtual void transferComponent(unsigned int index, EntityComponentCollectionBase * destination, unsigned int destinationIndex) { }
 
 		virtual unsigned int getCount() { return 0; }
@@ -31,6 +33,13 @@ namespace alvere
 		{
 			m_components.emplace_back(EntityComponentType());
 			return m_components.size() - 1;
+		}
+
+		void removeAt(unsigned int index) override
+		{
+			auto iter = m_components.begin() + index;
+			*iter = std::move(m_components.back());
+			m_components.pop_back();
 		}
 
 		void transferComponent(unsigned int index, EntityComponentCollectionBase * destination, unsigned int destinationIndex) override

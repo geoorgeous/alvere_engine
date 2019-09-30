@@ -10,6 +10,8 @@ namespace alvere
 	{
 	public:
 
+		friend class Scene;
+
 		friend class EntityArchetypeCollection;
 
 		Entity();
@@ -33,8 +35,6 @@ namespace alvere
 		{
 			return *m_transform;
 		}
-
-
 
 	private:
 

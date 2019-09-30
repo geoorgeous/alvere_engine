@@ -27,6 +27,11 @@ namespace alvere
 		return entity;
 	}
 
+	void Scene::destroyEntity(Entity & entity)
+	{
+		m_entityArchetypeCollections[entity.getArchetypeHashCode()].removeEntity(entity);
+	}
+
 	void Scene::update(float deltaTime)
 	{
 		for (auto & pair : m_updatedSystems)

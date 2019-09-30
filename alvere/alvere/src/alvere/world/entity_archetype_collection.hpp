@@ -36,7 +36,9 @@ namespace alvere
 
 		unsigned int allocate();
 
-		unsigned int transferEntity(unsigned int index, EntityArchetypeCollection & destination);
+		void removeEntity(Entity & entity);
+
+		void transferEntity(Entity & entity, EntityArchetypeCollection & destination);
 
 		unsigned int getEntityCount() const;
 

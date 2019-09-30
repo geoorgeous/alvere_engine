@@ -93,15 +93,31 @@ namespace alvere::platform::windows
 		{
 			std::unordered_map<Key, KeyData> & keys = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->keys;
 
+			if (action == GLFW_PRESS)
+			{
+				LogInfo("pressed\n");
+			}
+			else if (action == GLFW_RELEASE)
+			{
+				LogInfo("release\n");
+			}
+			else if (action == GLFW_REPEAT)
+			{
+				LogInfo("held/repeat\n");
+			}
+
 			auto SetKeyData = [](KeyData & keyData, int action)
 			{
 				keyData.isDown = action != GLFW_RELEASE;
 				keyData.isRepeating = action == GLFW_REPEAT;
+				keyData.justPressed = action == GLFW_PRESS;
+				keyData.justReleased = action == GLFW_RELEASE;
 			};
 
 			switch (key)
 			{
 			case GLFW_KEY_ESCAPE: SetKeyData(keys[Key::Escape], action); break;
+			case GLFW_KEY_GRAVE_ACCENT: SetKeyData(keys[Key::BackQuote], action); break;
 			case GLFW_KEY_TAB: SetKeyData(keys[Key::Tab], action); break;
 			case GLFW_KEY_CAPS_LOCK: SetKeyData(keys[Key::CapsLock], action); break;
 			case GLFW_KEY_SCROLL_LOCK: SetKeyData(keys[Key::ScrollLock], action); break;

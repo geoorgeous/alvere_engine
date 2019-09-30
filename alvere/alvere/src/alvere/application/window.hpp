@@ -14,6 +14,7 @@ namespace alvere
 	enum class Key
 	{
 		Escape,
+		BackQuote,
 		Tab,
 		CapsLock,
 		NumLock,
@@ -115,6 +116,8 @@ namespace alvere
 	{
 		bool isDown;
 		bool isRepeating;
+		bool justPressed;
+		bool justReleased;
 
 		inline operator bool() const
 		{

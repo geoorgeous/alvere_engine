@@ -23,6 +23,9 @@ namespace alvere
 
 		~Scene()
 		{
+			for (auto & pair : m_systems)
+				delete pair.second;
+
 			for (auto & pair : m_entityArchetypeCollections)
 				for (auto & pair2 : pair.second.m_componentCollections)
 					delete pair2.second;
@@ -84,7 +87,7 @@ namespace alvere
 
 		Entity createEntity();
 
-		//void destroyEntity(EntityHandle & entityHandle);
+		void destroyEntity(Entity & entity);
 
 		template <typename EntityComponentType>
 		void addEntityComponent(Entity & entity)
@@ -109,7 +112,12 @@ namespace alvere
 				iter = m_entityArchetypeCollections.emplace(destinationArchetypeHashCode, destinationArchetypeCollection).first;
 			}
 
-			originalArchetypeCollection.transferEntity(entity.getAchetypeCollectionIndex(), iter->second);
+			originalArchetypeCollection.transferEntity(entity, iter->second);
+		}
+
+		template <typename EntityComponentType>
+		void removeEntityComponent(Entity & entity)
+		{
 		}
 
 		void update(float deltaTime);

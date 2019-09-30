@@ -21,14 +21,21 @@ namespace alvere
 		return m_componentCollections.begin()->second->getCount() - 1;
 	}
 
-	unsigned int EntityArchetypeCollection::transferEntity(unsigned int index, EntityArchetypeCollection & destination)
+	void EntityArchetypeCollection::removeEntity(Entity & entity)
+	{
+		for (auto & pair : m_componentCollections)
+			pair.second->removeAt(entity.getAchetypeCollectionIndex());
+	}
+
+	void EntityArchetypeCollection::transferEntity(Entity & entity, EntityArchetypeCollection & destination)
 	{
 		unsigned int distinationIndex = destination.allocate();
 
 		for (auto & pair : m_componentCollections)
-			pair.second->transferComponent(index, destination.m_componentCollections[pair.first], distinationIndex);
+			pair.second->transferComponent(entity.getAchetypeCollectionIndex(), destination.m_componentCollections[pair.first], distinationIndex);
 
-		return distinationIndex;
+		entity.m_archetypeHashCode = destination.m_archetypeHashCode;
+		entity.m_archetypeCollectionIndex = distinationIndex;
 	}
 
 	unsigned int EntityArchetypeCollection::getEntityCount() const
