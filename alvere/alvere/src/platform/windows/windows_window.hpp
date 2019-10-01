@@ -10,28 +10,38 @@ namespace alvere::platform::windows
 	class Window : public alvere::Window
 	{
 	public:
+
 		Window(const alvere::Window::Properties& properties);
+
 		~Window();
 
-		void PollEvents() override;
-		void SwapBuffers() override;
-		void DisableCursor() override;
-		void EnableCursor() override;
-		inline void SetEventCallback(const EventCallbackFunction& callback) override { m_EventCallback = callback; }
+		void pollEvents() override;
+
+		void swapBuffers() override;
+
+		void disableCursor() override;
+
+		void enableCursor() override;
 
 	private:
+
 		struct WindowUserPointerData
 		{
 			Window * window;
-			std::unordered_map<Key, KeyData> * keys;
+			Properties * properties;
+			std::unordered_map<Key, KeyData> * currentKeys;
+			std::unordered_map<Key, KeyData> * oldKeys;
 			MouseData * mouse;
 		};
 
-		GLFWwindow * m_WindowHandle;
-		WindowUserPointerData m_WindowuserPointerData;
-		alvere::RenderingContext * m_RenderingContext;
+		GLFWwindow * m_windowHandle;
 
-		void Init(const alvere::Window::Properties& properties);
-		void Shutdown();
+		WindowUserPointerData m_windowUserPointerData;
+
+		alvere::RenderingContext * m_renderingContext;
+
+		void init(const alvere::Window::Properties& properties);
+
+		void shutdown();
 	};
 }

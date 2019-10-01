@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "alvere/application/window.hpp"
 #include "alvere/assets.hpp"
 
 // List of commands
@@ -11,47 +10,46 @@
 // Command auto-filling and parameter auto-filling
 // Command parameter suggestions based on context
 // Sub commands 
+// comand aliases and ways to modify/print all/edit etc etc
 
 // command subcommand <required> [optional] enum|option|x
 
 // entity spawn 
 
-namespace alvere::console
+namespace alvere
 {
-	template <typename ... ParameterTypes>
-	struct Command
+	class Window;
+
+	namespace console
 	{
-		struct Parameter
+		struct Command
 		{
-			enum class Type
+			struct Parameter
 			{
-				Required,
-				Optional,
-				Enumerated
+				std::string name;
+				std::string description;
 			};
 
-			std::string name;
+			std::string path;
 			std::string description;
-			Type type;
+			std::vector<Parameter> parameters;
+
+			virtual std::string f() = 0;
 		};
 
-		std::string path;
-		std::string description;
-		std::vector<Parameter> parameters; 
+		namespace gui
+		{
+			void init(alvere::Window * window);
 
-		virtual std::string f() = 0;
-	};
+			void destroy();
 
-	namespace gui
-	{
-		void init(AssetRef<Window> window);
+			void show();
 
-		void show();
+			void hide();
 
-		void hide();
+			void update(float deltaTime);
 
-		void update(float deltaTime);
-
-		void draw();
+			void draw();
+		}
 	}
 }

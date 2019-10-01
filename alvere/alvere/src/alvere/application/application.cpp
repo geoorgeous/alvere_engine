@@ -3,6 +3,7 @@
 #include <glfw/glfw3.h>
 
 #include "alvere/application/application.hpp"
+#include "alvere/utils/console.hpp"
 #include "alvere/utils/exceptions.hpp"
 #include "alvere/utils/logging.hpp"
 
@@ -20,7 +21,9 @@ namespace alvere
 	Application::Application()
 		: m_window(Window::New()), m_targetFrameRate(60.0f), m_running(true)
 	{
-		m_window->SetEventCallback(ALV_EVENT_BIND_FUNC(Application::onEvent));
+		//m_window->setEventCallback(ALV_EVENT_BIND_FUNC(Application::onEvent));
+
+		console::gui::init(m_window.get());
 	}
 
 	void Application::run()
@@ -61,16 +64,20 @@ namespace alvere
 				{
 					lag -= timeStep;
 
-					m_window->PollEvents();
+					m_window->pollEvents();
+
+					console::gui::update(timeStepSeconds);
 
 					update(timeStepSeconds);
 				}
 
 				render_commands::Clear();
 
+				console::gui::draw();
+
 				render();
 
-				m_window->SwapBuffers();
+				m_window->swapBuffers();
 			}
 			catch(FatalErrorException e)
 			{
@@ -83,20 +90,10 @@ namespace alvere
 			}
 		}
 
+		console::gui::destroy();
+
 		m_window.release();
 
 		glfwTerminate();
-	}
-
-	void Application::onEvent(Event& event)
-	{
-		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<WindowCloseEvent>(ALV_EVENT_BIND_FUNC(Application::onWindowClose));
-	}
-
-	bool Application::onWindowClose(WindowCloseEvent& e)
-	{
-		m_running = false;
-		return true;
 	}
 }

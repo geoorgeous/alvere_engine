@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <string>
+#include <queue>
 
 #define ALV_EVENT_BIND_FUNC(f) std::bind(&##f, this, std::placeholders::_1)
 
@@ -15,56 +16,28 @@
 
 namespace alvere
 {
+	template<typename EventT>
+	class EventHandler;
+
+	template <typename ... EventArgs>
 	class Event
 	{
 	public:
-		enum class Type
-		{
-			None = 0,
-			WindowClose,
-			WindowResize
-		};
 
-		enum Category
-		{
-			None = 0,
-			Application = 1 << 0
-		};
+		using Function = std::function<void(EventArgs ...)>;
 
-		bool m_Handled = false;
+		void subscribe(Function f);
 
-		virtual Type GetEventType() const = 0;
-		virtual const char* GetName() const = 0;
-		virtual int GetCategoryFlags() const = 0;
-		virtual std::string ToString() const;
+		void unsubscribe(Function f);
 
-		inline bool IsInCategory(Category category)
-		{
-			return GetCategoryFlags() & category;
-		}
-	};
+		void dispatch(EventArgs ...);
 
-	class EventDispatcher
-	{
-		template<typename T>
-		using EventFunction = std::function<bool(T&)>;
+		void operator+=(Function f);
 
-	public:
-		EventDispatcher(Event& event)
-			: m_Event(event) { }
-
-		template<typename T>
-		bool Dispatch(EventFunction<T> function)
-		{
-			if (m_Event.GetEventType() == T::StaticGetEventType())
-			{
-				m_Event.m_Handled = function((T&)m_Event);
-				return true;
-			}
-			return false;
-		}
+		void operator-=(Function f);
 
 	private:
-		Event& m_Event;
+
+		std::queue<Function> m_subscribers;
 	};
 }

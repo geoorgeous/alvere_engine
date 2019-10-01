@@ -2,8 +2,5 @@
 
 namespace alvere
 {
-	std::string Event::ToString() const
-	{
-		return GetName();
-	}
+
 }

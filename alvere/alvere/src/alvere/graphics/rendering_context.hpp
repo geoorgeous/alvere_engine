@@ -5,7 +5,7 @@ namespace alvere
 	class RenderingContext
 	{
 	public:
-		virtual void Init() = 0;
-		virtual void SwapBuffers() = 0;
+		virtual void init() = 0;
+		virtual void swapBuffers() = 0;
 	};
 }

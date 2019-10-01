@@ -10,6 +10,7 @@
 int main(int argc, char *argv[])
 {
 	alvere::Application * app = nullptr;
+
 	int error = 0;
 
 	try

@@ -29,7 +29,7 @@ namespace alvere
 		
 		virtual ~SpriteBatcher() = default;
 
-		virtual void Begin(const Matrix4& transformationMatrix, SortMode sortMode = SortMode::Default);
+		virtual void begin(const Matrix4& transformationMatrix, SortMode sortMode = SortMode::Default);
 
 		virtual void end();
 

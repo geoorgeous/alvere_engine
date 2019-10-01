@@ -51,7 +51,7 @@ namespace tilde
 			mem_free(m_buffer);
 		}
 
-		void Begin()
+		void begin()
 		{
 			TILDE_ASSERT(m_messageStart < 0);
 			TILDE_ASSERT(m_stringStart < 0);

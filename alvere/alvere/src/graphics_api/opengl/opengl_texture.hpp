@@ -21,6 +21,6 @@ namespace alvere::graphics_api::opengl
 
 		unsigned int m_Handle;
 
-		void Init();
+		void init();
 	};
 }

@@ -9,39 +9,42 @@ namespace alvere::platform::windows
 {
 	static bool s_GLFWInitialised = false;
 
-	Window::Window(const alvere::Window::Properties& properties)
+	Window::Window(const alvere::Window::Properties & properties)
+		: alvere::Window(properties)
 	{
-		Init(properties);
+		init(properties);
 	}
 
 	Window::~Window()
 	{
-		Shutdown();
+		shutdown();
 	}
 
-	void Window::PollEvents()
+	void Window::pollEvents()
 	{
+		m_oldKeys = m_currentKeys;
+
 		m_Mouse.delta = Vector2::zero;
 
 		glfwPollEvents();
 	}
 
-	void Window::SwapBuffers()
+	void Window::swapBuffers()
 	{
-		m_RenderingContext->SwapBuffers();
+		m_renderingContext->swapBuffers();
 	}
 
-	void Window::DisableCursor()
+	void Window::disableCursor()
 	{
-		glfwSetInputMode(m_WindowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(m_windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
-	void Window::EnableCursor()
+	void Window::enableCursor()
 	{
-		glfwSetInputMode(m_WindowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(m_windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
-	void Window::Init(const alvere::Window::Properties& properties)
+	void Window::init(const alvere::Window::Properties& properties)
 	{
 		if (!s_GLFWInitialised)
 		{
@@ -62,160 +65,158 @@ namespace alvere::platform::windows
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-		m_WindowHandle = glfwCreateWindow((int)properties.sizeWidth, (int)properties.sizeHeight, properties.title.c_str(), nullptr, nullptr);
+		m_windowHandle = glfwCreateWindow((int)properties.sizeWidth, (int)properties.sizeHeight, properties.title.c_str(), nullptr, nullptr);
 
-		if (m_WindowHandle == NULL)
+		if (m_windowHandle == NULL)
 		{
 			AlvThrowFatal("Fatal error! Failed to create GLFW window.");
 		}
 
-		m_RenderingContext = new alvere::graphics_api::opengl::RenderingContext(m_WindowHandle);
-		m_RenderingContext->Init();
+		m_renderingContext = new alvere::graphics_api::opengl::RenderingContext(m_windowHandle);
+		m_renderingContext->init();
 
 		glfwSwapInterval(0);
 
-		m_WindowuserPointerData = { this, &m_Keys, &m_Mouse };
-		glfwSetWindowUserPointer(m_WindowHandle, &m_WindowuserPointerData);
+		m_windowUserPointerData = { this, &m_properties, &m_currentKeys, &m_oldKeys, &m_Mouse };
+		glfwSetWindowUserPointer(m_windowHandle, &m_windowUserPointerData);
 
-		glfwSetWindowCloseCallback(m_WindowHandle, [](GLFWwindow * windowHandle)
+		glfwSetWindowCloseCallback(m_windowHandle, [](GLFWwindow * windowHandle)
 		{
-			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
-			alvere::WindowCloseEvent event;
-			window.m_EventCallback(event);
+			//Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
+			//alvere::WindowCloseEvent event;
+			//window.m_EventCallback(event);
 		});
-		glfwSetWindowSizeCallback(m_WindowHandle, [](GLFWwindow * windowHandle, int width, int height)
-		{
-			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
-			alvere::WindowResizeEvent event = alvere::WindowResizeEvent((unsigned int)width, (unsigned int)height);
-			window.m_EventCallback(event);
+		glfwSetWindowSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
+			{
+				WindowUserPointerData & data = *(WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle);
+
+				//alvere::WindowResizeEvent event = alvere::WindowResizeEvent((unsigned int)width, (unsigned int)height);
+				//data.window->m_EventCallback(event);
+
+				data.properties->sizeWidth = width;
+				data.properties->sizeHeight = height;
+
 		});
-		glfwSetKeyCallback(m_WindowHandle, [](GLFWwindow * windowHandle, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(m_windowHandle, [](GLFWwindow * windowHandle, int key, int scancode, int action, int mods)
 		{
-			std::unordered_map<Key, KeyData> & keys = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->keys;
+			std::unordered_map<Key, KeyData> & currentKeys = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->currentKeys;
 
-			if (action == GLFW_PRESS)
+			auto setKeyData = [&](Key key, int action)
 			{
-				LogInfo("pressed\n");
-			}
-			else if (action == GLFW_RELEASE)
-			{
-				LogInfo("release\n");
-			}
-			else if (action == GLFW_REPEAT)
-			{
-				LogInfo("held/repeat\n");
-			}
+				KeyData & currentKeyData = currentKeys[key];
 
-			auto SetKeyData = [](KeyData & keyData, int action)
-			{
-				keyData.isDown = action != GLFW_RELEASE;
-				keyData.isRepeating = action == GLFW_REPEAT;
-				keyData.justPressed = action == GLFW_PRESS;
-				keyData.justReleased = action == GLFW_RELEASE;
+				currentKeyData.isDown = action != GLFW_RELEASE;
+				currentKeyData.isRepeating = action == GLFW_REPEAT;
+				currentKeyData.justPressed = action == GLFW_PRESS;
+				currentKeyData.justReleased = action == GLFW_RELEASE;
 			};
 
 			switch (key)
 			{
-			case GLFW_KEY_ESCAPE: SetKeyData(keys[Key::Escape], action); break;
-			case GLFW_KEY_GRAVE_ACCENT: SetKeyData(keys[Key::BackQuote], action); break;
-			case GLFW_KEY_TAB: SetKeyData(keys[Key::Tab], action); break;
-			case GLFW_KEY_CAPS_LOCK: SetKeyData(keys[Key::CapsLock], action); break;
-			case GLFW_KEY_SCROLL_LOCK: SetKeyData(keys[Key::ScrollLock], action); break;
-			case GLFW_KEY_NUM_LOCK: SetKeyData(keys[Key::NumLock], action); break;
-			case GLFW_KEY_LEFT_SHIFT: SetKeyData(keys[Key::LeftShift], action); break;
-			case GLFW_KEY_LEFT_CONTROL: SetKeyData(keys[Key::LeftCtrl], action); break;
-			case GLFW_KEY_LEFT_ALT: SetKeyData(keys[Key::LeftAlt], action); break;
-			case GLFW_KEY_SPACE: SetKeyData(keys[Key::Space], action); break;
-			case GLFW_KEY_RIGHT_ALT: SetKeyData(keys[Key::RightAlt], action); break;
-			case GLFW_KEY_RIGHT_CONTROL: SetKeyData(keys[Key::RightCtrl], action); break;
-			case GLFW_KEY_RIGHT_SHIFT: SetKeyData(keys[Key::RightShift], action); break;
-			case GLFW_KEY_ENTER: SetKeyData(keys[Key::Enter], action); break;
-			case GLFW_KEY_BACKSPACE: SetKeyData(keys[Key::BackSpace], action); break;
+			case GLFW_KEY_ESCAPE: setKeyData(Key::Escape, action); break;
+			case GLFW_KEY_GRAVE_ACCENT: setKeyData(Key::BackQuote, action); break;
+			case GLFW_KEY_TAB: setKeyData(Key::Tab, action); break;
+			case GLFW_KEY_CAPS_LOCK: setKeyData(Key::CapsLock, action); break;
+			case GLFW_KEY_SCROLL_LOCK: setKeyData(Key::ScrollLock, action); break;
+			case GLFW_KEY_NUM_LOCK: setKeyData(Key::NumLock, action); break;
+			case GLFW_KEY_LEFT_SHIFT: setKeyData(Key::LeftShift, action); break;
+			case GLFW_KEY_LEFT_CONTROL: setKeyData(Key::LeftCtrl, action); break;
+			case GLFW_KEY_LEFT_ALT: setKeyData(Key::LeftAlt, action); break;
+			case GLFW_KEY_SPACE: setKeyData(Key::Space, action); break;
+			case GLFW_KEY_RIGHT_ALT: setKeyData(Key::RightAlt, action); break;
+			case GLFW_KEY_RIGHT_CONTROL: setKeyData(Key::RightCtrl, action); break;
+			case GLFW_KEY_RIGHT_SHIFT: setKeyData(Key::RightShift, action); break;
+			case GLFW_KEY_ENTER: setKeyData(Key::Enter, action); break;
+			case GLFW_KEY_BACKSPACE: setKeyData(Key::BackSpace, action); break;
 
-			case GLFW_KEY_A: SetKeyData(keys[Key::A], action); break;
-			case GLFW_KEY_B: SetKeyData(keys[Key::B], action); break;
-			case GLFW_KEY_C: SetKeyData(keys[Key::C], action); break;
-			case GLFW_KEY_D: SetKeyData(keys[Key::D], action); break;
-			case GLFW_KEY_E: SetKeyData(keys[Key::E], action); break;
-			case GLFW_KEY_F: SetKeyData(keys[Key::F], action); break;
-			case GLFW_KEY_G: SetKeyData(keys[Key::G], action); break;
-			case GLFW_KEY_H: SetKeyData(keys[Key::H], action); break;
-			case GLFW_KEY_I: SetKeyData(keys[Key::I], action); break;
-			case GLFW_KEY_J: SetKeyData(keys[Key::J], action); break;
-			case GLFW_KEY_K: SetKeyData(keys[Key::K], action); break;
-			case GLFW_KEY_L: SetKeyData(keys[Key::L], action); break;
-			case GLFW_KEY_M: SetKeyData(keys[Key::M], action); break;
-			case GLFW_KEY_N: SetKeyData(keys[Key::N], action); break;
-			case GLFW_KEY_O: SetKeyData(keys[Key::O], action); break;
-			case GLFW_KEY_P: SetKeyData(keys[Key::P], action); break;
-			case GLFW_KEY_Q: SetKeyData(keys[Key::Q], action); break;
-			case GLFW_KEY_R: SetKeyData(keys[Key::R], action); break;
-			case GLFW_KEY_S: SetKeyData(keys[Key::S], action); break;
-			case GLFW_KEY_T: SetKeyData(keys[Key::T], action); break;
-			case GLFW_KEY_U: SetKeyData(keys[Key::U], action); break;
-			case GLFW_KEY_V: SetKeyData(keys[Key::V], action); break;
-			case GLFW_KEY_W: SetKeyData(keys[Key::W], action); break;
-			case GLFW_KEY_X: SetKeyData(keys[Key::X], action); break;
-			case GLFW_KEY_Y: SetKeyData(keys[Key::Y], action); break;
-			case GLFW_KEY_Z: SetKeyData(keys[Key::Z], action); break;
+			case GLFW_KEY_A: setKeyData(Key::A, action); break;
+			case GLFW_KEY_B: setKeyData(Key::B, action); break;
+			case GLFW_KEY_C: setKeyData(Key::C, action); break;
+			case GLFW_KEY_D: setKeyData(Key::D, action); break;
+			case GLFW_KEY_E: setKeyData(Key::E, action); break;
+			case GLFW_KEY_F: setKeyData(Key::F, action); break;
+			case GLFW_KEY_G: setKeyData(Key::G, action); break;
+			case GLFW_KEY_H: setKeyData(Key::H, action); break;
+			case GLFW_KEY_I: setKeyData(Key::I, action); break;
+			case GLFW_KEY_J: setKeyData(Key::J, action); break;
+			case GLFW_KEY_K: setKeyData(Key::K, action); break;
+			case GLFW_KEY_L: setKeyData(Key::L, action); break;
+			case GLFW_KEY_M: setKeyData(Key::M, action); break;
+			case GLFW_KEY_N: setKeyData(Key::N, action); break;
+			case GLFW_KEY_O: setKeyData(Key::O, action); break;
+			case GLFW_KEY_P: setKeyData(Key::P, action); break;
+			case GLFW_KEY_Q: setKeyData(Key::Q, action); break;
+			case GLFW_KEY_R: setKeyData(Key::R, action); break;
+			case GLFW_KEY_S: setKeyData(Key::S, action); break;
+			case GLFW_KEY_T: setKeyData(Key::T, action); break;
+			case GLFW_KEY_U: setKeyData(Key::U, action); break;
+			case GLFW_KEY_V: setKeyData(Key::V, action); break;
+			case GLFW_KEY_W: setKeyData(Key::W, action); break;
+			case GLFW_KEY_X: setKeyData(Key::X, action); break;
+			case GLFW_KEY_Y: setKeyData(Key::Y, action); break;
+			case GLFW_KEY_Z: setKeyData(Key::Z, action); break;
 
-			case GLFW_KEY_0: SetKeyData(keys[Key::D0], action); break;
-			case GLFW_KEY_1: SetKeyData(keys[Key::D1], action); break;
-			case GLFW_KEY_2: SetKeyData(keys[Key::D2], action); break;
-			case GLFW_KEY_3: SetKeyData(keys[Key::D3], action); break;
-			case GLFW_KEY_4: SetKeyData(keys[Key::D4], action); break;
-			case GLFW_KEY_5: SetKeyData(keys[Key::D5], action); break;
-			case GLFW_KEY_6: SetKeyData(keys[Key::D6], action); break;
-			case GLFW_KEY_7: SetKeyData(keys[Key::D7], action); break;
-			case GLFW_KEY_8: SetKeyData(keys[Key::D8], action); break;
-			case GLFW_KEY_9: SetKeyData(keys[Key::D9], action); break;
+			case GLFW_KEY_0: setKeyData(Key::D0, action); break;
+			case GLFW_KEY_1: setKeyData(Key::D1, action); break;
+			case GLFW_KEY_2: setKeyData(Key::D2, action); break;
+			case GLFW_KEY_3: setKeyData(Key::D3, action); break;
+			case GLFW_KEY_4: setKeyData(Key::D4, action); break;
+			case GLFW_KEY_5: setKeyData(Key::D5, action); break;
+			case GLFW_KEY_6: setKeyData(Key::D6, action); break;
+			case GLFW_KEY_7: setKeyData(Key::D7, action); break;
+			case GLFW_KEY_8: setKeyData(Key::D8, action); break;
+			case GLFW_KEY_9: setKeyData(Key::D9, action); break;
 
-			case GLFW_KEY_F1: SetKeyData(keys[Key::F1], action); break;
-			case GLFW_KEY_F2: SetKeyData(keys[Key::F2], action); break;
-			case GLFW_KEY_F3: SetKeyData(keys[Key::F3], action); break;
-			case GLFW_KEY_F4: SetKeyData(keys[Key::F4], action); break;
-			case GLFW_KEY_F5: SetKeyData(keys[Key::F5], action); break;
-			case GLFW_KEY_F6: SetKeyData(keys[Key::F6], action); break;
-			case GLFW_KEY_F7: SetKeyData(keys[Key::F7], action); break;
-			case GLFW_KEY_F8: SetKeyData(keys[Key::F8], action); break;
-			case GLFW_KEY_F9: SetKeyData(keys[Key::F9], action); break;
-			case GLFW_KEY_F10: SetKeyData(keys[Key::F10], action); break;
-			case GLFW_KEY_F11: SetKeyData(keys[Key::F11], action); break;
-			case GLFW_KEY_F12: SetKeyData(keys[Key::F12], action); break;
+			case GLFW_KEY_F1: setKeyData(Key::F1, action); break;
+			case GLFW_KEY_F2: setKeyData(Key::F2, action); break;
+			case GLFW_KEY_F3: setKeyData(Key::F3, action); break;
+			case GLFW_KEY_F4: setKeyData(Key::F4, action); break;
+			case GLFW_KEY_F5: setKeyData(Key::F5, action); break;
+			case GLFW_KEY_F6: setKeyData(Key::F6, action); break;
+			case GLFW_KEY_F7: setKeyData(Key::F7, action); break;
+			case GLFW_KEY_F8: setKeyData(Key::F8, action); break;
+			case GLFW_KEY_F9: setKeyData(Key::F9, action); break;
+			case GLFW_KEY_F10: setKeyData(Key::F10, action); break;
+			case GLFW_KEY_F11: setKeyData(Key::F11, action); break;
+			case GLFW_KEY_F12: setKeyData(Key::F12, action); break;
 
-			case GLFW_KEY_PRINT_SCREEN: SetKeyData(keys[Key::PrintScreen], action); break;
-			case GLFW_KEY_PAUSE: SetKeyData(keys[Key::Pause], action); break;
-			case GLFW_KEY_INSERT: SetKeyData(keys[Key::Insert], action); break;
-			case GLFW_KEY_HOME: SetKeyData(keys[Key::Home], action); break;
-			case GLFW_KEY_DELETE: SetKeyData(keys[Key::Delete], action); break;
-			case GLFW_KEY_END: SetKeyData(keys[Key::End], action); break;
-			case GLFW_KEY_PAGE_UP: SetKeyData(keys[Key::PageUp], action); break;
-			case GLFW_KEY_PAGE_DOWN: SetKeyData(keys[Key::Down], action); break;
+			case GLFW_KEY_PRINT_SCREEN: setKeyData(Key::PrintScreen, action); break;
+			case GLFW_KEY_PAUSE: setKeyData(Key::Pause, action); break;
+			case GLFW_KEY_INSERT: setKeyData(Key::Insert, action); break;
+			case GLFW_KEY_HOME: setKeyData(Key::Home, action); break;
+			case GLFW_KEY_DELETE: setKeyData(Key::Delete, action); break;
+			case GLFW_KEY_END: setKeyData(Key::End, action); break;
+			case GLFW_KEY_PAGE_UP: setKeyData(Key::PageUp, action); break;
+			case GLFW_KEY_PAGE_DOWN: setKeyData(Key::Down, action); break;
 
-			case GLFW_KEY_LEFT: SetKeyData(keys[Key::Left], action); break;
-			case GLFW_KEY_UP: SetKeyData(keys[Key::Up], action); break;
-			case GLFW_KEY_DOWN: SetKeyData(keys[Key::Down], action); break;
-			case GLFW_KEY_RIGHT: SetKeyData(keys[Key::Right], action); break;
+			case GLFW_KEY_LEFT: setKeyData(Key::Left, action); break;
+			case GLFW_KEY_UP: setKeyData(Key::Up, action); break;
+			case GLFW_KEY_DOWN: setKeyData(Key::Down, action); break;
+			case GLFW_KEY_RIGHT: setKeyData(Key::Right, action); break;
 
-			case GLFW_KEY_KP_DIVIDE: SetKeyData(keys[Key::NumPad_Divide], action); break;
-			case GLFW_KEY_KP_MULTIPLY: SetKeyData(keys[Key::NumPad_Multiply], action); break;
-			case GLFW_KEY_KP_SUBTRACT: SetKeyData(keys[Key::NumPad_Subtract], action); break;
-			case GLFW_KEY_KP_ADD: SetKeyData(keys[Key::NumPad_Plus], action); break;
-			case GLFW_KEY_KP_ENTER: SetKeyData(keys[Key::NumPad_Plus], action); break;
-			case GLFW_KEY_KP_DECIMAL: SetKeyData(keys[Key::NumPad_Delete], action); break;
-			case GLFW_KEY_KP_0: SetKeyData(keys[Key::NumPad_0], action); break;
-			case GLFW_KEY_KP_1: SetKeyData(keys[Key::NumPad_1], action); break;
-			case GLFW_KEY_KP_2: SetKeyData(keys[Key::NumPad_2], action); break;
-			case GLFW_KEY_KP_3: SetKeyData(keys[Key::NumPad_3], action); break;
-			case GLFW_KEY_KP_4: SetKeyData(keys[Key::NumPad_4], action); break;
-			case GLFW_KEY_KP_5: SetKeyData(keys[Key::NumPad_5], action); break;
-			case GLFW_KEY_KP_6: SetKeyData(keys[Key::NumPad_6], action); break;
-			case GLFW_KEY_KP_7: SetKeyData(keys[Key::NumPad_7], action); break;
-			case GLFW_KEY_KP_8: SetKeyData(keys[Key::NumPad_8], action); break;
-			case GLFW_KEY_KP_9: SetKeyData(keys[Key::NumPad_9], action); break;
+			case GLFW_KEY_KP_DIVIDE: setKeyData(Key::NumPad_Divide, action); break;
+			case GLFW_KEY_KP_MULTIPLY: setKeyData(Key::NumPad_Multiply, action); break;
+			case GLFW_KEY_KP_SUBTRACT: setKeyData(Key::NumPad_Subtract, action); break;
+			case GLFW_KEY_KP_ADD: setKeyData(Key::NumPad_Plus, action); break;
+			case GLFW_KEY_KP_ENTER: setKeyData(Key::NumPad_Plus, action); break;
+			case GLFW_KEY_KP_DECIMAL: setKeyData(Key::NumPad_Delete, action); break;
+			case GLFW_KEY_KP_0: setKeyData(Key::NumPad_0, action); break;
+			case GLFW_KEY_KP_1: setKeyData(Key::NumPad_1, action); break;
+			case GLFW_KEY_KP_2: setKeyData(Key::NumPad_2, action); break;
+			case GLFW_KEY_KP_3: setKeyData(Key::NumPad_3, action); break;
+			case GLFW_KEY_KP_4: setKeyData(Key::NumPad_4, action); break;
+			case GLFW_KEY_KP_5: setKeyData(Key::NumPad_5, action); break;
+			case GLFW_KEY_KP_6: setKeyData(Key::NumPad_6, action); break;
+			case GLFW_KEY_KP_7: setKeyData(Key::NumPad_7, action); break;
+			case GLFW_KEY_KP_8: setKeyData(Key::NumPad_8, action); break;
+			case GLFW_KEY_KP_9: setKeyData(Key::NumPad_9, action); break;
 			}
 		});
-		glfwSetCursorPosCallback(m_WindowHandle, [](GLFWwindow* windowHandle, double xPos, double yPos)
+		glfwSetCharCallback(m_windowHandle, [](GLFWwindow * windowHandle, unsigned int charCode)
+		{
+
+		});
+		glfwSetCursorPosCallback(m_windowHandle, [](GLFWwindow* windowHandle, double xPos, double yPos)
 		{
 			MouseData & mouse = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->mouse;
 			mouse.delta.x = xPos - mouse.position.x;
@@ -223,7 +224,7 @@ namespace alvere::platform::windows
 			mouse.position.x = xPos;
 			mouse.position.y = yPos;
 		});
-		glfwSetMouseButtonCallback(m_WindowHandle, [](GLFWwindow * windowHandle, int button, int action, int mods)
+		glfwSetMouseButtonCallback(m_windowHandle, [](GLFWwindow * windowHandle, int button, int action, int mods)
 		{
 			MouseData & mouse = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->mouse;
 
@@ -238,9 +239,9 @@ namespace alvere::platform::windows
 		});
 	}
 
-	void Window::Shutdown()
+	void Window::shutdown()
 	{
-		glfwDestroyWindow(m_WindowHandle);
+		glfwDestroyWindow(m_windowHandle);
 	}
 }
 

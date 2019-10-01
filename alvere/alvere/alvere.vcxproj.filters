@@ -734,6 +734,9 @@
     <ClInclude Include="src\alvere\utils\console.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\alvere\events\event_handler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\include\luaplus\LuaCall.inl">

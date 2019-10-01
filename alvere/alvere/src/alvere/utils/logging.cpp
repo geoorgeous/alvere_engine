@@ -39,7 +39,7 @@ namespace alvere
 	static std::ofstream s_OutFile;
 #endif
 
-	void Init()
+	void init()
 	{
 #if defined(ALV_LOG_OUTFILE)
 		s_OutFile = std::ofstream(ALV_LOG_OUTFILE);

@@ -13,12 +13,12 @@ namespace alvere::graphics_api::opengl
 	static bool s_GLADInitialised = false;
 
 	RenderingContext::RenderingContext(GLFWwindow * windowHandle)
-		: m_WindowHandle(windowHandle)
+		: m_windowHandle(windowHandle)
 	{ }
 
-	void RenderingContext::Init()
+	void RenderingContext::init()
 	{
-		glfwMakeContextCurrent(m_WindowHandle);
+		glfwMakeContextCurrent(m_windowHandle);
 
 		if (!s_GLADInitialised && !gladLoaderLoadGL())
 			AlvThrowFatal("Failed to initialise OpenGL context!");
@@ -31,8 +31,8 @@ namespace alvere::graphics_api::opengl
 			(const char *)glGetString(GL_RENDERER));
 	}
 
-	void RenderingContext::SwapBuffers()
+	void RenderingContext::swapBuffers()
 	{
-		glfwSwapBuffers(m_WindowHandle);
+		glfwSwapBuffers(m_windowHandle);
 	}
 }

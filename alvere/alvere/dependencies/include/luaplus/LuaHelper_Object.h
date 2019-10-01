@@ -288,18 +288,18 @@ inline void MergeObjects(LuaObject& mergeTo, const LuaObject& mergeFrom, bool re
 	{
 		for (LuaTableIterator it(mergeFrom); it; ++it)
 		{
-			LuaObject toNodeKeyObj = mergeTo[it.GetKey()];
+			LuaObject toNodeKeyObj = mergeTo[it.getKey()];
 			if (it.GetValue().IsTable())
 			{
 				if (toNodeKeyObj.IsNil()  ||  replaceDuplicates)
 				{
-					toNodeKeyObj = mergeTo.CreateTable(it.GetKey());
+					toNodeKeyObj = mergeTo.CreateTable(it.getKey());
 				}
 				MergeObjects(toNodeKeyObj, it.GetValue(), replaceDuplicates);
 			}
 			else if (toNodeKeyObj.IsNil()  ||  replaceDuplicates)
 			{
-				mergeTo.Set(it.GetKey(), it.GetValue());
+				mergeTo.Set(it.getKey(), it.GetValue());
 			}
 		}
 	}
@@ -308,11 +308,11 @@ inline void MergeObjects(LuaObject& mergeTo, const LuaObject& mergeFrom, bool re
 		for (LuaTableIterator it(mergeFrom); it; ++it)
 		{
 			LuaObject obj;
-			switch (it.GetKey().Type())
+			switch (it.getKey().Type())
 			{
-				case LUA_TBOOLEAN:	obj.Assign(mergeTo.GetState(), it.GetKey().GetBoolean());		break;
-				case LUA_TNUMBER:	obj.Assign(mergeTo.GetState(), it.GetKey().GetNumber());			break;
-				case LUA_TSTRING:	obj.Assign(mergeTo.GetState(), it.GetKey().GetString());			break;
+				case LUA_TBOOLEAN:	obj.Assign(mergeTo.GetState(), it.getKey().GetBoolean());		break;
+				case LUA_TNUMBER:	obj.Assign(mergeTo.GetState(), it.getKey().GetNumber());			break;
+				case LUA_TSTRING:	obj.Assign(mergeTo.GetState(), it.getKey().GetString());			break;
 			}
 
 			LuaObject toNodeKeyObj = mergeTo[obj];
@@ -328,11 +328,11 @@ inline void MergeObjects(LuaObject& mergeTo, const LuaObject& mergeFrom, bool re
 			else if (toNodeKeyObj.IsNil()  ||  replaceDuplicates)
 			{
 				LuaObject toKeyObj;
-				switch (it.GetKey().Type())
+				switch (it.getKey().Type())
 				{
-					case LUA_TBOOLEAN:	toKeyObj.Assign(mergeTo.GetState(), it.GetKey().GetBoolean());		break;
-					case LUA_TNUMBER:	toKeyObj.Assign(mergeTo.GetState(), it.GetKey().GetNumber());			break;
-					case LUA_TSTRING:	toKeyObj.Assign(mergeTo.GetState(), it.GetKey().GetString());			break;
+					case LUA_TBOOLEAN:	toKeyObj.Assign(mergeTo.GetState(), it.getKey().GetBoolean());		break;
+					case LUA_TNUMBER:	toKeyObj.Assign(mergeTo.GetState(), it.getKey().GetNumber());			break;
+					case LUA_TSTRING:	toKeyObj.Assign(mergeTo.GetState(), it.getKey().GetString());			break;
 				}
 
 				switch (it.GetValue().Type())

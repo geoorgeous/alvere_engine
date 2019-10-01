@@ -346,6 +346,7 @@
     <ClInclude Include="src\alvere\application\application.hpp" />
     <ClInclude Include="src\alvere\assets.hpp" />
     <ClInclude Include="src\alvere\entry.hpp" />
+    <ClInclude Include="src\alvere\events\event_handler.hpp" />
     <ClInclude Include="src\alvere\graphics\buffers.hpp" />
     <ClInclude Include="src\alvere\graphics\camera.hpp" />
     <ClInclude Include="src\alvere\graphics\material.hpp" />

@@ -34,7 +34,7 @@ public:
 	bool IsValid() const;
 	LuaTableIterator& operator++();
 	operator bool() const;
-	LuaObject& GetKey();
+	LuaObject& getKey();
 	LuaObject& GetValue();
 
 protected:
@@ -186,7 +186,7 @@ inline LuaTableIterator::operator bool() const {
 /**
 	\return Returns a LuaObject describing the current key.
 **/
-inline LuaObject& LuaTableIterator::GetKey() {
+inline LuaObject& LuaTableIterator::getKey() {
 	// This function is only active if Reset() has been called head.
 	luaplus_assert( IsValid() );
 

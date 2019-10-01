@@ -914,13 +914,13 @@ bool LuaState::DumpObject(LuaStateOutFile& file, LuaObject& key, LuaObject& valu
 
 			if (flags & DUMP_ALPHABETICAL)
 			{
-				SimpleList<KeyValue> keys;
+				SimpleList<KeyValue> currentKeys;
 
 				// Cycle through the table.
 				for (LuaTableIterator it(table); it; ++it)
 				{
 					// Retrieve the table entry's key and value.
-					LuaObject& key = it.GetKey();
+					LuaObject& key = it.getKey();
 
 					// Is the key a number?
 					if (key.IsNumber())
@@ -947,12 +947,12 @@ bool LuaState::DumpObject(LuaStateOutFile& file, LuaObject& key, LuaObject& valu
 					KeyValue info;
 					info.key = key;
 					info.value = it.GetValue();
-					keys.AddTail(info);
+					currentKeys.AddTail(info);
 				}
 
-				keys.Sort(KeyValueCompare);
+				currentKeys.Sort(KeyValueCompare);
 
-				if (keys.GetHeadPosition() != NULL)
+				if (currentKeys.GetHeadPosition() != NULL)
 				{
 					// If we wrote a sequential list, the value we're about to write
 					// is not nil, and we haven't written the semicolon to separate
@@ -969,9 +969,9 @@ bool LuaState::DumpObject(LuaStateOutFile& file, LuaObject& key, LuaObject& valu
 					}
 				}
 
-				for (void* keysIt = keys.GetHeadPosition(); keysIt; )
+				for (void* keysIt = currentKeys.GetHeadPosition(); keysIt; )
 				{
-					KeyValue& info = keys.GetNext(keysIt);
+					KeyValue& info = currentKeys.GetNext(keysIt);
 
 					// Write the table entry.
 					bool ret = DumpObject(file, info.key, info.value, flags,
@@ -994,7 +994,7 @@ bool LuaState::DumpObject(LuaStateOutFile& file, LuaObject& key, LuaObject& valu
 				for (LuaTableIterator it(table); it; ++it)
 				{
 					// Retrieve the table entry's key and value.
-					LuaObject& key = it.GetKey();
+					LuaObject& key = it.getKey();
 
 					// Is the key a number?
 					if (key.IsNumber())

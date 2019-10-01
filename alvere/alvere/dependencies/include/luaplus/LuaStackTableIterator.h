@@ -34,7 +34,7 @@ public:
 	bool IsValid() const;
 	LuaStackTableIterator& operator++();
 	operator bool() const;
-	LuaStackObject GetKey();
+	LuaStackObject getKey();
 	LuaStackObject GetValue();
 
 protected:

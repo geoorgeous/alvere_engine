@@ -813,7 +813,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_Connect()
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_Connect);
 		m_sendBuffer->Write<int>(LUA_DEBUGGER_PROTOCOL_VERSION);
 		m_sendBuffer->Write<int>((int) sizeof(LuaDebuggerObjectID));
@@ -828,7 +828,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_Disconnect(const char * message)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_Disconnect);
 		m_sendBuffer->WriteString(message);
 		m_sendBuffer->End("LuaDebuggerComms::CreateMessage_Disconnect()");
@@ -853,7 +853,7 @@ namespace tilde
 			else
 				m_lastStateUpdateFile = file;
 
-			m_sendBuffer->Begin();
+			m_sendBuffer->begin();
 			m_sendBuffer->Write<int>(TargetMessage_StateUpdate);
 			m_sendBuffer->Write<int>(mode);
 			m_sendBuffer->Write<LuaDebuggerObjectID>(thread);
@@ -865,7 +865,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_ErrorMessage(const char * message)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_ErrorMessage);
 		m_sendBuffer->WriteString(message);
 		m_sendBuffer->End("LuaDebuggerComms::CreateMessage_ErrorMessage()");
@@ -873,7 +873,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_BreakpointAdded(int bkptid, bool success)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_BreakpointAdded);
 		m_sendBuffer->Write<int>(bkptid);
 		m_sendBuffer->Write<int>(success ? 1 : 0);
@@ -882,7 +882,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_BreakpointRemoved(int bkptid)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_BreakpointRemoved);
 		m_sendBuffer->Write<int>(bkptid);
 		m_sendBuffer->End("LuaDebuggerComms::CreateMessage_BreakpointRemoved()");
@@ -890,7 +890,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_CallstackUpdate(LuaDebuggerObjectID threadid, const StackFrameCollection & stackFrames, int currentFrame)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_CallstackUpdate);
 		m_sendBuffer->Write<LuaDebuggerObjectID>(threadid);
 		m_sendBuffer->Write<int>(currentFrame);
@@ -913,7 +913,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_ValueCached(LuaDebuggerObjectID value, LuaType luatype, const char * desc)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_ValueCached);
 		m_sendBuffer->Write<int>(luatype);
 		m_sendBuffer->Write<LuaDebuggerObjectID>(value);
@@ -962,7 +962,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_LocalsUpdate(LuaDebuggerObjectID threadid, VariableInfo * rootvar, int stackIndex, bool cacheFlush)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_LocalsUpdate);
 		m_sendBuffer->Write<LuaDebuggerObjectID>(threadid);
 		m_sendBuffer->Write<int>(stackIndex);
@@ -973,7 +973,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_ThreadsUpdate()
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_ThreadsUpdate);
 		int countpos = m_sendBuffer->Write<int>(0);
 
@@ -1011,7 +1011,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_WatchUpdate(LuaDebuggerObjectID threadid, WatchCollection * watches)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_WatchUpdate);
 		m_sendBuffer->Write<LuaDebuggerObjectID>(threadid);
 		int countpos = m_sendBuffer->Write<int>(0);
@@ -1036,7 +1036,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_ExMessage(const char * command, const void * data, int datasize)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_ExMessage);
 		m_sendBuffer->WriteString(command);
 		m_sendBuffer->Write<int>(datasize);
@@ -1047,7 +1047,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_SnippetResult(bool success, const char * output, const char * result)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_SnippetResult);
 		m_sendBuffer->Write<int>(success);
 		m_sendBuffer->WriteString(output);
@@ -1057,7 +1057,7 @@ namespace tilde
 
 	void LuaDebuggerComms::CreateMessage_AutocompleteOptions(int seqid, std::vector<AutoCompleteResult> * values, const char * message)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_AutocompleteOptions);
 		m_sendBuffer->Write<int>(seqid);
 		m_sendBuffer->Write<int>(values == NULL ? -1 : (int) values->size());
@@ -1100,7 +1100,7 @@ namespace tilde
 
 	void LuaDebuggerComms::SendProfileResults(const char * varname)
 	{
-		m_sendBuffer->Begin();
+		m_sendBuffer->begin();
 		m_sendBuffer->Write<int>(TargetMessage_UploadFile);
 		m_sendBuffer->WriteString("generalPurposeProfile.luaprof.xml");
 

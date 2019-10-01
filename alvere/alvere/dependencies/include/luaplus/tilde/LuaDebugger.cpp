@@ -77,7 +77,7 @@ namespace tilde
 
 		if(debugger->m_shutdown)
 		{
-			debugger->Shutdown();
+			debugger->shutdown();
 			return;
 		}
 
@@ -116,7 +116,7 @@ namespace tilde
 
 		// Wait for all operations to be complete before shutting ourselves down
 		if(debugger->IsShutdown())
-			debugger->Shutdown();
+			debugger->shutdown();
 	}
 
 	void LuaDebugger::RegisterState(lua_State* lvm)
@@ -178,7 +178,7 @@ namespace tilde
 		m_shutdown = true;
 	}
 
-	void LuaDebugger::Shutdown()
+	void LuaDebugger::shutdown()
 	{
 		if(m_mainlvm != NULL)
 		{

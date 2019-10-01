@@ -138,13 +138,12 @@ namespace alvere
 		Vector2 delta;
 		std::unordered_map<MouseButton, bool> buttons;
 
-		bool GetButton(MouseButton button) const;
+		bool getButton(MouseButton button) const;
 	};
 
 	class Window
 	{
 	public:
-		using EventCallbackFunction = std::function<void(Event&)>;
 
 		struct Properties
 		{
@@ -163,21 +162,41 @@ namespace alvere
 
 		static Asset<Window> New(const Properties& properties = Window::Properties::s_Default);
 
-		virtual ~Window() { }
+		virtual void pollEvents() = 0;
 
-		virtual void PollEvents() = 0;
-		virtual void SwapBuffers() = 0;
-		virtual void DisableCursor() = 0;
-		virtual void EnableCursor() = 0;
-		virtual void SetEventCallback(const EventCallbackFunction& callback) = 0;
+		virtual void swapBuffers() = 0;
 
-		KeyData GetKey(Key key) const;
-		const MouseData& GetMouse() const;
+		virtual void disableCursor() = 0;
+
+		virtual void enableCursor() = 0;
+
+		virtual ~Window();
+
+		inline unsigned int getWidth() const
+		{
+			return m_properties.sizeWidth;
+		}
+
+		inline unsigned int getHeight() const
+		{
+			return m_properties.sizeHeight;
+		}
+
+		KeyData getKey(Key key) const;
+
+		const MouseData& getMouse() const;
 
 	protected:
-		EventCallbackFunction m_EventCallback;
+
+		Window(const Properties & properties);
+
+		Properties m_properties;
+
 		FrameBuffer * m_FrameBuffer;
-		std::unordered_map<Key, KeyData> m_Keys;
+
+		std::unordered_map<Key, KeyData> m_currentKeys;
+		std::unordered_map<Key, KeyData> m_oldKeys;
+
 		MouseData m_Mouse;
 	};
 }

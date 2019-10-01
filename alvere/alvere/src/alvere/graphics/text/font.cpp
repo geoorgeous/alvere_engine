@@ -199,8 +199,8 @@ namespace alvere
 
 		delete[] pixels;
 
-		m_fontFaceHeight = face->size->metrics.y_ppem;
-		m_fontFaceMaxAdvance = face->size->metrics.y_ppem;
+		m_fontFaceHeight = face->size->metrics.height >> 6;
+		m_fontFaceMaxAdvance = face->size->metrics.max_advance >> 6;
 
 		FT_Done_Face(face);
 

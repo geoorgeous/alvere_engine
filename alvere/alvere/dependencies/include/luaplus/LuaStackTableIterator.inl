@@ -141,7 +141,7 @@ LUAPLUS_INLINE LuaStackTableIterator::operator bool() const {
 /**
 	\return Returns a LuaStackObject describing the current key.
 **/
-LUAPLUS_INLINE LuaStackObject LuaStackTableIterator::GetKey() {
+LUAPLUS_INLINE LuaStackObject LuaStackTableIterator::getKey() {
 	// This function is only active if Reset() has been called head.
 	luaplus_assert(IsValid());
 

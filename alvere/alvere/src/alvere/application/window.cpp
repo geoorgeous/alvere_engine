@@ -6,7 +6,7 @@
 
 namespace alvere
 {
-	bool MouseData::GetButton(MouseButton button) const
+	bool MouseData::getButton(MouseButton button) const
 	{
 		auto b = buttons.find(button);
 		if (b != buttons.end())
@@ -35,16 +35,22 @@ namespace alvere
 		: title(title), sizeWidth(sizeWidth), sizeHeight(sizeHeight), resWidth(resWidth), resHeight(resHeight)
 	{ }
 
-	KeyData Window::GetKey(Key key) const
+	Window::~Window() { }
+
+	KeyData Window::getKey(Key key) const
 	{
-		auto k = m_Keys.find(key);
-		if (k != m_Keys.end())
+		auto k = m_currentKeys.find(key);
+		if (k != m_currentKeys.end())
 			return k->second;	
 		return KeyData{};
 	}
 
-	const MouseData& Window::GetMouse() const
+	const MouseData& Window::getMouse() const
 	{
 		return m_Mouse;
 	}
+
+	Window::Window(const Properties & properties)
+		: m_properties(properties) 
+	{ }
 }

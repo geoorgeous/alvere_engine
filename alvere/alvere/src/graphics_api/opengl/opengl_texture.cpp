@@ -11,13 +11,13 @@ namespace alvere::graphics_api::opengl
 	Texture::Texture(const char * filename, Channels channels)
 		: alvere::Texture(filename, channels)
 	{
-		Init();
+		init();
 	}
 
 	Texture::Texture(const unsigned char * data, int width, int height, Channels channels)
 		: alvere::Texture(data, width, height, channels)
 	{
-		Init();
+		init();
 	}
 
 	Texture::~Texture()
@@ -35,7 +35,7 @@ namespace alvere::graphics_api::opengl
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Texture::Init()
+	void Texture::init()
 	{
 		GLenum format = GL_RGBA;
 

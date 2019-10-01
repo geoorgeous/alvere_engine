@@ -594,7 +594,7 @@ namespace tilde
 
 		bool Connect(lua_State * lvm);
 		void Disconnect();
-		void Shutdown();
+		void shutdown();
 		void EnableHook(bool enabled)		{ m_enabled = enabled; }
 		void RegisterState(lua_State* lvm);
 

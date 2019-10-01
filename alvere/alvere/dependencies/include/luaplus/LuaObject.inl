@@ -1309,10 +1309,10 @@ inline LuaObject LuaObject::Clone() const {
 		for (LuaTableIterator it(*this); it; ++it) {
 			if (it.GetValue().IsTable()) {
 				LuaObject clonedChildTableObj = it.GetValue().Clone();
-				tableObj.Set(it.GetKey(), clonedChildTableObj);
+				tableObj.Set(it.getKey(), clonedChildTableObj);
 			}
 			else
-				tableObj.Set(it.GetKey(), it.GetValue());
+				tableObj.Set(it.getKey(), it.GetValue());
 		}
 
 		return tableObj;
@@ -1330,11 +1330,11 @@ inline void LuaObject::DeepClone(LuaObject& outObj) const {
 		for (LuaTableIterator it(*this); it; ++it)
 		{
 			LuaObject keyObj;
-			switch (it.GetKey().Type())
+			switch (it.getKey().Type())
 			{
-				case LUA_TBOOLEAN:	keyObj.AssignBoolean(outObj.GetState(), it.GetKey().GetBoolean());		break;
-				case LUA_TNUMBER:		keyObj.AssignNumber(outObj.GetState(), it.GetKey().GetNumber());	break;
-				case LUA_TSTRING:		keyObj.AssignString(outObj.GetState(), it.GetKey().GetString());	break;
+				case LUA_TBOOLEAN:	keyObj.AssignBoolean(outObj.GetState(), it.getKey().GetBoolean());		break;
+				case LUA_TNUMBER:		keyObj.AssignNumber(outObj.GetState(), it.getKey().GetNumber());	break;
+				case LUA_TSTRING:		keyObj.AssignString(outObj.GetState(), it.getKey().GetString());	break;
 			}
 
 			switch (it.GetValue().Type())

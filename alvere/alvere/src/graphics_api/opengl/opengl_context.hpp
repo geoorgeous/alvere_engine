@@ -11,11 +11,11 @@ namespace alvere::graphics_api::opengl
 	public:
 		RenderingContext(GLFWwindow* windowHandle);
 
-		void Init() override;
-		void SwapBuffers() override;
+		void init() override;
+		void swapBuffers() override;
 
 	private:
-		GLFWwindow * m_WindowHandle;
+		GLFWwindow * m_windowHandle;
 	};
 
 	int static LogOpenGLErrors();

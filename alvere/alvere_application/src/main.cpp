@@ -159,35 +159,35 @@ struct AlvereApplication : public Application
 		const float turnSpeed = 2.0f;
 		const float mouseDamper = 0.1f;
 
-		if (m_window->GetKey(Key::W)) velocity += Camera::forward * moveSpeed;
-		if (m_window->GetKey(Key::S)) velocity -= Camera::forward * moveSpeed;
-		if (m_window->GetKey(Key::D)) velocity += Camera::right * moveSpeed;
-		if (m_window->GetKey(Key::A)) velocity -= Camera::right * moveSpeed;
-		if (m_window->GetKey(Key::Space)) velocity += Camera::up * moveSpeed;
-		if (m_window->GetKey(Key::LeftShift)) velocity -= Camera::up * moveSpeed;
+		if (m_window->getKey(Key::W)) velocity += Camera::forward * moveSpeed;
+		if (m_window->getKey(Key::S)) velocity -= Camera::forward * moveSpeed;
+		if (m_window->getKey(Key::D)) velocity += Camera::right * moveSpeed;
+		if (m_window->getKey(Key::A)) velocity -= Camera::right * moveSpeed;
+		if (m_window->getKey(Key::Space)) velocity += Camera::up * moveSpeed;
+		if (m_window->getKey(Key::LeftShift)) velocity -= Camera::up * moveSpeed;
 
 		velocity *= deltaTime;
 		sceneCamera.Move(velocity * sceneCamera.GetRotation());
 
-		if (m_window->GetMouse().GetButton(MouseButton::Left))
+		if (m_window->getMouse().getButton(MouseButton::Left))
 		{
-			m_window->DisableCursor();
+			m_window->disableCursor();
 
-			rotation -= Camera::up * m_window->GetMouse().delta.x * mouseDamper;
-			rotation -= Camera::right * m_window->GetMouse().delta.y * mouseDamper;
+			rotation -= Camera::up * m_window->getMouse().delta.x * mouseDamper;
+			rotation -= Camera::right * m_window->getMouse().delta.y * mouseDamper;
 		}
 		else
 		{
-			m_window->EnableCursor();
+			m_window->enableCursor();
 
-			if (m_window->GetKey(Key::Left)) rotation += Camera::up * turnSpeed;
-			if (m_window->GetKey(Key::Right)) rotation -= Camera::up * turnSpeed;
-			if (m_window->GetKey(Key::Up)) rotation += Camera::right * turnSpeed;
-			if (m_window->GetKey(Key::Down)) rotation -= Camera::right * turnSpeed;
+			if (m_window->getKey(Key::Left)) rotation += Camera::up * turnSpeed;
+			if (m_window->getKey(Key::Right)) rotation -= Camera::up * turnSpeed;
+			if (m_window->getKey(Key::Up)) rotation += Camera::right * turnSpeed;
+			if (m_window->getKey(Key::Down)) rotation -= Camera::right * turnSpeed;
 		}
 		
-		if (m_window->GetKey(Key::E)) rotation += Camera::forward * turnSpeed;
-		if (m_window->GetKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
+		if (m_window->getKey(Key::E)) rotation += Camera::forward * turnSpeed;
+		if (m_window->getKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
 		sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
 
@@ -198,7 +198,7 @@ struct AlvereApplication : public Application
 	{
 		scene.draw();
 
-		m_spriteBatcher->Begin(sceneCamera.GetProjectionViewMatrix());
+		m_spriteBatcher->begin(sceneCamera.GetProjectionViewMatrix());
 		 
 		for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
 		{
@@ -211,7 +211,7 @@ struct AlvereApplication : public Application
 
 		m_spriteBatcher->end();
 
-		m_spriteBatcher->Begin(uiCamera.GetProjectionViewMatrix());
+		m_spriteBatcher->begin(uiCamera.GetProjectionViewMatrix());
 
 		std::string cameraPositionString = "x: " + std::to_string(sceneCamera.GetPosition().x) + "\ny: " + std::to_string(sceneCamera.GetPosition().y) + "\nz: " + std::to_string(sceneCamera.GetPosition().z);
 
