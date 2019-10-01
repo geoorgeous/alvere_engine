@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <utility>
 
 #include "alvere/application/window.hpp"
 #include "alvere/graphics/rendering_context.hpp"
@@ -29,8 +30,7 @@ namespace alvere::platform::windows
 		{
 			Window * window;
 			Properties * properties;
-			std::unordered_map<Key, KeyData> * currentKeys;
-			std::unordered_map<Key, KeyData> * oldKeys;
+			std::unordered_map<Key, std::pair<KeyData, KeyData>> * keys;
 			MouseData * mouse;
 		};
 

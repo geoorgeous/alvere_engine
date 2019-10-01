@@ -2,7 +2,7 @@
 
 #include <functional>
 #include <string>
-#include <queue>
+#include <vector>
 
 #define ALV_EVENT_BIND_FUNC(f) std::bind(&##f, this, std::placeholders::_1)
 
@@ -16,28 +16,81 @@
 
 namespace alvere
 {
-	template<typename EventT>
-	class EventHandler;
+	class EventBase { };
 
 	template <typename ... EventArgs>
-	class Event
+	class Event : public EventBase
 	{
 	public:
 
 		using Function = std::function<void(EventArgs ...)>;
 
-		void subscribe(Function f);
+		class Handler
+		{
+		public:
 
-		void unsubscribe(Function f);
+			friend class Event<EventArgs ...>;
+			
+			Handler() { }
 
-		void dispatch(EventArgs ...);
+			Handler(Function f)
+			{
+				m_handlerFunction = f;
+			}
 
-		void operator+=(Function f);
+			void setFunction(Function f)
+			{
+				m_handlerFunction = f;
+			}
 
-		void operator-=(Function f);
+			bool operator==(const Handler & other)
+			{
+				return this == &other;
+			}
+
+		private:
+
+			Function m_handlerFunction;
+		};
+
+		virtual ~Event<EventArgs ...>() = 0 { };
+
+		void subscribe(const Handler & handler)
+		{
+			if (std::find(m_subscribers.begin(), m_subscribers.end(), &handler) != m_subscribers.end())
+				return;
+
+			m_subscribers.emplace_back(&handler);
+		}
+
+		void unsubscribe(const Handler & handler)
+		{
+			auto iter = std::find(m_subscribers.begin(), m_subscribers.end(), &handler);
+
+			if (iter == m_subscribers.end())
+				return;
+
+			m_subscribers.erase(iter);
+		}
+
+		void dispatch(EventArgs ... args)
+		{
+			for (const Handler * handler : m_subscribers)
+				handler->m_handlerFunction(args ...);
+		}
+
+		void operator+=(const Handler & handler)
+		{
+			subscribe(handler);
+		}
+
+		void operator-=(const Handler & handler)
+		{
+			unsubscribe(handler);
+		}
 
 	private:
 
-		std::queue<Function> m_subscribers;
+		std::vector<const Handler *> m_subscribers;
 	};
 }

@@ -22,9 +22,14 @@ namespace alvere::platform::windows
 
 	void Window::pollEvents()
 	{
-		m_oldKeys = m_currentKeys;
+		for (auto & keyDataPair : m_keys)
+		{
+			keyDataPair.second.second = keyDataPair.second.first;
+			keyDataPair.second.first.justPressed = false;
+			keyDataPair.second.first.justReleased = false;
+		}
 
-		m_Mouse.delta = Vector2::zero;
+		m_mouse.delta = Vector2::zero;
 
 		glfwPollEvents();
 	}
@@ -77,38 +82,40 @@ namespace alvere::platform::windows
 
 		glfwSwapInterval(0);
 
-		m_windowUserPointerData = { this, &m_properties, &m_currentKeys, &m_oldKeys, &m_Mouse };
+		m_windowUserPointerData = { this, &m_properties, &m_keys, &m_mouse };
 		glfwSetWindowUserPointer(m_windowHandle, &m_windowUserPointerData);
 
 		glfwSetWindowCloseCallback(m_windowHandle, [](GLFWwindow * windowHandle)
 		{
-			//Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
-			//alvere::WindowCloseEvent event;
-			//window.m_EventCallback(event);
+			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
+			window.getEvent<WindowCloseEvent>()->dispatch();
 		});
 		glfwSetWindowSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
-			{
-				WindowUserPointerData & data = *(WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle);
+		{
+			WindowUserPointerData & data = *(WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle);
+			data.properties->sizeWidth = width;
+			data.properties->sizeHeight = height;
 
-				//alvere::WindowResizeEvent event = alvere::WindowResizeEvent((unsigned int)width, (unsigned int)height);
-				//data.window->m_EventCallback(event);
-
-				data.properties->sizeWidth = width;
-				data.properties->sizeHeight = height;
+			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
+			window.getEvent<WindowResizeEvent>()->dispatch(data.properties->sizeWidth, data.properties->sizeHeight);
 
 		});
 		glfwSetKeyCallback(m_windowHandle, [](GLFWwindow * windowHandle, int key, int scancode, int action, int mods)
 		{
-			std::unordered_map<Key, KeyData> & currentKeys = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->currentKeys;
+			std::unordered_map<Key, std::pair<KeyData, KeyData>> & keys = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->keys;
 
 			auto setKeyData = [&](Key key, int action)
 			{
-				KeyData & currentKeyData = currentKeys[key];
+				std::pair< KeyData, KeyData> & keyDataPair = keys[key];
+				KeyData & oldKeyData = keyDataPair.second;
+				KeyData & newKeyData = keyDataPair.first;
 
-				currentKeyData.isDown = action != GLFW_RELEASE;
-				currentKeyData.isRepeating = action == GLFW_REPEAT;
-				currentKeyData.justPressed = action == GLFW_PRESS;
-				currentKeyData.justReleased = action == GLFW_RELEASE;
+				newKeyData.isDown = action != GLFW_RELEASE;
+				newKeyData.isRepeating = action == GLFW_REPEAT;
+				newKeyData.justPressed = action == GLFW_PRESS && !oldKeyData.isDown;
+				newKeyData.justReleased = action == GLFW_RELEASE && oldKeyData.isDown;
+
+				oldKeyData = newKeyData;
 			};
 
 			switch (key)
@@ -187,7 +194,7 @@ namespace alvere::platform::windows
 			case GLFW_KEY_DELETE: setKeyData(Key::Delete, action); break;
 			case GLFW_KEY_END: setKeyData(Key::End, action); break;
 			case GLFW_KEY_PAGE_UP: setKeyData(Key::PageUp, action); break;
-			case GLFW_KEY_PAGE_DOWN: setKeyData(Key::Down, action); break;
+			case GLFW_KEY_PAGE_DOWN: setKeyData(Key::PageDown, action); break;
 
 			case GLFW_KEY_LEFT: setKeyData(Key::Left, action); break;
 			case GLFW_KEY_UP: setKeyData(Key::Up, action); break;
@@ -214,7 +221,8 @@ namespace alvere::platform::windows
 		});
 		glfwSetCharCallback(m_windowHandle, [](GLFWwindow * windowHandle, unsigned int charCode)
 		{
-
+			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
+			window.getEvent<CharInputEvent>()->dispatch(charCode);
 		});
 		glfwSetCursorPosCallback(m_windowHandle, [](GLFWwindow* windowHandle, double xPos, double yPos)
 		{

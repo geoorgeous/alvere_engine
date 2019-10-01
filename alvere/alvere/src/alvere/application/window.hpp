@@ -1,7 +1,9 @@
 #pragma once
 
 #include <string>
+#include <typeindex>
 #include <unordered_map>
+#include <utility>
 
 #include "alvere/assets.hpp"
 #include "alvere/events/application_events.hpp"
@@ -147,7 +149,7 @@ namespace alvere
 
 		struct Properties
 		{
-			static const Properties s_Default;
+			static const Properties s_default;
 
 			std::string title;
 			unsigned int sizeWidth;
@@ -155,12 +157,14 @@ namespace alvere
 			unsigned int resWidth;
 			unsigned int resHeight;
 
-			Properties(const std::string& title);
-			Properties(const std::string& title, unsigned int sizeWidth, unsigned int sizeHeight);
-			Properties(const std::string& title, unsigned int sizeWidth, unsigned int sizeHeight, unsigned int resWidth, unsigned int resHeight);
+			Properties(const std::string & title);
+			Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight);
+			Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight, unsigned int resWidth, unsigned int resHeight);
 		};
 
-		static Asset<Window> New(const Properties& properties = Window::Properties::s_Default);
+		static Asset<Window> New(const Properties & properties = Window::Properties::s_default);
+
+		virtual ~Window() = 0;
 
 		virtual void pollEvents() = 0;
 
@@ -170,8 +174,6 @@ namespace alvere
 
 		virtual void enableCursor() = 0;
 
-		virtual ~Window();
-
 		inline unsigned int getWidth() const
 		{
 			return m_properties.sizeWidth;
@@ -180,6 +182,12 @@ namespace alvere
 		inline unsigned int getHeight() const
 		{
 			return m_properties.sizeHeight;
+		}
+
+		template <typename EventT>
+		EventT * getEvent()
+		{
+			return (EventT *)m_events[typeid(EventT)];
 		}
 
 		KeyData getKey(Key key) const;
@@ -192,11 +200,12 @@ namespace alvere
 
 		Properties m_properties;
 
-		FrameBuffer * m_FrameBuffer;
+		FrameBuffer * m_frameBuffer;
 
-		std::unordered_map<Key, KeyData> m_currentKeys;
-		std::unordered_map<Key, KeyData> m_oldKeys;
+		std::unordered_map<Key, std::pair<KeyData, KeyData>> m_keys;
 
-		MouseData m_Mouse;
+		MouseData m_mouse;
+
+		std::unordered_map<std::type_index, EventBase *> m_events;
 	};
 }

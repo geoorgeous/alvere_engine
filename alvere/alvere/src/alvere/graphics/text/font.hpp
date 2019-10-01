@@ -69,6 +69,8 @@ namespace alvere
 					return m_fontFaceMaxAdvance;
 				}
 
+				Vector2 getTextSize(const std::string & text) const;
+
 			private:
 
 				unsigned int m_glyphHeightPixels;

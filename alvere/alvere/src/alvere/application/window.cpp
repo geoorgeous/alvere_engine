@@ -14,7 +14,7 @@ namespace alvere
 		return false;
 	}
 
-	const Window::Properties Window::Properties::s_Default = 
+	const Window::Properties Window::Properties::s_default = 
 	{
 		ALV_WINDOW_DEFAULT_TITLE,
 		ALV_WINDOW_DEFAULT_SIZE_X,
@@ -23,15 +23,15 @@ namespace alvere
 		ALV_WINDOW_DEFAULT_SIZE_Y
 	};
 
-	Window::Properties::Properties(const std::string& title)
-		: Properties(title, s_Default.sizeWidth, s_Default.sizeHeight)
+	Window::Properties::Properties(const std::string & title)
+		: Properties(title, s_default.sizeWidth, s_default.sizeHeight)
 	{ }
 
-	Window::Properties::Properties(const std::string& title, unsigned int sizeWidth, unsigned int sizeHeight)
-		: Properties(title, sizeWidth, sizeHeight, s_Default.resWidth, s_Default.resHeight)
+	Window::Properties::Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight)
+		: Properties(title, sizeWidth, sizeHeight, s_default.resWidth, s_default.resHeight)
 	{ }
 
-	Window::Properties::Properties(const std::string& title, unsigned int sizeWidth, unsigned int sizeHeight, unsigned int resWidth, unsigned int resHeight)
+	Window::Properties::Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight, unsigned int resWidth, unsigned int resHeight)
 		: title(title), sizeWidth(sizeWidth), sizeHeight(sizeHeight), resWidth(resWidth), resHeight(resHeight)
 	{ }
 
@@ -39,18 +39,22 @@ namespace alvere
 
 	KeyData Window::getKey(Key key) const
 	{
-		auto k = m_currentKeys.find(key);
-		if (k != m_currentKeys.end())
-			return k->second;	
+		auto k = m_keys.find(key);
+		if (k != m_keys.end())
+			return k->second.first;	
 		return KeyData{};
 	}
 
 	const MouseData& Window::getMouse() const
 	{
-		return m_Mouse;
+		return m_mouse;
 	}
 
 	Window::Window(const Properties & properties)
 		: m_properties(properties) 
-	{ }
+	{
+		m_events.emplace(typeid(WindowCloseEvent), new WindowCloseEvent);
+		m_events.emplace(typeid(WindowResizeEvent), new WindowResizeEvent);
+		m_events.emplace(typeid(CharInputEvent), new CharInputEvent);
+	}
 }

@@ -16,6 +16,7 @@
 #include "alvere/graphics/texture.hpp"
 #include "alvere/math/matrix/matrix_4.hpp"
 #include "alvere/math/matrix/transformations.hpp"
+#include "alvere/utils/utilities.hpp"
 
 namespace alvere::console
 {
@@ -28,12 +29,14 @@ namespace alvere::console
 		VertexBuffer * _vbo;
 		graphics_api::opengl::VertexArray * _vao;
 		Font::Face _fontFace("res/fonts/consola.ttf");
+		const Font::Face::Bitmap * _fontFaceBitmap;
 		Asset<SpriteBatcher> _spriteBatcher;
-		unsigned int _lineHeight = 18;
-		unsigned int _numLinesToShow = 9;
+		unsigned int _fontSize = 18;
+		unsigned int _maxOutputLineCount = 9;
 		Matrix4 _projection;
 
 		Window * _window;
+		CharInputEvent::Handler _charInputEventHandler;
 
 		Key _keyShowHide = Key::BackQuote;
 		Key _keySubmitCommand = Key::Enter;
@@ -41,27 +44,44 @@ namespace alvere::console
 		Key _keyHistoryForward = Key::Down;
 		Key _keyCaretLeft = Key::Left;
 		Key _keyCaretRight = Key::Right;
+		Key _keyEraseCharLeft = Key::BackSpace;
+		Key _keyEraseCharRight = Key::Delete;
 		Key _keyAutoFill = Key::Tab;
 		Key _keyAutoFillAccept = Key::Space;
 		Key _keyPageUp = Key::PageUp;
 		Key _keyPageDown = Key::PageDown;
 
-		std::vector<std::string> _commandHistory;
+		std::vector<std::string> _output;
+		unsigned int _outputPageIndex = 0;
+		std::vector<std::string> _inputHistory;
+		std::string _inputPre = ">: ";
 		std::string _input;
-		std::stringstream _output;
 		unsigned int _caretPosition;
+		bool _caretIsVisible = true;
+		float _caretFlashSpeed = 0.5f;
+		float _timeUntilCaretToggle = _caretFlashSpeed;
 
-		// draw input box
-		// draw history background box
-		// draw cursor
-		// draw text
-
-		void submitCommand();
+		void submitInput();
+		void viewHistoryBack();
+		void viewHistoryForward();
+		void moveCaretLeft();
+		void moveCaretRight();
+		void eraseCharLeft();
+		void eraseCharRight();
+		void tryViewAutoFill();
+		void tryAcceptAutoFill();
+		void pageUpOutput();
+		void pageDownOutput();
+		void receiveInput(unsigned int);
+		void clearInput();
+		void resetCaretVisibility();
 
 		void init(Window * window)
 		{
 			if (_initialised)
 				return;
+
+			_fontFaceBitmap = _fontFace.getBitmap(_fontSize);
 
 			Asset<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core
 					uniform mat4 u_projectionMatrix;
@@ -77,7 +97,7 @@ namespace alvere::console
 			Asset<Shader> fShader = Shader::New(Shader::Type::Fragment, R"(#version 330 core
 					uniform vec3 u_colour;
 					uniform int u_lineHeight;
-					uniform int u_lineCount;
+					uniform int u_outputLineCount;
 
 					out vec4 f_colour;
 
@@ -85,13 +105,13 @@ namespace alvere::console
 					{
 						int y = int(gl_FragCoord.y);
 
-						if (y > u_lineHeight * (u_lineCount + 1))
+						if (y > u_lineHeight * (u_outputLineCount + 1))
 							discard;
 
 						if (y <= u_lineHeight)
-							f_colour = vec4(u_colour, 0.5f);
+							f_colour = vec4(u_colour, 0.85f);
 						else
-							f_colour = vec4(u_colour, 0.8f);
+							f_colour = vec4(u_colour, 0.5f);
 					}
 				)");
 
@@ -101,6 +121,8 @@ namespace alvere::console
 			_shaderProgram->build();
 
 			_window = window;
+			_charInputEventHandler.setFunction(receiveInput);
+			_window->getEvent<CharInputEvent>()->subscribe(_charInputEventHandler);
 
 			unsigned int width = _window->getWidth();
 			unsigned int height = _window->getHeight();
@@ -109,9 +131,9 @@ namespace alvere::console
 
 			_shaderProgram->bind();
 			_shaderProgram->sendUniformMat4x4("u_projectionMatrix", _projection);
-			_shaderProgram->sendUniformFloat3("u_colour", 0.2f, 0.2f, 0.2f);
-			_shaderProgram->sendUniformInt1("u_lineHeight", _fontFace.getBitmap(18)->getFontFaceHeight());
-			_shaderProgram->sendUniformInt1("u_lineCount", 9);
+			_shaderProgram->sendUniformFloat3("u_colour", 0.0f, 0.0f, 0.0f);
+			_shaderProgram->sendUniformInt1("u_lineHeight", _fontFaceBitmap->getFontFaceHeight());
+			_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
 
 			float vertexData[18] = {
 				0.0f, height, 0.0f,
@@ -131,9 +153,12 @@ namespace alvere::console
 			_vao = new graphics_api::opengl::VertexArray;
 			_vao->AddVertexBuffer(_vbo);
 
+
 			_spriteBatcher = SpriteBatcher::New();
 
 			_initialised = true;
+
+			_output.emplace_back("Type 'help' for a list of available commands.");
 		}
 
 		void destroy()
@@ -150,6 +175,10 @@ namespace alvere::console
 				return;
 
 			_shown = true;
+
+			clearInput();
+
+			_outputPageIndex = 0;
 		}
 
 		void hide()
@@ -175,50 +204,36 @@ namespace alvere::console
 			if (!_shown)
 				return;
 
+			_timeUntilCaretToggle -= deltaTime;
+
+			if (_timeUntilCaretToggle <= 0.0f)
+			{
+				_timeUntilCaretToggle = _caretFlashSpeed;
+				_caretIsVisible = !_caretIsVisible;
+			}
+
 			if (_window->getKey(_keySubmitCommand).justPressed)
-			{
-				submitCommand();
-			}
-
-			if (_window->getKey(_keyHistoryBack).justPressed || _window->getKey(_keyHistoryBack).isRepeating)
-			{
-				// previous command in history
-			}
-
-			if (_window->getKey(_keyHistoryForward).justPressed || _window->getKey(_keyHistoryForward).isRepeating)
-			{
-				// next command in history
-			}
-
-			if (_window->getKey(_keyCaretLeft).justPressed || _window->getKey(_keyCaretLeft).isRepeating)
-			{
-				// move caret left
-			}
-
-			if (_window->getKey(_keyCaretRight).justPressed || _window->getKey(_keyCaretRight).isRepeating)
-			{
-				// move caret right
-			}
-
-			if (_window->getKey(_keyAutoFill).justPressed || _window->getKey(_keyAutoFill).isRepeating)
-			{
-				// display option at caret position
-			}
-
-			if (_window->getKey(_keyAutoFillAccept).justPressed)
-			{
-				// write the displayed option in to input
-			}
-
-			if (_window->getKey(_keyPageUp).justPressed || _window->getKey(_keyPageUp).isRepeating)
-			{
-				// display the previous page of text in the display window
-			}
-
-			if (_window->getKey(_keyPageDown).justPressed || _window->getKey(_keyPageDown).isRepeating)
-			{
-				// display the next page of text in the display window
-			}
+				submitInput();
+			else if (_window->getKey(_keyHistoryBack).justPressed || _window->getKey(_keyHistoryBack).isRepeating)
+				viewHistoryBack();
+			else if (_window->getKey(_keyHistoryForward).justPressed || _window->getKey(_keyHistoryForward).isRepeating)
+				viewHistoryForward();
+			else if (_window->getKey(_keyCaretLeft).justPressed || _window->getKey(_keyCaretLeft).isRepeating)
+				moveCaretLeft();
+			else if (_window->getKey(_keyCaretRight).justPressed || _window->getKey(_keyCaretRight).isRepeating)
+				moveCaretRight();
+			else if (_window->getKey(_keyEraseCharLeft).justPressed || _window->getKey(_keyEraseCharLeft).isRepeating)
+				eraseCharLeft();
+			else if (_window->getKey(_keyEraseCharRight).justPressed || _window->getKey(_keyEraseCharRight).isRepeating)
+				eraseCharRight();
+			else if (_window->getKey(_keyAutoFill).justPressed || _window->getKey(_keyAutoFill).isRepeating)
+				tryViewAutoFill();
+			else if (_window->getKey(_keyAutoFillAccept).justPressed)
+				tryAcceptAutoFill();
+			else if (_window->getKey(_keyPageUp).justPressed || _window->getKey(_keyPageUp).isRepeating)
+				pageUpOutput();
+			else if (_window->getKey(_keyPageDown).justPressed || _window->getKey(_keyPageDown).isRepeating)
+				pageDownOutput();
 		}
 
 		void draw()
@@ -226,21 +241,154 @@ namespace alvere::console
 			if (!_shown)
 				return;
 
-			glClear(GL_DEPTH_BUFFER_BIT);
+			float inputXOffset = _fontFaceBitmap->getTextSize(_inputPre).x;
+			float caretXOffset = _fontFaceBitmap->getTextSize(_input.substr(0, _caretPosition)).x;
+
+			_spriteBatcher->begin(_projection);
+
+			_spriteBatcher->submit(*_fontFaceBitmap, _inputPre.c_str(), Vector2(3.0f, 6.0f));
+			_spriteBatcher->submit(*_fontFaceBitmap, _input.c_str(), Vector2(3.0f + inputXOffset, 6.0f));
+			
+			if (_caretIsVisible)
+				_spriteBatcher->submit(*_fontFaceBitmap, "_", Vector2(3.0f + inputXOffset + caretXOffset, 6.0f));
+
+			int lineCount = 0;
+			for (int i = _outputPageIndex * _maxOutputLineCount; i < _output.size() && lineCount < _maxOutputLineCount; ++i, ++lineCount)
+			{
+				_spriteBatcher->submit(*_fontFaceBitmap, _output[_output.size() - 1 - i], Vector2(3.0f, 6.0f + _fontFaceBitmap->getFontFaceHeight() * (lineCount + 1)));
+			}
 
 			_shaderProgram->bind();
-
+			_shaderProgram->sendUniformInt1("u_outputLineCount", lineCount);
 			_vao->Bind();
 			ALV_LOG_OPENGL_CALL(glDrawArrays(GL_TRIANGLES, 0, 18));
 
-			_spriteBatcher->begin(_projection);
-			_spriteBatcher->submit(*_fontFace.getBitmap(18), "hello world", Vector2(0.0f, 0.0f));
 			_spriteBatcher->end();
 		}
 
-		void submitCommand()
-		{
+		// private
 
+		void submitInput()
+		{
+			_output.emplace_back(_input);
+			_inputHistory.emplace_back(_input);
+
+			std::string output = submitCommand(_input);
+
+			if (!output.empty())
+			{
+				std::vector<std::string> lines = utils::splitString(output, '\n');
+				_output.insert(_output.end(), lines.begin(), lines.end());
+			}
+
+			resetCaretVisibility();
+
+			clearInput();
 		}
+
+		void viewHistoryBack()
+		{
+			// todo
+		}
+
+		void viewHistoryForward()
+		{
+			// todo
+		}
+
+		void moveCaretLeft()
+		{
+			resetCaretVisibility();
+
+			if (_caretPosition > 0)
+				--_caretPosition;
+		}
+
+		void moveCaretRight()
+		{
+			resetCaretVisibility();
+
+			if (_caretPosition < _input.size())
+				++_caretPosition;
+		}
+
+		void eraseCharLeft()
+		{
+			resetCaretVisibility();
+
+			if (_caretPosition == 0)
+				return;
+
+			_input.erase(_input.begin() + _caretPosition - 1);
+
+			moveCaretLeft();
+		}
+
+		void eraseCharRight()
+		{
+			resetCaretVisibility();
+
+			if (_caretPosition == _input.size())
+				return;
+
+			_input.erase(_input.begin() + _caretPosition);
+		}
+
+		void tryViewAutoFill()
+		{
+			// todo: pressing tab will try and display the next possible auto fill value
+		}
+
+		void tryAcceptAutoFill()
+		{
+			// todo: pressing space when an autofilloption is displayed will accept the auto fill
+		}
+
+		void pageUpOutput()
+		{
+			if ((unsigned int)_output.size() - (_outputPageIndex * _maxOutputLineCount) > _maxOutputLineCount)
+				++_outputPageIndex;
+		}
+
+		void pageDownOutput()
+		{
+			if (_outputPageIndex == 0)
+				return;
+
+			--_outputPageIndex;
+		}
+
+		void receiveInput(unsigned int utfCodePoint)
+		{
+			if (!_shown)
+				return;
+
+			resetCaretVisibility();
+
+			char c = (char)utfCodePoint;
+
+			_input.insert(_input.begin() + _caretPosition, c);
+
+			moveCaretRight();
+		}
+
+		void clearInput()
+		{
+			_input = "";
+			_caretPosition = 0;
+
+			resetCaretVisibility();
+		}
+
+		void resetCaretVisibility()
+		{
+			_caretIsVisible = true;
+			_timeUntilCaretToggle = _caretFlashSpeed;
+		}
+	}
+
+	std::string submitCommand(const std::string & command)
+	{
+		return "";
 	}
 }

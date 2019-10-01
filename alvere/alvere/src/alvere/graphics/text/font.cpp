@@ -217,6 +217,18 @@ namespace alvere
 		return &iter->second;
 	}
 
+	Vector2 Font::Face::Bitmap::getTextSize(const std::string & text) const
+	{
+		Vector2 size;
+
+		size.y = getFontFaceHeight();
+
+		for (const char & c : text)
+			size.x += getGlyph((unsigned long)c)->advance;
+
+		return size;
+	}
+
 	Font::Face::Face(const char * fontFilepath)
 		: m_name("INVALID FONT"), m_resourceFilepath(fontFilepath), m_fontStyle(Font::Style::Regular)
 	{

@@ -21,7 +21,11 @@ namespace alvere
 	Application::Application()
 		: m_window(Window::New()), m_targetFrameRate(60.0f), m_running(true)
 	{
-		//m_window->setEventCallback(ALV_EVENT_BIND_FUNC(Application::onEvent));
+		m_windowCloseEventHandler.setFunction([&]() {
+			m_running = false;
+		});
+
+		*m_window->getEvent<WindowCloseEvent>() += m_windowCloseEventHandler;
 
 		console::gui::init(m_window.get());
 	}
@@ -73,9 +77,9 @@ namespace alvere
 
 				render_commands::Clear();
 
-				console::gui::draw();
-
 				render();
+
+				console::gui::draw();
 
 				m_window->swapBuffers();
 			}

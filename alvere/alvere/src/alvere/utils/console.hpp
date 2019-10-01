@@ -51,5 +51,7 @@ namespace alvere
 
 			void draw();
 		}
+
+		std::string submitCommand(const std::string & command);
 	}
 }

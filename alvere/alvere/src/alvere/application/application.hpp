@@ -30,6 +30,8 @@ namespace alvere
 	private:
 
 		bool m_running;
+
+		WindowCloseEvent::Handler m_windowCloseEventHandler;
 	};
 
 	extern Application * NewApplication();
