@@ -1,4 +1,5 @@
 #include <chrono>
+#include <memory>
 
 #include <glfw/glfw3.h>
 
@@ -18,6 +19,8 @@
 
 namespace alvere
 {
+	static std::unique_ptr<console::Command> s_quitCommand;
+
 	Application::Application()
 		: m_window(Window::New()), m_targetFrameRate(60.0f), m_running(true)
 	{
@@ -28,6 +31,14 @@ namespace alvere
 		*m_window->getEvent<WindowCloseEvent>() += m_windowCloseEventHandler;
 
 		console::gui::init(m_window.get());
+
+		s_quitCommand = std::make_unique<console::Command>("quit", "Quits the application.", std::vector<console::Command::Param *>{}, [&](std::vector<const console::Command::Arg *> args) -> std::string
+		{
+			m_running = false;
+			return "";
+		});
+
+		console::registerCommand(*s_quitCommand);
 	}
 
 	void Application::run()

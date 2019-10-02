@@ -64,6 +64,8 @@ namespace alvere
 			{
 			public:
 
+				virtual Param * clone() const = 0;
+
 				virtual bool validateArg(const Arg * arg, std::string & output) const;
 
 				inline std::type_index getTypeIndex() const
@@ -88,7 +90,7 @@ namespace alvere
 
 			protected:
 
-				Param(const std::string & name, const std::string & description, bool isOptional, std::type_index typeIndex, const char * typeString);
+				Param(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString);
 
 				std::type_index m_typeIndex;
 
@@ -110,9 +112,11 @@ namespace alvere
 			{
 			public:
 
-				TParam(const char * name, const char * description, bool isOptional)
-					: Param(name, description, isOptional, typeid(unsigned int), "uint")
+				TParam(const char * name, const char * description, bool isRequired)
+					: Param(name, description, isRequired, typeid(unsigned int), "uint")
 				{ }
+
+				Param * clone() const override { return new TParam<unsigned int>(*this); }
 			};
 
 			template <>
@@ -120,9 +124,11 @@ namespace alvere
 			{
 			public:
 
-				TParam(const char * name, const char * description, bool isOptional)
-					: Param(name, description, isOptional, typeid(int), "int")
+				TParam(const char * name, const char * description, bool isRequired)
+					: Param(name, description, isRequired, typeid(int), "int")
 				{ }
+
+				Param * clone() const override { return new TParam<int>(*this); }
 			};
 
 			template <>
@@ -130,9 +136,11 @@ namespace alvere
 			{
 			public:
 
-				TParam(const char * name, const char * description, bool isOptional)
-					: Param(name, description, isOptional, typeid(float), "flt")
+				TParam(const char * name, const char * description, bool isRequired)
+					: Param(name, description, isRequired, typeid(float), "flt")
 				{ }
+
+				Param * clone() const override { return new TParam<float>(*this); }
 			};
 
 			template <>
@@ -140,9 +148,11 @@ namespace alvere
 			{
 			public:
 
-				TParam(const char * name, const char * description, bool isOptional)
-					: Param(name, description, isOptional, typeid(std::string), "str")
+				TParam(const char * name, const char * description, bool isRequired)
+					: Param(name, description, isRequired, typeid(std::string), "str")
 				{ }
+
+				Param * clone() const override { return new TParam<std::string>(*this); }
 			};
 
 			class Arg
@@ -186,11 +196,40 @@ namespace alvere
 
 			Command(const char * name, const char * description, std::vector<Param *> params, Function f);
 
+			~Command();
+
+			inline const std::string & getName() const
+			{
+				return m_name;
+			}
+
+			inline const std::string & getDescription() const
+			{
+				return m_description;
+			}
+
+			inline const std::string & getSignature() const
+			{
+				return m_signature;
+			}
+
+			inline const std::vector<Param *> & getParams() const
+			{
+				return m_params;
+			}
+
+			std::string operator()(std::vector<const Arg *> args) const
+			{
+				return m_f(args);
+			}
+
 		private:
 
 			std::string m_name;
 
 			std::string m_description;
+
+			std::string m_signature;
 
 			std::vector<Param *> m_params;
 

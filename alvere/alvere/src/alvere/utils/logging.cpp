@@ -1,3 +1,5 @@
+#include "alvere/utils/logging.hpp"
+
 #include <chrono>
 #include <ctime>
 #include <fstream>
@@ -10,7 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "alvere/utils/logging.hpp"
+#include "alvere/utils/console.hpp"
 
 #define ALV_LOG_TIMESTAMP_FMT "[%X]"
 #define ALV_LOG_PREFIXSTRING_DBUG "[## Debug ##] "
@@ -35,16 +37,31 @@ namespace alvere
 	static std::unordered_map<LogType, std::ostringstream> s_LogOutStreams;
 	static LogType s_LastUsedLogType = LogType::Trace;
 	static __time64_t s_ClockTime;
+	static bool s_isInit;
 #if defined(ALV_LOG_OUTFILE)
 	static std::ofstream s_OutFile;
 #endif
+	static std::unique_ptr<console::Command> s_logCommand;
 
 	void init()
 	{
+		if (s_isInit)
+			return;
+		s_isInit = true;
+
 #if defined(ALV_LOG_OUTFILE)
 		s_OutFile = std::ofstream(ALV_LOG_OUTFILE);
 		std::cout.rdbuf(s_OutFile.rdbuf());
 #endif
+
+		s_logCommand = std::make_unique<console::Command>("log", "Log text to the info log buffer.", std::vector<console::Command::Param *> {
+			&console::Command::TParam<std::string>("text", "The text that will be submitted to the info log buffer.", true)
+			}, [&](std::vector<const console::Command::Arg *> args) -> std::string
+		{
+			return "NOT IMPLEMENTED!";
+		});
+
+		console::registerCommand(*s_logCommand);
 	}
 
 	std::string FormatString(const char* format, va_list args)
@@ -63,9 +80,7 @@ namespace alvere
 
 	void NewLog(LogType type, std::string message)
 	{
-#if defined(ALV_LOG_OUTFILE)
-		if (!s_OutFile.is_open()) Init();
-#endif
+		if (!s_isInit) init();
 
 		s_LastUsedLogType = type;
 

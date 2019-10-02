@@ -1,5 +1,6 @@
 #include "alvere/utils/console.hpp"
 
+#include <memory>
 #include <sstream>
 
 #include <glad/gl.h>
@@ -39,9 +40,22 @@ namespace alvere::console
 	}
 
 	Command::Command(const char * name, const char * description, std::vector<Param *> params, Function f)
-		: m_name(name), m_description(description), m_params(params), m_f(f)
+		: m_name(name), m_description(description), m_f(f)
 	{
+		m_signature = m_name;
 
+		m_params.resize(params.size());
+		for (int i = 0; i < params.size(); ++i)
+		{
+			m_params[i] = params[i]->clone();
+			m_signature += " " + m_params[i]->getDetailedName();
+		}
+	}
+
+	Command::~Command()
+	{
+		for (int i = 0; i < m_params.size(); ++i)
+			delete m_params[i];
 	}
 
 	std::vector<const Command *> _commands;
@@ -59,11 +73,23 @@ namespace alvere::console
 		Asset<SpriteBatcher> _spriteBatcher;
 		Font::Face _fontFace("res/fonts/consola.ttf");
 		const Font::Face::Bitmap * _fontFaceBitmap;
-		unsigned int _fontSize = 18;
-		unsigned int _maxOutputLineCount = 9;
+		unsigned int _fontSize = 14;
+		unsigned int _maxOutputLineCountShrunk = 14;
+		unsigned int _maxOutputLineCountExpanded = 48;
+		unsigned int _maxOutputLineCount = _maxOutputLineCountShrunk;
 
 		Window * _window;
 		CharInputEvent::Handler _charInputEventHandler;
+
+		std::vector<std::string> _output;
+		unsigned int _outputPageIndex = 0;
+		std::vector<std::string> _inputHistory;
+		std::string _inputPre = "> ";
+		std::string _input;
+		unsigned int _caretPosition;
+		bool _caretIsVisible = true;
+		float _caretFlashSpeed = 0.5f;
+		float _timeUntilCaretToggle = _caretFlashSpeed;
 
 		Key _keyShowHide = Key::BackQuote;
 		Key _keySubmitCommand = Key::Enter;
@@ -78,17 +104,11 @@ namespace alvere::console
 		Key _keyPageUp = Key::PageUp;
 		Key _keyPageDown = Key::PageDown;
 
-		std::vector<std::string> _output;
-		unsigned int _outputPageIndex = 0;
-		std::vector<std::string> _inputHistory;
-		std::string _inputPre = "alvere:>";
-		std::string _input;
-		unsigned int _caretPosition;
-		bool _caretIsVisible = true;
-		float _caretFlashSpeed = 0.5f;
-		float _timeUntilCaretToggle = _caretFlashSpeed;
-
-		//Command _helpCommand;
+		std::unique_ptr<Command> _help;
+		std::unique_ptr<Command> _clearConsole;
+		std::unique_ptr<Command> _expandConsole;
+		std::unique_ptr<Command> _shrinkConsole;
+		std::unique_ptr<Command> _alias;
 
 		void submitInput();
 		void viewHistoryBack();
@@ -109,6 +129,54 @@ namespace alvere::console
 		{
 			if (_initialised)
 				return;
+
+			_help = std::make_unique<Command>("help", "Displays a list of all of the available commands.", std::vector<Command::Param *> {
+				&Command::TParam<std::string>("command name", "The name of the command to detail.", false)
+				}, [&](std::vector<const Command::Arg *> args) -> std::string
+			{
+				std::string output("Below is a list of all of the available commands.To see more information about a particular command, use help with the name of the command.\n\n[] : Optional parameter.\n<> : Required parameter.\n() : Parameter type.\n\n");
+
+				for (const Command * command : _commands)
+					output += command->getSignature() + " : " + command->getDescription() + "\n";
+
+				return output;
+			});
+
+			_clearConsole = std::make_unique<Command>("console.clear", "Clears the console output.", std::vector<Command::Param *> {}, [&](std::vector<const Command::Arg *> args) -> std::string
+			{
+				_output.clear();
+				return "";
+			});
+
+			_expandConsole = std::make_unique<Command>("console.expand", "Expands the console window.", std::vector<Command::Param *> {}, [&](std::vector<const Command::Arg *> args) -> std::string
+			{
+				_maxOutputLineCount = _maxOutputLineCountExpanded;
+				_shaderProgram->bind();
+				_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
+				return "";
+			});
+
+			_shrinkConsole = std::make_unique<Command>("console.shrink", "Shrinks the console window.", std::vector<Command::Param *> {}, [&](std::vector<const Command::Arg *> args) -> std::string
+			{
+				_maxOutputLineCount = _maxOutputLineCountShrunk;
+				_shaderProgram->bind();
+				_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
+				return "";
+			});
+
+			_alias = std::make_unique<Command>("alias", "Creates an alias for some console input.", std::vector<Command::Param *> {
+				&Command::TParam<std::string>("alias", "The alias name to create.", true),
+				&Command::TParam<std::string>("string", "The string of input which will be aliased.", true)
+				}, [&](std::vector<const Command::Arg *> args) -> std::string
+			{
+				return "NOT IMPLEMENTED!";
+			});
+
+			registerCommand(*_help);
+			registerCommand(*_clearConsole);
+			registerCommand(*_expandConsole);
+			registerCommand(*_shrinkConsole);
+			registerCommand(*_alias);
 
 			_fontFaceBitmap = _fontFace.getBitmap(_fontSize);
 
@@ -138,9 +206,9 @@ namespace alvere::console
 							discard;
 
 						if (y <= u_lineHeight)
-							f_colour = vec4(u_colour, 0.85f);
+							f_colour = vec4(u_colour, 0.925f);
 						else
-							f_colour = vec4(u_colour, 0.5f);
+							f_colour = vec4(u_colour, 0.8f);
 					}
 				)");
 
@@ -295,6 +363,7 @@ namespace alvere::console
 
 		void submitInput()
 		{
+			_output.emplace_back("");
 			_output.emplace_back(_inputPre + _input);
 			_inputHistory.emplace_back(_input);
 
@@ -302,7 +371,7 @@ namespace alvere::console
 
 			if (!output.empty())
 			{
-				std::vector<std::string> lines = utils::splitString(output, '\n');
+				std::vector<std::string> lines = utils::splitString(output, '\n', true);
 				_output.insert(_output.end(), lines.begin(), lines.end());
 			}
 
@@ -424,7 +493,7 @@ namespace alvere::console
 	{
 		auto iter = std::find(_commands.begin(), _commands.end(), &command);
 
-		if (iter != _commands.end())
+		if (iter == _commands.end())
 			return;
 
 		_commands.erase(iter);
@@ -432,6 +501,21 @@ namespace alvere::console
 
 	std::string submitCommand(const std::string & command)
 	{
-		return "";
+		std::vector<std::string> parts = utils::splitString(command, ' ');
+
+		if (parts.size() == 0)
+			return "";
+
+		const std::string & commandName = parts[0];
+
+		for (const Command * command : _commands)
+		{
+			if (command->getName() == commandName)
+			{
+				return (*command)({});
+			}
+		}
+
+		return "No command found for 'test123'. Type 'help' for a list of available commands.";
 	}
 }
