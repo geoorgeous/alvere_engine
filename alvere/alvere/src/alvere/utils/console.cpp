@@ -20,6 +20,32 @@
 
 namespace alvere::console
 {
+	bool Command::Param::validateArg(const Arg * arg, std::string & output) const
+	{
+		if (arg->getTypeIndex() != m_typeIndex)
+		{
+			output = "Argument types are not compatible.";
+			return false;
+		}
+		return true;
+	}
+
+	Command::Param::Param(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString)
+		: m_name(name), m_description(description), m_isRequired(isRequired), m_typeIndex(typeIndex)
+	{
+		m_detailedName = isRequired ? "<()>" : "[()]";
+		m_detailedName.insert(2, typeString);
+		m_detailedName.insert(1, m_name);
+	}
+
+	Command::Command(const char * name, const char * description, std::vector<Param *> params, Function f)
+		: m_name(name), m_description(description), m_params(params), m_f(f)
+	{
+
+	}
+
+	std::vector<const Command *> _commands;
+
 	namespace gui
 	{
 		bool _initialised = false;
@@ -28,12 +54,13 @@ namespace alvere::console
 		Asset<ShaderProgram> _shaderProgram;
 		VertexBuffer * _vbo;
 		graphics_api::opengl::VertexArray * _vao;
+		Matrix4 _projection;
+
+		Asset<SpriteBatcher> _spriteBatcher;
 		Font::Face _fontFace("res/fonts/consola.ttf");
 		const Font::Face::Bitmap * _fontFaceBitmap;
-		Asset<SpriteBatcher> _spriteBatcher;
 		unsigned int _fontSize = 18;
 		unsigned int _maxOutputLineCount = 9;
-		Matrix4 _projection;
 
 		Window * _window;
 		CharInputEvent::Handler _charInputEventHandler;
@@ -54,12 +81,14 @@ namespace alvere::console
 		std::vector<std::string> _output;
 		unsigned int _outputPageIndex = 0;
 		std::vector<std::string> _inputHistory;
-		std::string _inputPre = ">: ";
+		std::string _inputPre = "alvere:>";
 		std::string _input;
 		unsigned int _caretPosition;
 		bool _caretIsVisible = true;
 		float _caretFlashSpeed = 0.5f;
 		float _timeUntilCaretToggle = _caretFlashSpeed;
+
+		//Command _helpCommand;
 
 		void submitInput();
 		void viewHistoryBack();
@@ -72,7 +101,7 @@ namespace alvere::console
 		void tryAcceptAutoFill();
 		void pageUpOutput();
 		void pageDownOutput();
-		void receiveInput(unsigned int);
+		void onCharInput(unsigned int);
 		void clearInput();
 		void resetCaretVisibility();
 
@@ -121,7 +150,7 @@ namespace alvere::console
 			_shaderProgram->build();
 
 			_window = window;
-			_charInputEventHandler.setFunction(receiveInput);
+			_charInputEventHandler.setFunction(onCharInput);
 			_window->getEvent<CharInputEvent>()->subscribe(_charInputEventHandler);
 
 			unsigned int width = _window->getWidth();
@@ -204,9 +233,7 @@ namespace alvere::console
 			if (!_shown)
 				return;
 
-			_timeUntilCaretToggle -= deltaTime;
-
-			if (_timeUntilCaretToggle <= 0.0f)
+			if ((_timeUntilCaretToggle -= deltaTime) <= 0.0f)
 			{
 				_timeUntilCaretToggle = _caretFlashSpeed;
 				_caretIsVisible = !_caretIsVisible;
@@ -266,11 +293,9 @@ namespace alvere::console
 			_spriteBatcher->end();
 		}
 
-		// private
-
 		void submitInput()
 		{
-			_output.emplace_back(_input);
+			_output.emplace_back(_inputPre + _input);
 			_inputHistory.emplace_back(_input);
 
 			std::string output = submitCommand(_input);
@@ -358,16 +383,14 @@ namespace alvere::console
 			--_outputPageIndex;
 		}
 
-		void receiveInput(unsigned int utfCodePoint)
+		void onCharInput(unsigned int utfCodePoint)
 		{
 			if (!_shown)
 				return;
 
 			resetCaretVisibility();
 
-			char c = (char)utfCodePoint;
-
-			_input.insert(_input.begin() + _caretPosition, c);
+			_input.insert(_input.begin() + _caretPosition, (char)utfCodePoint);
 
 			moveCaretRight();
 		}
@@ -385,6 +408,26 @@ namespace alvere::console
 			_caretIsVisible = true;
 			_timeUntilCaretToggle = _caretFlashSpeed;
 		}
+	}
+
+	void registerCommand(const Command & command)
+	{
+		auto iter = std::find(_commands.begin(), _commands.end(), &command);
+
+		if (iter != _commands.end())
+			return;
+
+		_commands.emplace_back(&command);
+	}
+
+	void unregisterCommand(const Command & command)
+	{
+		auto iter = std::find(_commands.begin(), _commands.end(), &command);
+
+		if (iter != _commands.end())
+			return;
+
+		_commands.erase(iter);
 	}
 
 	std::string submitCommand(const std::string & command)
