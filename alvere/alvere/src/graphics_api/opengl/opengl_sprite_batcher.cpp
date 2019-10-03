@@ -134,7 +134,7 @@ namespace alvere::graphics_api::opengl
 	void SpriteBatcher::Draw()
 	{
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_DEPTH_TEST);
 
 		m_VBO->SetSubData(0, m_VertexData, m_SpriteCount * sizeof(float) * s_vertexDataLayout.GetStride());
@@ -151,6 +151,8 @@ namespace alvere::graphics_api::opengl
 
 		m_VAO.Bind();
 		ALV_LOG_OPENGL_CALL(glDrawElements(GL_TRIANGLES, m_SpriteCount * 6, GL_UNSIGNED_INT, nullptr));
+
+		glDisable(GL_BLEND);
 	}
 
 	void SpriteBatcher::Clear()

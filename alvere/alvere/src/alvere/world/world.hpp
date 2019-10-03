@@ -48,7 +48,7 @@ namespace alvere
 		T & GetComponent(const Entity & e) const;
 
 		template <typename T>
-		void AddSystem();
+		T * AddSystem();
 
 		template <typename T>
 		void RemoveSystem();
@@ -138,7 +138,7 @@ namespace alvere
 	}
 
 	template <typename T>
-	void World::AddSystem()
+	T * World::AddSystem()
 	{
 		T * t = new T();
 		bool added = false;
@@ -157,6 +157,8 @@ namespace alvere
 		{
 			delete t;
 		}
+
+		return t;
 	}
 
 	template <typename T>

@@ -20,7 +20,7 @@ namespace alvere
 		{
 		}
 
-		virtual void Update(World & world, float deltaTime) override final
+		virtual void Update(World & world, float deltaTime) override
 		{
 			world.QueryArchetypes(m_UpdateQuery, m_Archetypes);
 

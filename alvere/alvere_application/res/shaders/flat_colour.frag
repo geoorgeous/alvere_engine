@@ -14,5 +14,5 @@ out vec4 f_colour;
 
 void main()
 {
-	f_colour = texture(u_albedo, v_texCoords.xy);// vec4(u_colour, 1.0);
+	f_colour = texture(u_albedo, v_texCoords.xy);
 }
