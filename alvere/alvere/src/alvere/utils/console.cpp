@@ -58,6 +58,23 @@ namespace alvere::console
 			delete m_params[i];
 	}
 
+	bool Command::validateArgStrings(const std::vector<std::string> & argStrings, std::string & output) const
+	{
+		if (argStrings.size() > m_params.size())
+		{
+			output = "Too many arguments provided for this command.";
+			return false;
+		}
+
+		for (int i = 0; i < argStrings.size(); ++i)
+		{
+			const std::string & arg = argStrings[i];
+
+			// try parse the arg for params that don't have args yet...
+			// if we get to a required arg that we cant parge then fail
+		}
+	}
+
 	std::vector<const Command *> _commands;
 
 	namespace gui

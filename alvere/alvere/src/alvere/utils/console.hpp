@@ -218,6 +218,8 @@ namespace alvere
 				return m_params;
 			}
 
+			bool validateArgStrings(const std::vector<std::string> & argStrings, std::string & output) const;
+
 			std::string operator()(std::vector<const Arg *> args) const
 			{
 				return m_f(args);

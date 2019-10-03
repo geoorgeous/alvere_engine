@@ -23,7 +23,7 @@
  * mover/controller component+systems?
  * rich text formatting
  * command console work
- * 
+ * command console argument parsing
  */
 
 using namespace alvere;
