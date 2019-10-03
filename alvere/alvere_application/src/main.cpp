@@ -8,10 +8,15 @@
 #include <alvere/math/constants.hpp>
 #include <alvere/math/matrix/transformations.hpp>
 #include <alvere/utils/file_reader.hpp>
-#include <alvere/world/scene.hpp>
-#include <alvere/world/entity_component_systems/scene_renderer.hpp>
-#include <alvere/world/entity_components/ec_rendered_mesh.hpp>
-#include <alvere/world/entity_components/ec_camera.hpp>
+#include <alvere/world/world.hpp>
+#include <alvere/world/ecs_testing.hpp>
+#include <alvere/world/application/c_transform.hpp>
+#include <alvere/world/application/c_mover.hpp>
+#include <alvere/world/application/c_saveable.hpp>
+#include <alvere/world/application/mover_system.hpp>
+//#include <alvere/world/entity_component_systems/scene_renderer.hpp>
+//#include <alvere/world/entity_components/ec_rendered_mesh.hpp>
+//#include <alvere/world/entity_components/ec_camera.hpp>
 
 #include "tile_drawer.hpp"
 #include "world_cell.hpp"
@@ -30,7 +35,7 @@ struct AlvereApplication : public Application
 	Material * material;
 	MaterialInstance * m_materialInstance;
 
-	Scene scene;
+	World world;
 	Camera sceneCamera;
 	Camera uiCamera;
 	Asset<SpriteBatcher> m_spriteBatcher;
@@ -44,6 +49,8 @@ struct AlvereApplication : public Application
 	AlvereApplication() : Application(),
 		m_tileDrawer("res/img/tilesheet.png")
 	{
+		RunTests();
+
 		m_spriteBatcher = SpriteBatcher::New();
 
 		world_generation::Generate(m_worldCellArea, 0);
@@ -72,15 +79,38 @@ struct AlvereApplication : public Application
 
 		uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
-		scene.addSystem<SceneRenderer>();
 
-		Entity sceneObject = scene.createEntity();
-		scene.addEntityComponent<ECRenderedMesh>(sceneObject);
+		for (int i = 0; i < 10'000; ++i)
+		{
+			Entity e = world.SpawnEntity();
+		
+			//if (rand() % 2)
+			{
+				world.AddComponent<C_Transform>( e );
+				world.GetComponent<C_Transform>( e ).m_X = rand() % 100;
+			}
 
-		Entity cameraEntity = scene.createEntity();
-		scene.addEntityComponent<ECCamera>(cameraEntity);
+			//if (rand() % 2)
+			{
+				world.AddComponent<C_Mover>( e );
+				world.GetComponent<C_Mover>( e ).m_Speed = rand() % 100;
+			}
 
-		scene.destroyEntity(sceneObject);
+			if (rand() % 2)
+			{
+				world.AddComponent<C_Saveable>( e );
+			}
+		}
+
+		world.AddSystem<MoverSystem>();
+
+		//world.AddSystem<SceneRenderer>();
+
+		//Entity sceneObject = world.SpawnEntity<ECRenderedMesh>();
+
+		//Entity cameraEntity = world.SpawnEntity<ECCamera>();
+
+		//world.DestroyEntity(sceneObject);
 
 		/*
 		{
@@ -191,12 +221,12 @@ struct AlvereApplication : public Application
 
 		sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
 
-		scene.update(deltaTime);
+		world.Update(deltaTime);
 	}
 
 	void render() override
 	{
-		scene.draw();
+		world.Render();
 
 		m_spriteBatcher->begin(sceneCamera.GetProjectionViewMatrix());
 		 

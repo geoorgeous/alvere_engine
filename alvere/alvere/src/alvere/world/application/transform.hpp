@@ -13,8 +13,6 @@
 
 namespace alvere
 {
-	struct Vector3;
-
 	/**
 	 * \brief A transform class which can represent a translation, scale, and rotation in 3D space.
 	 */
