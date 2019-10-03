@@ -80,7 +80,7 @@ struct AlvereApplication : public Application
 		uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
 
-		for (int i = 0; i < 10'000; ++i)
+		for (int i = 0; i < 1'000; ++i)
 		{
 			Entity e = world.SpawnEntity();
 		

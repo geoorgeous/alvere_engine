@@ -2,59 +2,62 @@
 
 #include "alvere/world/component/tag_component_provider.hpp"
 
-template <typename T>
-class TagComponent<T>::Provider::iterator
+namespace alvere
 {
-	TagComponent<T>::Provider* m_Provider;
-
-public:
-
-	iterator()
-		: m_Provider( nullptr )
+	template <typename T>
+	class TagComponent<T>::Provider::iterator
 	{
-	}
+		TagComponent<T>::Provider * m_Provider;
 
-	iterator( TagComponent<T>::Provider* provider )
-		: m_Provider( provider )
-	{
-	}
+	public:
 
-	iterator& operator++()
-	{
-		return *this;
-	}
+		iterator()
+			: m_Provider(nullptr)
+		{
+		}
 
-	iterator operator++( int )
-	{
-		iterator retval = *this;
-		++( *this );
-		return retval;
-	}
+		iterator(TagComponent<T>::Provider * provider)
+			: m_Provider(provider)
+		{
+		}
 
-	bool operator==( iterator other ) const
-	{
-		return m_Provider == other.m_Provider;
-	}
+		iterator & operator++()
+		{
+			return *this;
+		}
 
-	bool operator!=( iterator other ) const
-	{
-		return !( *this == other );
-	}
+		iterator operator++(int)
+		{
+			iterator retval = *this;
+			++(*this);
+			return retval;
+		}
 
-	T& operator*()
-	{
-		return static_cast<T&>( m_Provider->GetComponent( 0 ) );
-	}
+		bool operator==(iterator other) const
+		{
+			return m_Provider == other.m_Provider;
+		}
 
-	T* operator->()
-	{
-		return static_cast<T*>( &m_Provider->GetComponent( 0 ) );
-	}
+		bool operator!=(iterator other) const
+		{
+			return !(*this == other);
+		}
 
-	// iterator traits
-	using difference_type = std::size_t;
-	using value_type = T;
-	using pointer = T*;
-	using reference = T&;
-	using iterator_category = std::forward_iterator_tag;
-};
+		T & operator*()
+		{
+			return static_cast<T &>(m_Provider->GetComponent(0));
+		}
+
+		T * operator->()
+		{
+			return static_cast<T *>(&m_Provider->GetComponent(0));
+		}
+
+		// iterator traits
+		using difference_type = std::size_t;
+		using value_type = T;
+		using pointer = T *;
+		using reference = T &;
+		using iterator_category = std::forward_iterator_tag;
+	};
+}

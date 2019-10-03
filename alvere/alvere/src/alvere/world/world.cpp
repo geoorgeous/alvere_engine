@@ -3,49 +3,52 @@
 #include "alvere/world/system/updated_system.hpp"
 #include "alvere/world/system/rendered_system.hpp"
 
-World::World()
+namespace alvere
 {
-	m_Archetypes.emplace( Archetype::Handle::make_handle<>(), new Archetype() );
-}
-
-void World::Update( float deltaTime )
-{
-	for ( auto& system : m_UpdatedSystems )
+	World::World()
 	{
-		system.second->Update( *this, deltaTime );
+		m_Archetypes.emplace(Archetype::Handle::make_handle<>(), new Archetype());
 	}
-}
 
-void World::Render()
-{
-	for ( auto& system : m_RenderedSystems )
+	void World::Update(float deltaTime)
 	{
-		system.second->Render( *this );
-	}
-}
-
-Entity World::SpawnEntity()
-{
-	Entity e;
-	m_Archetypes[ Archetype::Handle::make_handle<>() ]->AddEntity( e );
-	return e;
-}
-
-void World::DestroyEntity( Entity& entity )
-{
-	Archetype* archetype = entity.m_Archetype;
-	archetype->DestroyEntity( entity );
-}
-
-void World::QueryArchetypes( const Archetype::Query& query, std::vector<std::reference_wrapper<Archetype>>& matchingArchetypes ) const
-{
-	matchingArchetypes.clear();
-
-	for ( auto& archetype : m_Archetypes )
-	{
-		if ( query.Matches( *archetype.second ) )
+		for (auto & system : m_UpdatedSystems)
 		{
-			matchingArchetypes.emplace_back( *archetype.second );
+			system.second->Update(*this, deltaTime);
+		}
+	}
+
+	void World::Render()
+	{
+		for (auto & system : m_RenderedSystems)
+		{
+			system.second->Render(*this);
+		}
+	}
+
+	Entity World::SpawnEntity()
+	{
+		Entity e;
+		m_Archetypes[Archetype::Handle::make_handle<>()]->AddEntity(e);
+		return e;
+	}
+
+	void World::DestroyEntity(Entity & entity)
+	{
+		Archetype * archetype = entity.m_Archetype;
+		archetype->DestroyEntity(entity);
+	}
+
+	void World::QueryArchetypes(const Archetype::Query & query, std::vector<std::reference_wrapper<Archetype>> & matchingArchetypes) const
+	{
+		matchingArchetypes.clear();
+
+		for (auto & archetype : m_Archetypes)
+		{
+			if (query.Matches(*archetype.second))
+			{
+				matchingArchetypes.emplace_back(*archetype.second);
+			}
 		}
 	}
 }

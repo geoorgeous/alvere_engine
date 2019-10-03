@@ -1,7 +1,10 @@
 #pragma once
 
-class Component
+namespace alvere
 {
-public:
-	virtual ~Component() {}
-};
+	class Component
+	{
+	public:
+		virtual ~Component() {}
+	};
+}

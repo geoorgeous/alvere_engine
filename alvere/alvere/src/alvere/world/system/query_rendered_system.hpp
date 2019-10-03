@@ -5,34 +5,37 @@
 #include "alvere/world/archetype/archetype_query.hpp"
 #include "alvere/world/archetype/archetype_provider_iterator.hpp"
 
-template <typename... Components>
-class QueryRenderedSystem : public RenderedSystem
+namespace alvere
 {
-	std::vector<std::reference_wrapper<Archetype>> m_Archetypes;
-	Archetype::Query m_RenderQuery;
-
-public:
-
-	QueryRenderedSystem()
-		: m_RenderQuery( Archetype::Query().Include<Components...>() )
+	template <typename... Components>
+	class QueryRenderedSystem : public RenderedSystem
 	{
-	}
+		std::vector<std::reference_wrapper<Archetype>> m_Archetypes;
+		Archetype::Query m_RenderQuery;
 
-	virtual void Render( World& world ) override final
-	{
-		world.QueryArchetypes( m_RenderQuery, m_Archetypes );
+	public:
 
-		for ( std::size_t i = 0; i < m_Archetypes.size(); ++i )
+		QueryRenderedSystem()
+			: m_RenderQuery(Archetype::Query().Include<Components...>())
 		{
-			Archetype& archetype = m_Archetypes[ i ].get();
+		}
 
-			ArchetypeProviderIterator<Components... > iterator( archetype.GetEntityCount(), archetype.GetProvider<Components>()... );
-			for ( ; iterator; ++iterator )
+		virtual void Render(World & world) override final
+		{
+			world.QueryArchetypes(m_RenderQuery, m_Archetypes);
+
+			for (std::size_t i = 0; i < m_Archetypes.size(); ++i)
 			{
-				std::apply( [ this ]( auto&&... args ) { Render( args... ); }, iterator.GetComponents() );
+				Archetype & archetype = m_Archetypes[i].get();
+
+				ArchetypeProviderIterator<Components... > iterator(archetype.GetEntityCount(), archetype.GetProvider<Components>()...);
+				for (; iterator; ++iterator)
+				{
+					std::apply([this](auto && ... args) { Render(args...); }, iterator.GetComponents());
+				}
 			}
 		}
-	}
 
-	virtual void Render( Components&... ) = 0;
-};
+		virtual void Render(Components & ...) = 0;
+	};
+}

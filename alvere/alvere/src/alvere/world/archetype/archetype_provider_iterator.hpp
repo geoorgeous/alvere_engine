@@ -3,43 +3,46 @@
 #include <tuple>
 #include <functional>
 
-template <typename... Components>
-class ArchetypeProviderIterator
+namespace alvere
 {
-public:
-	std::size_t m_EntityCount;
-	std::tuple<typename Components::Provider::iterator...> m_Iterators;
-
-	ArchetypeProviderIterator( std::size_t entityCount, typename Components::Provider&... providers )
-		: m_EntityCount( entityCount )
-		, m_Iterators( providers.begin()... )
+	template <typename... Components>
+	class ArchetypeProviderIterator
 	{
-	}
+	public:
+		std::size_t m_EntityCount;
+		std::tuple<typename Components::Provider::iterator...> m_Iterators;
 
-	ArchetypeProviderIterator& operator++()
-	{
-		m_EntityCount -= 1;
-		std::apply( &ArchetypeProviderIterator::IncrementIterators, m_Iterators );
-		return *this;
-	}
+		ArchetypeProviderIterator(std::size_t entityCount, typename Components::Provider & ... providers)
+			: m_EntityCount(entityCount)
+			, m_Iterators(providers.begin()...)
+		{
+		}
 
-	operator bool() const
-	{
-		return m_EntityCount > 0;
-	}
+		ArchetypeProviderIterator & operator++()
+		{
+			m_EntityCount -= 1;
+			std::apply(&ArchetypeProviderIterator::IncrementIterators, m_Iterators);
+			return *this;
+		}
 
-	static void IncrementIterators( typename Components::Provider::iterator&... iterators )
-	{
-		( ++iterators, ... );
-	}
+		operator bool() const
+		{
+			return m_EntityCount > 0;
+		}
 
-	std::tuple<std::reference_wrapper<Components>...> GetComponents()
-	{
-		return std::apply( &ArchetypeProviderIterator::make_components, m_Iterators );
-	}
+		static void IncrementIterators(typename Components::Provider::iterator & ... iterators)
+		{
+			(++iterators, ...);
+		}
 
-	static std::tuple<std::reference_wrapper<Components>...> make_components( typename Components::Provider::iterator&... iterators )
-	{
-		return std::tuple<std::reference_wrapper<Components>...>( *iterators... );
-	}
-};
+		std::tuple<std::reference_wrapper<Components>...> GetComponents()
+		{
+			return std::apply(&ArchetypeProviderIterator::make_components, m_Iterators);
+		}
+
+		static std::tuple<std::reference_wrapper<Components>...> make_components(typename Components::Provider::iterator & ... iterators)
+		{
+			return std::tuple<std::reference_wrapper<Components>...>(*iterators...);
+		}
+	};
+}

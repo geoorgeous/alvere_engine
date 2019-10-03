@@ -1,8 +1,11 @@
 #pragma once
 
-class System
+namespace alvere
 {
-public:
+	class System
+	{
+	public:
 
-	virtual ~System() {}
-};
+		virtual ~System() {}
+	};
+}

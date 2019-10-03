@@ -7,13 +7,16 @@
 #include "alvere/world/application/c_saveable.hpp"
 #include "alvere/utils/logging.hpp"
 
-class MoverSystem : public QueryUpdatedSystem<C_Transform, C_Mover>
+namespace alvere
 {
-public:
-
-	virtual void Update( C_Transform& transform, C_Mover& mover ) override
+	class MoverSystem : public QueryUpdatedSystem<C_Transform, C_Mover>
 	{
-		//alvere::LogInfo( "Mover system being updated, Position is: %.1f!\n", transform.m_X );
-		transform.m_X += mover.m_Speed;
-	}
-};
+	public:
+
+		virtual void Update(C_Transform & transform, C_Mover & mover) override
+		{
+			//alvere::LogInfo( "Mover system being updated, Position is: %.1f!\n", transform.m_X );
+			transform.m_X += mover.m_Speed;
+		}
+	};
+}

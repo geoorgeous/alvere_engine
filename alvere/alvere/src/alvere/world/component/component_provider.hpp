@@ -4,16 +4,19 @@
 
 #include "alvere/world/component/component.hpp"
 
-class ComponentProvider
+namespace alvere
 {
-public:
+	class ComponentProvider
+	{
+	public:
 
-	virtual ~ComponentProvider() {}
-	virtual ComponentProvider* CloneNew() = 0;
+		virtual ~ComponentProvider() {}
+		virtual ComponentProvider * CloneNew() = 0;
 
-	virtual void Allocate() = 0;
-	virtual void Deallocate( int entityIndex ) = 0;
-	virtual Component& GetComponent( int entityIndex ) = 0;
+		virtual void Allocate() = 0;
+		virtual void Deallocate(int entityIndex) = 0;
+		virtual Component & GetComponent(int entityIndex) = 0;
 
-	virtual void MoveEntityProvider( int entityIndex, ComponentProvider& other ) = 0;
-};
+		virtual void MoveEntityProvider(int entityIndex, ComponentProvider & other) = 0;
+	};
+}

@@ -1,3 +1,6 @@
 #pragma once
 
-void RunTests();
+namespace alvere
+{
+	void RunTests();
+}

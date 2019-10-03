@@ -2,13 +2,16 @@
 
 #include "alvere/world/component/component.hpp"
 
-template <typename T>
-class PooledComponent : public Component
+namespace alvere
 {
-public:
-	class Provider;
+	template <typename T>
+	class PooledComponent : public Component
+	{
+	public:
+		class Provider;
 
-	virtual ~PooledComponent() {};
-};
+		virtual ~PooledComponent() {};
+	};
+}
 
 #include "alvere/world/component/pooled_component_provider.hpp"
