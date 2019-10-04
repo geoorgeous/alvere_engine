@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-//#include "alvere/utils/exceptions.hpp"
+#include "alvere/utils/exceptions.hpp"
 #include "alvere/world/component/component_provider.hpp"
 #include "alvere/world/entity/entity.hpp"
 #include "alvere/world/archetype/version_map.hpp"
@@ -57,7 +57,7 @@ namespace alvere
 	{
 		auto iter = m_Providers.find( typeid( T ) );
 
-		//AlvWasAssert( iter != m_Providers.end(), "[Archetype] Attempted to get a component provider that is not contained in this archetype" );
+		AlvAssert( iter != m_Providers.end(), "Attempted to get a component provider that is not contained in this archetype" );
 
 		int mappedIndex = (int) m_VersionMap.GetMapping( entity.m_MappingHandle );
 		typename T::Provider* typedProvider = static_cast<typename T::Provider*>( iter->second );
@@ -67,14 +67,14 @@ namespace alvere
 	template <typename T>
 	void Archetype::AddProvider()
 	{
-		//AlvWasAssert( m_Providers.find( typeid( T ) ) == m_Providers.end(), "[Archetype] Attempted to add a provider we already contain" );
+		AlvAssert( m_Providers.find( typeid( T ) ) == m_Providers.end(), "Attempted to add a provider we already contain" );
 		m_Providers.emplace( typeid( T ), new typename T::Provider() );
 	}
 
 	template <typename T>
 	typename T::Provider& Archetype::GetProvider()
 	{
-		//AlvWasAssert( m_Providers.find( typeid( T ) ) != m_Providers.end(), "[Archetype] Attmpted to get a provider not in this archetype" );
+		AlvAssert( m_Providers.find( typeid( T ) ) != m_Providers.end(), "Attmpted to get a provider not in this archetype" );
 		return static_cast<typename T::Provider&>( *m_Providers[ typeid( T ) ] );
 	}
 

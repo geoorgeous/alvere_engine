@@ -8,7 +8,7 @@ namespace alvere
 {
 	void SpriteBatcher::begin(const alvere::Matrix4& transformationMatrix, SortMode sortMode)
 	{
-		AlvWasAssert(!m_HasBegun, "SpriteBatcher.Begin() cannot be called before the current SpriteBatcher batch has ended.");
+		AlvAssert(!m_HasBegun, "SpriteBatcher.Begin() cannot be called before the current SpriteBatcher batch has ended.");
 
 		m_HasBegun = true;
 		m_TransformationMatrix = &transformationMatrix;
