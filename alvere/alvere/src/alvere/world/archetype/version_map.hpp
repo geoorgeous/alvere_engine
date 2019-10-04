@@ -2,7 +2,7 @@
 
 #include <vector>
 
-//#include "alvere/utils/exceptions.hpp"
+#include "alvere/utils/exceptions.hpp"
 
 namespace alvere
 {
@@ -85,7 +85,8 @@ namespace alvere
 
 		std::size_t GetMapping(const Handle & handle) const
 		{
-			//AlvWasAssert( IsMappingValid( handle ), "[VersionMap] Must check IsMappingValid() before attempting to get the mapping" );
+			AlvAssert(IsMappingValid( handle ), "Must check IsMappingValid() before attempting to get the mapping");
+
 			return m_Mappings[handle.m_Index].m_Index;
 		}
 

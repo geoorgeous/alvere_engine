@@ -1,14 +1,16 @@
+#pragma once
+
 #include <stdexcept>
 #include <string>
 
 #include "alvere/utils/logging.hpp"
 
 #ifdef NDEBUG
-#define AlvAssert(message)
-#define AlvWasAssert(assertion, message) assertion
+#define AlvUnreachable(message)
+#define AlvAssert(assertion, message) assertion
 #else
-#define AlvAssert(message) throw ::alvere::AssertionFailedException(__FILE__, __LINE__, message)
-#define AlvWasAssert(assertion, message) (void)((assertion) || (throw ::alvere::AssertionFailedException(#assertion, __FILE__, __LINE__, message),0))
+#define AlvUnreachable(message) throw ::alvere::UnreachableCodeException(__FILE__, __LINE__, message)
+#define AlvAssert(assertion, message) (void)((assertion) || (throw ::alvere::AssertionFailedException(#assertion, __FILE__, __LINE__, message),0))
 #endif
 
 #define AlvThrow(message, ...) throw ::alvere::Exception(__FILE__, __LINE__, ::alvere::FormatString(message, ##__VA_ARGS__))
@@ -31,6 +33,16 @@ namespace alvere
 
 	protected:
 		virtual std::stringstream& GenerateFullReport(std::stringstream& ss) const;
+	};
+
+	class UnreachableCodeException : public Exception
+	{
+	public:
+
+		UnreachableCodeException(const char * file, int line, const std::string & message = "");
+
+	protected:
+		std::stringstream & GenerateFullReport(std::stringstream & ss) const override;
 	};
 
 	class AssertionFailedException : public Exception

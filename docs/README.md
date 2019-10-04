@@ -2,11 +2,11 @@
 
 Alvere is intended to be a single-library game engine which provides API for creating 3D and 2D games. It is currently in the very early stages of development.
 
-There exists a [test application](https://github.com/george-mcdonagh/alvere_engine/tree/master/alvere/alvere_application) in the repo which is being used as a sandbox for the Alvere engine.
+There exists a [test application](https://github.com/george-mcdonagh/alvere_engine/tree/master/alvere/alvere_application) in the repo which is being used as a sandbox for the Alvere engine. **This uses a bunch of resource which currently aren't being stored on the repo. You can download the archive for these [here](https://drive.google.com/file/d/11Dz9fz7qMgKwgXxKrLdUUyGEYkzEYfOR/view)** and extract them in to the `alvere/alvere_application/res` folder.
 
 ### Dependencies
 
-The repo is missing the third party libary binaries as they are too large. They can be downloaded separately [here](https://drive.google.com/uc?id=1jVAdz4ckPYVXvqeiaK1tjmpgNbDu-rFz&export=download). Download the zip file, extract its contents, and place the extracted `lib` folder in `alvere/alvere/dependencies`. All necessary linking should already be setup in the project.
+**The repo is missing the third party libary binaries as they are too large. They can be downloaded separately [here](https://drive.google.com/uc?id=1jVAdz4ckPYVXvqeiaK1tjmpgNbDu-rFz&export=download).** Download the zip file, extract its contents, and place the extracted `lib` folder in `alvere/alvere/dependencies`. All necessary linking should already be setup in the project.
 
 Currently the engine depends on the following third party libraries:
 

@@ -12,8 +12,7 @@ namespace alvere
 		if (m_FullReport.empty())
 		{
 			std::stringstream ss;
-			GenerateFullReport(ss);
-			m_FullReport = ss.str();
+			m_FullReport = GenerateFullReport(ss).str();
 		}
 
 		return m_FullReport.c_str();
@@ -21,12 +20,25 @@ namespace alvere
 
 	std::stringstream& Exception::GenerateFullReport(std::stringstream& ss) const
 	{
-		if (!m_Message.empty())
-			ss << m_Message << " ";
 		if (ss.rdbuf()->in_avail() == 0)
-			ss << "Exception thrown: ";
-		ss << "\n\tFile: " << m_File << ", line " << m_Line << ".";
+			ss << "Exception thrown.";
+
+		ss << " Location: " << m_File << "::" << m_Line << ".";
+
+		if (!m_Message.empty())
+			ss << " Message: " << m_Message;
+
 		return ss;
+	}
+
+	UnreachableCodeException::UnreachableCodeException(const char * file, int line, const std::string & message)
+		: Exception(file, line, message)
+	{ }
+
+	std::stringstream & UnreachableCodeException::GenerateFullReport(std::stringstream & ss) const
+	{
+		ss << "Unreachable code detected.";
+		return Exception::GenerateFullReport(ss);
 	}
 
 	AssertionFailedException::AssertionFailedException(const char* file, int line, const std::string& message)
