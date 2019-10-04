@@ -5,6 +5,7 @@
 #include <memory>
 #include <type_traits>
 
+#include "alvere/world/system/system.hpp"
 #include "alvere/world/archetype/archetype.hpp"
 #include "alvere/world/archetype/archetype_handle.hpp"
 #include "alvere/world/archetype/archetype_query.hpp"
@@ -19,8 +20,8 @@ namespace alvere
 	{
 		std::unordered_map<Archetype::Handle, Archetype *> m_Archetypes;
 
+		std::unordered_map<std::type_index, System *> m_AllSystems;
 		std::unordered_map<std::type_index, UpdatedSystem *> m_UpdatedSystems;
-
 		std::unordered_map<std::type_index, RenderedSystem *> m_RenderedSystems;
 
 	public:
@@ -49,6 +50,9 @@ namespace alvere
 
 		template <typename T, typename... Args>
 		T * AddSystem( Args&&... args );
+
+		template <typename T>
+		T * GetSystem();
 
 		template <typename T>
 		void RemoveSystem();
@@ -140,57 +144,71 @@ namespace alvere
 	template <typename T, typename... Args>
 	T * World::AddSystem( Args&&... args )
 	{
+		std::type_index systemType = typeid( T );
+
+		auto iter = m_AllSystems.find( systemType );
+		if ( iter != m_AllSystems.end() )
+		{
+			return nullptr;
+		}
+
 		T * t = new T( std::forward<Args...>( args )... );
-		bool added = false;
+		m_AllSystems[ systemType ] = t;
+
 
 		if (std::is_base_of<UpdatedSystem, T>::value)
 		{
-			added |= m_UpdatedSystems.emplace(typeid(T), (UpdatedSystem *)(t)).second;
+			m_UpdatedSystems.emplace( systemType, (UpdatedSystem *) t );
 		}
 
 		if (std::is_base_of<RenderedSystem, T>::value)
 		{
-			added |= m_RenderedSystems.emplace(typeid(T), (RenderedSystem *)(t)).second;
+			m_RenderedSystems.emplace( systemType, (RenderedSystem *) t );
 		}
 
-		if (added == false)
-		{
-			delete t;
-		}
-
-		return added ? t : nullptr;
+		return t;
 	}
 
 	template <typename T>
 	void World::RemoveSystem()
 	{
-		T * system = nullptr;
+		std::type_index systemType = typeid( T );
+
+		auto allIter = m_AllSystems.find( systemType );
+		if (allIter == m_AllSystems.end())
+		{
+			return;
+		}
 
 		if (std::is_base_of<UpdatedSystem, T>::value)
 		{
-			auto iter = m_UpdatedSystems.find(typeid(T));
+			auto iter = m_UpdatedSystems.find( systemType );
 
 			if (iter != m_UpdatedSystems.end())
 			{
-				system = (T *)iter->second;
 				m_UpdatedSystems.erase(iter);
 			}
 		}
 
 		if (std::is_base_of<RenderedSystem, T>::value)
 		{
-			auto iter = m_RenderedSystems.find(typeid(T));
+			auto iter = m_RenderedSystems.find( systemType );
 
 			if (iter != m_RenderedSystems.end())
 			{
-				system = (T *)iter->second;
 				m_RenderedSystems.erase(iter);
 			}
 		}
 
-		if (system != nullptr)
-		{
-			delete system;
-		}
+		delete allIter->second;
+	}
+
+	template <typename T>
+	T * World::GetSystem()
+	{
+		auto iter = m_AllSystems.find( typeid( T ) );
+		return iter != m_AllSystems.end()
+			? dynamic_cast<T *>( iter->second )
+			: nullptr;
 	}
 }

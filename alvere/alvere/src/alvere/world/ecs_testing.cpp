@@ -47,6 +47,8 @@ namespace alvere
 		}
 
 		world.AddSystem<MoverSystem>();
+		MoverSystem* moverSystem = world.GetSystem<MoverSystem>();
+		assert( moverSystem != nullptr );
 
 		world.Update(1.0f);
 		world.Render();
