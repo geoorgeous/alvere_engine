@@ -66,7 +66,7 @@ namespace alvere
 
 				virtual Param * clone() const = 0;
 
-				virtual bool validateArg(const Arg * arg, std::string & output) const;
+				virtual bool validateArgString(const std::string & argString, std::string & output) const = 0;
 
 				inline std::type_index getTypeIndex() const
 				{
@@ -86,6 +86,11 @@ namespace alvere
 				inline const std::string & getDescription() const
 				{
 					return m_description;
+				}
+
+				inline bool getIsRequired() const
+				{
+					return m_isRequired;
 				}
 
 			protected:
@@ -108,6 +113,23 @@ namespace alvere
 			{ };
 
 			template <>
+			class TParam<bool> : public Param
+			{
+			public:
+
+				TParam(const char * name, const char * description, bool isRequired)
+					: Param(name, description, isRequired, typeid(unsigned int), "uint")
+				{ }
+
+				Param * clone() const override { return new TParam<bool>(*this); }
+
+				bool validateArgString(const std::string & argString, std::string & output) const override
+				{
+					return true;
+				}
+			};
+
+			template <>
 			class TParam<unsigned int> : public Param
 			{
 			public:
@@ -117,6 +139,12 @@ namespace alvere
 				{ }
 
 				Param * clone() const override { return new TParam<unsigned int>(*this); }
+
+				bool validateArgString(const std::string & argString, std::string & output) const override
+				{
+					// try convert to uint
+					return true;
+				}
 			};
 
 			template <>
@@ -129,6 +157,12 @@ namespace alvere
 				{ }
 
 				Param * clone() const override { return new TParam<int>(*this); }
+
+				bool validateArgString(const std::string & argString, std::string & output) const override
+				{
+					// try convert to int
+					return true;
+				}
 			};
 
 			template <>
@@ -141,6 +175,12 @@ namespace alvere
 				{ }
 
 				Param * clone() const override { return new TParam<float>(*this); }
+
+				bool validateArgString(const std::string & argString, std::string & output) const override
+				{
+					// try convert to float
+					return true;
+				}
 			};
 
 			template <>
@@ -153,6 +193,11 @@ namespace alvere
 				{ }
 
 				Param * clone() const override { return new TParam<std::string>(*this); }
+
+				bool validateArgString(const std::string & argString, std::string & output) const override
+				{
+					return true;
+				}
 			};
 
 			class Arg
@@ -218,7 +263,7 @@ namespace alvere
 				return m_params;
 			}
 
-			bool validateArgStrings(const std::vector<std::string> & argStrings, std::string & output) const;
+			bool tryParseArgs(const std::vector<std::string> & argStrings, std::string & output) const;
 
 			std::string operator()(std::vector<const Arg *> args) const
 			{

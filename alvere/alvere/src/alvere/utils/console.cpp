@@ -21,16 +21,6 @@
 
 namespace alvere::console
 {
-	bool Command::Param::validateArg(const Arg * arg, std::string & output) const
-	{
-		if (arg->getTypeIndex() != m_typeIndex)
-		{
-			output = "Argument types are not compatible.";
-			return false;
-		}
-		return true;
-	}
-
 	Command::Param::Param(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString)
 		: m_name(name), m_description(description), m_isRequired(isRequired), m_typeIndex(typeIndex)
 	{
@@ -58,7 +48,7 @@ namespace alvere::console
 			delete m_params[i];
 	}
 
-	bool Command::validateArgStrings(const std::vector<std::string> & argStrings, std::string & output) const
+	bool Command::tryParseArgs(const std::vector<std::string> & argStrings, std::string & output) const
 	{
 		if (argStrings.size() > m_params.size())
 		{
@@ -66,13 +56,67 @@ namespace alvere::console
 			return false;
 		}
 
-		for (int i = 0; i < argStrings.size(); ++i)
+		size_t lastParsedParam = 0;
+		size_t numValidArgs = 0;
+
+		for (size_t i = 0; i < argStrings.size(); ++i)
 		{
 			const std::string & arg = argStrings[i];
 
-			// try parse the arg for params that don't have args yet...
-			// if we get to a required arg that we cant parge then fail
+			bool valid = false;
+
+			for (size_t p = lastParsedParam; p < m_params.size(); ++p)
+			{
+				Param & param = *m_params[p];
+
+				if (param.validateArgString(arg, output))
+				{
+					// add valid arg to list of args
+
+					valid = true;
+					++numValidArgs;
+					++lastParsedParam;
+					break;
+				}
+				else if (param.getIsRequired())
+				{
+					output = "Failed to parse argument '" + arg + "' for required parameter " + param.getDetailedName() + " " + output;
+				}
+				else
+				{
+					// add empty arg to list of args
+				}
+			}
+
+			if (valid)
+			{
+				continue;
+			}
+
+			return false;
 		}
+
+		if (argStrings.size() > numValidArgs)
+		{
+			output = "Too many arguments supplied. Type `help " + m_name + "` for more information.";
+			return false;
+		}
+
+		for (size_t p = lastParsedParam; p < m_params.size(); ++p)
+		{
+			Param & param = *m_params[p];
+
+			if (param.getIsRequired())
+			{
+				output = "No argument supplied for required parameter " + param.getDetailedName() + ". Type `help " + m_name + "` for more information.";
+				return false;
+			}
+		}
+
+		// call function with args
+		// m_f();
+
+		return true;
 	}
 
 	std::vector<const Command *> _commands;
@@ -518,21 +562,85 @@ namespace alvere::console
 
 	std::string submitCommand(const std::string & command)
 	{
-		std::vector<std::string> parts = utils::splitString(command, ' ');
+		std::vector<std::string> parts;
+		size_t partBegin;
+		char delim(0);
+
+		for (size_t i = 0; i < command.length(); ++i)
+		{
+			if (std::isspace(command[i]))
+				continue;
+			
+			delim = 0;
+			partBegin = i;
+
+			if (command[i] == '"' || command[i] == '\'')
+			{
+				++partBegin;
+
+				if (partBegin >= command.length())
+				{
+					return (std::string("Expecting matching delimiter (") + command[i]) + ")";
+				}
+						
+				delim = command[i];
+			}
+
+			for (size_t j = partBegin; ; ++partBegin)
+			{
+				if (j >= command.length())
+				{
+					return (std::string("Expecting matching delimiter (") + command[i]) + ")";
+				}
+
+				if (delim)
+				{
+					if (command[j] == delim)
+					{
+						// stop. j = end
+						parts.emplace_back(command.substr(partBegin, j - partBegin));
+						i = j;
+						break;
+					}
+				}
+				else if (isspace(command[j]))
+				{
+					// stop. j = end
+					parts.emplace_back(command.substr(partBegin, j - partBegin));
+					i = j;
+					break;
+				}
+			}
+		}
 
 		if (parts.size() == 0)
 			return "";
 
 		const std::string & commandName = parts[0];
+		
+		std::string output;
+
+		bool commandFound = false;
 
 		for (const Command * command : _commands)
 		{
 			if (command->getName() == commandName)
 			{
-				return (*command)({});
+				commandFound = true;
+
+				if (command->tryParseArgs(parts, output))
+				{
+					return (*command)({});
+					return output;
+				}
 			}
 		}
 
-		return "No command found for 'test123'. Type 'help' for a list of available commands.";
+		if (commandFound)
+		{
+			return output;
+		}
+
+		return "No command found for '" + commandName + "'. Type 'help' for a list of available commands.";
 	}
 }

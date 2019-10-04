@@ -10,6 +10,7 @@
 #include <alvere/utils/file_reader.hpp>
 #include <alvere/world/world.hpp>
 #include <alvere/world/ecs_testing.hpp>
+#include <alvere/utils/exceptions.hpp>
 #include <alvere/world/system/systems/renderer_system.hpp>
 
 #include "tile_drawer.hpp"
