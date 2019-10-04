@@ -47,8 +47,8 @@ namespace alvere
 		template <typename T>
 		T & GetComponent(const Entity & e) const;
 
-		template <typename T>
-		T * AddSystem();
+		template <typename T, typename... Args>
+		T * AddSystem( Args&&... args );
 
 		template <typename T>
 		void RemoveSystem();
@@ -137,10 +137,10 @@ namespace alvere
 		return e.m_Archetype->GetComponent<T>(e);
 	}
 
-	template <typename T>
-	T * World::AddSystem()
+	template <typename T, typename... Args>
+	T * World::AddSystem( Args&&... args )
 	{
-		T * t = new T();
+		T * t = new T( std::forward<Args...>( args )... );
 		bool added = false;
 
 		if (std::is_base_of<UpdatedSystem, T>::value)
@@ -158,7 +158,7 @@ namespace alvere
 			delete t;
 		}
 
-		return t;
+		return added ? t : nullptr;
 	}
 
 	template <typename T>

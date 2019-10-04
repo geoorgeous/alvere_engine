@@ -11,12 +11,12 @@ namespace alvere
 	{
 	public:
 
-		void setRenderer(Renderer * renderer);
+		RendererSystem(Renderer & renderer);
 
 		void Render(C_Transform & transform, C_RenderableMesh & mesh) override;
 
 	private:
 
-		Renderer * m_renderer;
+		Renderer & m_renderer;
 	};
 }

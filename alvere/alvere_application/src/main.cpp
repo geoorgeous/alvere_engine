@@ -91,7 +91,7 @@ struct AlvereApplication : public Application
 		renderableMesh.m_material = m_materialInstance;
 		renderableMesh.m_mesh = mesh;
 
-		world.AddSystem<RendererSystem>()->setRenderer(m_renderer);
+		world.AddSystem<RendererSystem>( *m_renderer );
 	}
 
 	~AlvereApplication()
