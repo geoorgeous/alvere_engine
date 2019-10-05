@@ -435,6 +435,8 @@ namespace alvere::console
 
 		void draw()
 		{
+			// todo: most of this shit to be done by some sort of formatted text renderer
+
 			if (!_shown)
 				return;
 
@@ -456,6 +458,13 @@ namespace alvere::console
 				_spriteBatcher->submit(*_fontFaceBitmap, _output[_output.size() - 1 - i], Vector2(3.0f, 6.0f + _fontFaceBitmap->getFontFaceHeight() * (lineCount + 1)));
 			}
 
+			if (_output.size() > _maxOutputLineCount)
+			{
+				int pageCount = _output.size() / _maxOutputLineCount + 1;
+				std::string pageCounter = std::to_string(_outputPageIndex + 1) + "/" + std::to_string(pageCount);
+				_spriteBatcher->submit(*_fontFaceBitmap, pageCounter, Vector2(_window->getWidth() - (3.0f + _fontFaceBitmap->getTextSize(pageCounter).x), 6.0f));
+			}
+
 			_shaderProgram->bind();
 			_shaderProgram->sendUniformInt1("u_outputLineCount", lineCount);
 			_vao->Bind();
@@ -466,7 +475,6 @@ namespace alvere::console
 
 		void submitInput()
 		{
-			_output.emplace_back("");
 			_output.emplace_back(_inputPre + _input);
 			_inputHistory.insert(_inputHistory.begin(), _input);
 
@@ -477,6 +485,10 @@ namespace alvere::console
 				std::vector<std::string> lines = utils::splitString(output, '\n', true);
 				_output.insert(_output.end(), lines.begin(), lines.end());
 			}
+
+			_output.emplace_back("");
+
+			_outputPageIndex = 0;
 
 			resetCaretVisibility();
 
@@ -626,7 +638,9 @@ namespace alvere::console
 
 			resetCaretVisibility();
 
-			_input.insert(_input.begin() + _caretPosition, (char)utfCodePoint);
+			char c = (char)utfCodePoint;
+
+			_input.insert(_input.begin() + _caretPosition, c);
 
 			moveCaretRight();
 
@@ -756,26 +770,6 @@ namespace alvere::console
 		{
 			return output;
 		}
-
-		/*bool commandFound = false;
-
-		for (const Command * command : _commands)
-		{
-			if (command->getName() == commandName)
-			{
-				commandFound = true;
-
-				if (command->tryInvoke(args, output))
-				{
-					return output;
-				}
-			}
-		}
-
-		if (commandFound)
-		{
-			return output;
-		}*/
 
 		return "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
 	}
