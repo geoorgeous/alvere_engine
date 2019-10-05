@@ -58,7 +58,7 @@ namespace alvere
 			&console::Command::Param<std::string>("text", "The text that will be submitted to the info log buffer.", true) },
 			[&](std::vector<const console::Command::IArg *> args) -> std::string
 		{
-			std::string output = args[0]->getValue<std::string>(); + "\n";
+			std::string output = args[0]->getValue<std::string>() + "\n";
 			LogInfo(output.c_str());
 			return "";
 		});

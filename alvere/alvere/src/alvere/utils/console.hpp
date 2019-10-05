@@ -172,7 +172,7 @@ namespace alvere
 
 			protected:
 
-				virtual 	IParam * clone() const override { return new Param<bool>(m_name.c_str(), m_description.c_str(), m_isRequired); }
+				virtual IParam * clone() const override { return new Param<bool>(m_name.c_str(), m_description.c_str(), m_isRequired); }
 
 				virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
 				{
@@ -459,6 +459,10 @@ namespace alvere
 
 			bool tryInvoke(const std::vector<std::string> & argStrings, std::string & output) const;
 
+		protected:
+
+			Command(const char * name, const char * description, Function f);
+
 		private:
 
 			std::string m_name;
@@ -470,6 +474,22 @@ namespace alvere
 			std::vector<IParam *> m_params;
 
 			Function m_f;
+		};
+
+		class CommandAlias : public Command
+		{
+		public:
+
+			CommandAlias(const char * name, const char * description, const char * command);
+
+			inline const std::string & getCommandString() const
+			{
+				return m_command;
+			}
+
+		private:
+
+			std::string m_command;
 		};
 
 		namespace gui

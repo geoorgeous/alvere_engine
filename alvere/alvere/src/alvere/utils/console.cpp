@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <regex>
 #include <sstream>
 
 #include <glad/gl.h>
@@ -39,9 +40,10 @@ namespace alvere::console
 	{ }
 
 	Command::Command(const char * name, const char * description, std::vector<IParam *> params, Function f)
-		: m_name(name), m_description(description), m_f(f)
+		: Command(name, description, f)
 	{
-		m_signature = m_name;
+		for (size_t i = 0; i < m_name.length(); ++i)
+			m_name[i] = std::tolower(m_name[i]);
 
 		m_params.resize(params.size());
 		for (int i = 0; i < params.size(); ++i)
@@ -52,6 +54,10 @@ namespace alvere::console
 
 		registerCommand(*this);
 	}
+
+	Command::Command(const char * name, const char * description, Function f)
+		: m_name(name), m_description(description), m_signature(m_name), m_f(f)
+	{ }
 
 	Command::~Command()
 	{
@@ -122,11 +128,19 @@ namespace alvere::console
 		for (const IArg * arg : args)
 			delete arg;
 
-		return parseFailure;
-		return false;
+		return !parseFailure;
 	}
 
+	CommandAlias::CommandAlias(const char * name, const char * description, const char * command)
+		: m_command(command), Command(name, description,
+			[&](std::vector<const Command::IArg *> args) -> std::string
+			{
+				return m_command + "\n" + submitCommand(m_command);
+			})
+	{ }
+
 	std::vector<const Command *> _commands;
+	std::vector<std::unique_ptr<CommandAlias>> _aliasCommands;
 
 	namespace gui
 	{
@@ -215,6 +229,14 @@ namespace alvere::console
 
 						for (const Command * command : _commands)
 							output += command->getSignature() + " : " + command->getDescription() + "\n";
+
+						if (_aliasCommands.size() > 0)
+						{
+							output += "\nAliases\n\n";
+
+							for (const std::unique_ptr<CommandAlias> & alias : _aliasCommands)
+								output += alias->getSignature() + " : (" + alias->getCommandString() + ") " + alias->getDescription() + "\n";
+						}
 					}
 					else
 					{
@@ -222,24 +244,37 @@ namespace alvere::console
 
 						const std::string & commandName = args[0]->getValue<std::string>();
 
+						const Command * foundCommand = nullptr;
+
 						for (const Command * command : _commands)
-						{
 							if (command->getName() == commandName)
 							{
-								commandFound = true;
+								output += foundCommand->getSignature() + "\n\t";
+								output += foundCommand->getDescription() + "\n\t";
 
-								output += command->getSignature() + "\n\t";
-								output += command->getDescription() + "\n\t";
-
-								const std::vector<Command::IParam *> & params = command->getParams();
+								const std::vector<Command::IParam *> & params = foundCommand->getParams();
 
 								for (const Command::IParam * param : params)
 									output += param->getDetailedName() + " : " + param->getDescription() + "\n\t";
-							}
-						}
 
-						if (!commandFound)
-							output = "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
+								return output;
+							}
+
+						for (const std::unique_ptr<CommandAlias> & alias : _aliasCommands)
+							if (alias->getName() == commandName)
+							{
+								output += alias->getSignature() + " (alias)\n\t(";
+								output += alias->getCommandString() + ")\n\t";
+
+								const std::string & description = alias->getDescription();
+
+								if (!description.empty())
+									output += description + "\n\t";
+
+								return output;
+							}
+
+						output = "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
 					}
 
 					return output;
@@ -281,14 +316,46 @@ namespace alvere::console
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"alias.new",
-				"Creates an alias for some console input.",
+				"Creates an alias for a specified command call.",
 				std::vector<Command::IParam *> {
-					&Command::StringParam("new alias name", "The name of the alias being created.", true),
-					& Command::StringParam("command string", "The command which will be executed when the new alias is called.", true),
-					& Command::StringParam("description", "A description of the new alias", false), },
+					&Command::StringParam("new alias name", "The name of the new command alias being created.", true),
+					& Command::StringParam("command string", "The command to be executed when the command alias is entered.", true),
+					& Command::StringParam("description", "A description of the new command alias.", false), },
 				[&](std::vector<const Command::IArg *> args) -> std::string
 				{
-					return "NOT IMPLEMENTED!";
+					std::string name = args[0]->getValue<std::string>();
+
+					if (!std::regex_match(name, std::regex("^[A-Za-z.-_]+$")))
+						return "Command alias bad format.";
+
+					for (size_t i = 0; i < name.length(); ++i)
+						name[i] = std::tolower(name[i]);
+
+					for (const Command * command : _commands)
+						if (command->getName() == name)
+							return "Failed to create alias. Command '" + name + "' already exists. Command alias names must be unique.";
+
+					for (const std::unique_ptr<CommandAlias> & alias : _aliasCommands)
+						if (alias->getName() == name)
+							return "Failed to create alias. Command alias '" + name + "' already exists. Command alias names must be unique.";
+
+					std::string description = "";
+
+					if (args[2] != nullptr)
+						description = args[2]->getValue<std::string>();
+
+					_aliasCommands.emplace_back(std::make_unique<CommandAlias>(
+						name.c_str(),
+						description.c_str(),
+						args[1]->getValue<std::string>().c_str()));
+
+					std::sort(_aliasCommands.begin(), _aliasCommands.end(), 
+						[](const std::unique_ptr<CommandAlias> & a, const std::unique_ptr<CommandAlias> & b) -> bool 
+						{ 
+							return a->getName() < b->getName();
+						});
+
+					return "Successfully created new alias '" + name + "'.";
 				}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
@@ -298,7 +365,16 @@ namespace alvere::console
 					&Command::StringParam("alias name", "The name of the alias to delete.", true), },
 				[&](std::vector<const Command::IArg *> args) -> std::string
 				{
-					return "NOT IMPLEMENTED!";
+						const std::string & name = args[0]->getValue<std::string>();
+
+						for (size_t a = 0; a < _aliasCommands.size(); ++a)
+							if (_aliasCommands[a]->getName() == name)
+							{
+								_aliasCommands.erase(_aliasCommands.begin() + a);
+								return "Successfully deleted alias '" + name + "'.";
+							}
+
+						return "Alias '" + name + "' does not exist.";
 				}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
@@ -679,6 +755,11 @@ namespace alvere::console
 
 			_suggestions.clear();
 
+			
+
+			// do we have a command name yet?
+
+
 			// todo: try and find suggestions for command names and paameters
 
 			if (_suggestions.size() > 0)
@@ -756,12 +837,39 @@ namespace alvere::console
 		if (parts.size() == 0)
 			return "";
 
-		const std::string & commandName = parts[0];
+		std::string commandName = parts[0];
+
+		for (size_t i = 0; i < commandName.length(); ++i)
+			commandName[i] = std::tolower(commandName[i]);
+
 		std::vector<std::string> args(parts.begin() + 1, parts.begin() + parts.size());
 
 		std::string output;
 
-		bool commandFound = false;
+		const Command * foundCommand = nullptr;
+
+		for (const Command * command : _commands)
+			if (command->getName() == commandName)
+			{
+				foundCommand = command;
+				if (command->tryInvoke(args, output))
+					return output;
+			}
+
+		for (const std::unique_ptr<CommandAlias> & alias : _aliasCommands)
+			if (alias->getName() == commandName)
+			{
+				foundCommand = alias.get();
+				if (alias->tryInvoke(args, output))
+					return output;
+			}
+
+		if (foundCommand != nullptr)
+		{
+			return output;
+		}
+
+		/*bool commandFound = false;
 
 		for (const Command * command : _commands)
 		{
@@ -779,7 +887,7 @@ namespace alvere::console
 		if (commandFound)
 		{
 			return output;
-		}
+		}*/
 
 		return "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
 	}
@@ -793,7 +901,11 @@ namespace alvere::console
 
 		_commands.emplace_back(&command);
 
-		std::sort(_commands.begin(), _commands.end(), [](const Command * a, const Command * b) -> bool { return a->getName() < b->getName(); });
+		std::sort(_commands.begin(), _commands.end(),
+			[](const Command * a, const Command * b) -> bool
+			{
+				return a->getName() < b->getName();
+			});
 	}
 
 	void unregisterCommand(const Command & command)
