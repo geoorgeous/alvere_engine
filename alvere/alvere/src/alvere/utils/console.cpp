@@ -1,5 +1,6 @@
 #include "alvere/utils/console.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <sstream>
 
@@ -21,7 +22,11 @@
 
 namespace alvere::console
 {
-	Command::Param::Param(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString)
+	void registerCommand(const Command & command);
+
+	void unregisterCommand(const Command & command);
+
+	Command::IParam::IParam(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString)
 		: m_name(name), m_description(description), m_isRequired(isRequired), m_typeIndex(typeIndex)
 	{
 		m_detailedName = isRequired ? "<()>" : "[()]";
@@ -29,7 +34,11 @@ namespace alvere::console
 		m_detailedName.insert(1, m_name);
 	}
 
-	Command::Command(const char * name, const char * description, std::vector<Param *> params, Function f)
+	Command::IArg::IArg(std::type_index typeIndex)
+		: m_typeIndex(typeIndex)
+	{ }
+
+	Command::Command(const char * name, const char * description, std::vector<IParam *> params, Function f)
 		: m_name(name), m_description(description), m_f(f)
 	{
 		m_signature = m_name;
@@ -40,83 +49,81 @@ namespace alvere::console
 			m_params[i] = params[i]->clone();
 			m_signature += " " + m_params[i]->getDetailedName();
 		}
+
+		registerCommand(*this);
 	}
 
 	Command::~Command()
 	{
+		unregisterCommand(*this);
+
 		for (int i = 0; i < m_params.size(); ++i)
 			delete m_params[i];
 	}
 
-	bool Command::tryParseArgs(const std::vector<std::string> & argStrings, std::string & output) const
+	bool Command::tryInvoke(const std::vector<std::string> & argStrings, std::string & output) const
 	{
 		if (argStrings.size() > m_params.size())
 		{
-			output = "Too many arguments provided for this command.";
+			output = "Too many arguments supplied.\nType `help " + m_name + "` to see the expected parameters.";
 			return false;
 		}
-
-		size_t lastParsedParam = 0;
-		size_t numValidArgs = 0;
-
-		for (size_t i = 0; i < argStrings.size(); ++i)
+		else if (argStrings.empty() && m_params.empty())
 		{
-			const std::string & arg = argStrings[i];
+			output = m_f({});
+			return true;
+		}
 
-			bool valid = false;
+		std::vector<const IArg *> args(m_params.size(), nullptr);
 
-			for (size_t p = lastParsedParam; p < m_params.size(); ++p)
+		size_t currentArgString = 0;
+
+		bool parseFailure = false;
+
+		for (size_t p = 0; p < m_params.size(); ++p)
+		{
+			if (currentArgString == argStrings.size())
 			{
-				Param & param = *m_params[p];
-
-				if (param.validateArgString(arg, output))
+				if (m_params[p]->getIsRequired())
 				{
-					// add valid arg to list of args
-
-					valid = true;
-					++numValidArgs;
-					++lastParsedParam;
+					output = "Missing argument for required parameter " + m_params[p]->getDetailedName() + ".\nType `help " + m_name + "` to see the expected parameters.";
+					parseFailure = true;
 					break;
 				}
-				else if (param.getIsRequired())
-				{
-					output = "Failed to parse argument '" + arg + "' for required parameter " + param.getDetailedName() + " " + output;
-				}
 				else
-				{
-					// add empty arg to list of args
-				}
+					continue;
 			}
 
-			if (valid)
+			args[currentArgString] = m_params[p]->tryParseStringToArg(argStrings[currentArgString], output);
+
+			if (args[currentArgString] != nullptr)
 			{
-				continue;
+				++currentArgString;
 			}
-
-			return false;
-		}
-
-		if (argStrings.size() > numValidArgs)
-		{
-			output = "Too many arguments supplied. Type `help " + m_name + "` for more information.";
-			return false;
-		}
-
-		for (size_t p = lastParsedParam; p < m_params.size(); ++p)
-		{
-			Param & param = *m_params[p];
-
-			if (param.getIsRequired())
+			else if (m_params[p]->getIsRequired())
 			{
-				output = "No argument supplied for required parameter " + param.getDetailedName() + ". Type `help " + m_name + "` for more information.";
-				return false;
+				output = "Failed to parse argument " + std::to_string(currentArgString) + " (" + argStrings[currentArgString] + ") for required parameter " + m_params[p]->getDetailedName() + ((output == "") ? "" : ": " + output);
+				parseFailure = true;
+				break;
 			}
 		}
 
-		// call function with args
-		// m_f();
+		if (!parseFailure && currentArgString < argStrings.size())
+		{
+			output = "Too many arguments provided.\nType `help " + m_name + "` to see the expected parameters.";
+			parseFailure = true;
+		}
 
-		return true;
+		if (!parseFailure)
+		{
+			output = m_f(args);
+		}
+
+		for (const IArg * arg : args)
+			delete arg;
+
+		return parseFailure;
+		return false;
 	}
 
 	std::vector<const Command *> _commands;
@@ -147,6 +154,9 @@ namespace alvere::console
 		std::vector<std::string> _inputHistory;
 		std::string _inputPre = "> ";
 		std::string _input;
+		std::string _inputSuggestion;
+		std::vector<std::string> _suggestions;
+		int _currentHistory = -1;
 		unsigned int _caretPosition;
 		bool _caretIsVisible = true;
 		float _caretFlashSpeed = 0.5f;
@@ -160,29 +170,28 @@ namespace alvere::console
 		Key _keyCaretRight = Key::Right;
 		Key _keyEraseCharLeft = Key::BackSpace;
 		Key _keyEraseCharRight = Key::Delete;
-		Key _keyAutoFill = Key::Tab;
-		Key _keyAutoFillAccept = Key::Space;
+		Key _keyApplySuggestion = Key::Tab;
+		Key _keyAcceptSuggestion = Key::Space;
 		Key _keyPageUp = Key::PageUp;
 		Key _keyPageDown = Key::PageDown;
 
-		std::unique_ptr<Command> _help;
-		std::unique_ptr<Command> _clearConsole;
-		std::unique_ptr<Command> _expandConsole;
-		std::unique_ptr<Command> _shrinkConsole;
-		std::unique_ptr<Command> _alias;
+		std::vector<std::unique_ptr<Command>> _builtInCommands;
 
 		void submitInput();
 		void viewHistoryBack();
 		void viewHistoryForward();
-		void moveCaretLeft();
-		void moveCaretRight();
-		void eraseCharLeft();
-		void eraseCharRight();
-		void tryViewAutoFill();
-		void tryAcceptAutoFill();
+		int getLeftSkipIndex();
+		int getRightSkipIndex();
+		void moveCaretLeft(bool skipWord = false);
+		void moveCaretRight(bool skipWord = false);
+		void eraseCharLeft(bool skipWord = false);
+		void eraseCharRight(bool skipWord = false);
+		void tryCycleSuggestions();
+		void tryApplySuggestion();
 		void pageUpOutput();
 		void pageDownOutput();
 		void onCharInput(unsigned int);
+		void updateInputSuggestion();
 		void clearInput();
 		void resetCaretVisibility();
 
@@ -191,53 +200,121 @@ namespace alvere::console
 			if (_initialised)
 				return;
 
-			_help = std::make_unique<Command>("help", "Displays a list of all of the available commands.", std::vector<Command::Param *> {
-				&Command::TParam<std::string>("command name", "The name of the command to detail.", false)
-				}, [&](std::vector<const Command::Arg *> args) -> std::string
-			{
-				std::string output("Below is a list of all of the available commands.To see more information about a particular command, use help with the name of the command.\n\n[] : Optional parameter.\n<> : Required parameter.\n() : Parameter type.\n\n");
+			_builtInCommands.emplace_back(std::make_unique<Command>(
+				"help", 
+				"Displays a list of all of the available commands, and can optionally be used to display further information about a single command.", 
+				std::vector<Command::IParam *> {
+					&Command::StringParam("command name", "The name of the command to display information about.", false) },
+				[&](std::vector<const Command::IArg *> args) -> std::string
+				{
+					std::string output;
 
-				for (const Command * command : _commands)
-					output += command->getSignature() + " : " + command->getDescription() + "\n";
+					if (args[0] == nullptr)
+					{
+						output = "Below is a list of all of the available commands. To see more information about a particular command, type 'help' with the name of the command.\n\nSyntax:\n[optional parameter]\n<required parameter>\n(parameter type)\n(enum|values)\n\n";
 
-				return output;
-			});
+						for (const Command * command : _commands)
+							output += command->getSignature() + " : " + command->getDescription() + "\n";
+					}
+					else
+					{
+						bool commandFound = false;
 
-			_clearConsole = std::make_unique<Command>("console.clear", "Clears the console output.", std::vector<Command::Param *> {}, [&](std::vector<const Command::Arg *> args) -> std::string
-			{
-				_output.clear();
-				return "";
-			});
+						const std::string & commandName = args[0]->getValue<std::string>();
 
-			_expandConsole = std::make_unique<Command>("console.expand", "Expands the console window.", std::vector<Command::Param *> {}, [&](std::vector<const Command::Arg *> args) -> std::string
-			{
-				_maxOutputLineCount = _maxOutputLineCountExpanded;
-				_shaderProgram->bind();
-				_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
-				return "";
-			});
+						for (const Command * command : _commands)
+						{
+							if (command->getName() == commandName)
+							{
+								commandFound = true;
 
-			_shrinkConsole = std::make_unique<Command>("console.shrink", "Shrinks the console window.", std::vector<Command::Param *> {}, [&](std::vector<const Command::Arg *> args) -> std::string
-			{
-				_maxOutputLineCount = _maxOutputLineCountShrunk;
-				_shaderProgram->bind();
-				_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
-				return "";
-			});
+								output += command->getSignature() + "\n\t";
+								output += command->getDescription() + "\n\t";
 
-			_alias = std::make_unique<Command>("alias", "Creates an alias for some console input.", std::vector<Command::Param *> {
-				&Command::TParam<std::string>("alias", "The alias name to create.", true),
-				&Command::TParam<std::string>("string", "The string of input which will be aliased.", true)
-				}, [&](std::vector<const Command::Arg *> args) -> std::string
-			{
-				return "NOT IMPLEMENTED!";
-			});
+								const std::vector<Command::IParam *> & params = command->getParams();
 
-			registerCommand(*_help);
-			registerCommand(*_clearConsole);
-			registerCommand(*_expandConsole);
-			registerCommand(*_shrinkConsole);
-			registerCommand(*_alias);
+								for (const Command::IParam * param : params)
+									output += param->getDetailedName() + " : " + param->getDescription() + "\n\t";
+							}
+						}
+
+						if (!commandFound)
+							output = "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
+					}
+
+					return output;
+				}));
+
+			_builtInCommands.emplace_back(std::make_unique<Command>(
+				"console.clear", 
+				"Clears the console output.", 
+				std::vector<Command::IParam *> {},
+				[&](std::vector<const Command::IArg *> args) -> std::string
+				{
+					_output.clear();
+					return "";
+				}));
+
+			_builtInCommands.emplace_back(std::make_unique<Command>(
+				"console.expand", 
+				"Expands the console window.", 
+				std::vector<Command::IParam *> {},
+				[&](std::vector<const Command::IArg *> args) -> std::string
+				{
+					_maxOutputLineCount = _maxOutputLineCountExpanded;
+					_shaderProgram->bind();
+					_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
+					return "";
+				}));
+
+			_builtInCommands.emplace_back(std::make_unique<Command>(
+				"console.shrink", 
+				"Shrinks the console window.", 
+				std::vector<Command::IParam *> {},
+				[&](std::vector<const Command::IArg *> args) -> std::string
+				{
+					_maxOutputLineCount = _maxOutputLineCountShrunk;
+					_shaderProgram->bind();
+					_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
+					return "";
+				}));
+
+			_builtInCommands.emplace_back(std::make_unique<Command>(
+				"alias.new",
+				"Creates an alias for some console input.",
+				std::vector<Command::IParam *> {
+					&Command::StringParam("new alias name", "The name of the alias being created.", true),
+					& Command::StringParam("command string", "The command which will be executed when the new alias is called.", true),
+					& Command::StringParam("description", "A description of the new alias", false), },
+				[&](std::vector<const Command::IArg *> args) -> std::string
+				{
+					return "NOT IMPLEMENTED!";
+				}));
+
+			_builtInCommands.emplace_back(std::make_unique<Command>(
+				"alias.delete",
+				"Deletes an existing alias.",
+				std::vector<Command::IParam *> {
+					&Command::StringParam("alias name", "The name of the alias to delete.", true), },
+				[&](std::vector<const Command::IArg *> args) -> std::string
+				{
+					return "NOT IMPLEMENTED!";
+				}));
+
+			_builtInCommands.emplace_back(std::make_unique<Command>(
+				"test",
+				"This is a test command.",
+				std::vector<Command::IParam *> {
+					&Command::BoolParam("pbool", "test pool param", true),
+					&Command::UIntParam("puint", "test unsigned int param", true),
+					&Command::IntParam("pint", "test int param", true),
+					&Command::FloatParam("pfloat", "test float param", true),
+					&Command::StringParam("pstring", "test string param", true),
+					&Command::EnumParam("penum", "test enum param", true, { "one", "two", "three" }), },
+				[](std::vector<const Command::IArg *> args) -> std::string
+				{
+					return "test command";
+				}));
 
 			_fontFaceBitmap = _fontFace.getBitmap(_fontSize);
 
@@ -375,17 +452,17 @@ namespace alvere::console
 			else if (_window->getKey(_keyHistoryForward).justPressed || _window->getKey(_keyHistoryForward).isRepeating)
 				viewHistoryForward();
 			else if (_window->getKey(_keyCaretLeft).justPressed || _window->getKey(_keyCaretLeft).isRepeating)
-				moveCaretLeft();
+				moveCaretLeft(_window->getKey(Key::LeftCtrl).isDown || _window->getKey(Key::RightCtrl).isDown);
 			else if (_window->getKey(_keyCaretRight).justPressed || _window->getKey(_keyCaretRight).isRepeating)
-				moveCaretRight();
+				moveCaretRight(_window->getKey(Key::LeftCtrl).isDown || _window->getKey(Key::RightCtrl).isDown);
 			else if (_window->getKey(_keyEraseCharLeft).justPressed || _window->getKey(_keyEraseCharLeft).isRepeating)
-				eraseCharLeft();
+				eraseCharLeft(_window->getKey(Key::LeftCtrl).isDown || _window->getKey(Key::RightCtrl).isDown);
 			else if (_window->getKey(_keyEraseCharRight).justPressed || _window->getKey(_keyEraseCharRight).isRepeating)
-				eraseCharRight();
-			else if (_window->getKey(_keyAutoFill).justPressed || _window->getKey(_keyAutoFill).isRepeating)
-				tryViewAutoFill();
-			else if (_window->getKey(_keyAutoFillAccept).justPressed)
-				tryAcceptAutoFill();
+				eraseCharRight(_window->getKey(Key::LeftCtrl).isDown || _window->getKey(Key::RightCtrl).isDown);
+			else if (_window->getKey(_keyApplySuggestion).justPressed || _window->getKey(_keyApplySuggestion).isRepeating)
+				tryCycleSuggestions();
+			else if (_window->getKey(_keyAcceptSuggestion).justPressed)
+				tryApplySuggestion();
 			else if (_window->getKey(_keyPageUp).justPressed || _window->getKey(_keyPageUp).isRepeating)
 				pageUpOutput();
 			else if (_window->getKey(_keyPageDown).justPressed || _window->getKey(_keyPageDown).isRepeating)
@@ -403,8 +480,9 @@ namespace alvere::console
 			_spriteBatcher->begin(_projection);
 
 			_spriteBatcher->submit(*_fontFaceBitmap, _inputPre.c_str(), Vector2(3.0f, 6.0f));
+
 			_spriteBatcher->submit(*_fontFaceBitmap, _input.c_str(), Vector2(3.0f + inputXOffset, 6.0f));
-			
+
 			if (_caretIsVisible)
 				_spriteBatcher->submit(*_fontFaceBitmap, "_", Vector2(3.0f + inputXOffset + caretXOffset, 6.0f));
 
@@ -426,7 +504,7 @@ namespace alvere::console
 		{
 			_output.emplace_back("");
 			_output.emplace_back(_inputPre + _input);
-			_inputHistory.emplace_back(_input);
+			_inputHistory.insert(_inputHistory.begin(), _input);
 
 			std::string output = submitCommand(_input);
 
@@ -443,60 +521,124 @@ namespace alvere::console
 
 		void viewHistoryBack()
 		{
-			// todo
+			if (_currentHistory == _inputHistory.size() - 1)
+				return;
+
+			++_currentHistory;
+
+			_input = _inputHistory[_currentHistory];
+			_caretPosition = _input.size();
+			resetCaretVisibility();
+		}
+
+		int getLeftSkipIndex()
+		{
+			bool wasOnChar = false;
+			size_t pos = _caretPosition;
+			while (pos > 0)
+			{
+				if (wasOnChar && std::isspace(_input[pos - 1]))
+					break;
+				--pos;
+				wasOnChar = !std::isspace(_input[pos]);
+			}
+			return pos;
+		}
+
+		int getRightSkipIndex()
+		{
+			bool wasOnSpace = false;
+			int pos = _caretPosition;
+			while (pos < _input.length())
+			{
+				if (wasOnSpace && !std::isspace(_input[pos]))
+					break;
+				wasOnSpace = std::isspace(_input[pos]);
+				++pos;
+			}
+			return pos;
 		}
 
 		void viewHistoryForward()
 		{
-			// todo
+			if (_currentHistory == -1)
+				return;
+
+			if (_currentHistory == 0)
+			{
+				clearInput();
+				return;
+			}
+
+			--_currentHistory;
+
+			_input = _inputHistory[_currentHistory];
+			_caretPosition = _input.size();
+			resetCaretVisibility();
 		}
 
-		void moveCaretLeft()
+		void moveCaretLeft(bool skipWord)
 		{
 			resetCaretVisibility();
 
-			if (_caretPosition > 0)
+			if (skipWord)
+			{
+				_caretPosition = getLeftSkipIndex();
+			}
+			else if (_caretPosition > 0)
+			{
 				--_caretPosition;
+			}
 		}
 
-		void moveCaretRight()
+		void moveCaretRight(bool skipWord)
 		{
 			resetCaretVisibility();
 
-			if (_caretPosition < _input.size())
+			if (skipWord)
+			{
+				_caretPosition = getRightSkipIndex();
+			}
+			else if (_caretPosition < _input.length())
+			{
 				++_caretPosition;
+			}
 		}
 
-		void eraseCharLeft()
+		void eraseCharLeft(bool skipWord)
 		{
 			resetCaretVisibility();
 
 			if (_caretPosition == 0)
 				return;
 
-			_input.erase(_input.begin() + _caretPosition - 1);
+			size_t caretOrigin = _caretPosition;
 
-			moveCaretLeft();
+			moveCaretLeft(skipWord);
+
+			_input.erase(_input.begin() + _caretPosition, _input.begin() + caretOrigin);
 		}
 
-		void eraseCharRight()
+		void eraseCharRight(bool skipWord)
 		{
 			resetCaretVisibility();
 
 			if (_caretPosition == _input.size())
 				return;
 
-			_input.erase(_input.begin() + _caretPosition);
+			auto eraseLast = skipWord ? _input.begin() + getRightSkipIndex() : _input.begin() + _caretPosition + 1;
+
+			_input.erase(_input.begin() + _caretPosition, eraseLast);
 		}
 
-		void tryViewAutoFill()
+		void tryCycleSuggestions()
 		{
-			// todo: pressing tab will try and display the next possible auto fill value
+			// todo: pressing tab will try and display the next available suggestion
 		}
 
-		void tryAcceptAutoFill()
+		void tryApplySuggestion()
 		{
-			// todo: pressing space when an autofilloption is displayed will accept the auto fill
+			// todo: pressing space when a suggestion is displayed will apply the suggestion to the input
 		}
 
 		void pageUpOutput()
@@ -523,12 +665,33 @@ namespace alvere::console
 			_input.insert(_input.begin() + _caretPosition, (char)utfCodePoint);
 
 			moveCaretRight();
+
+			updateInputSuggestion();
+		}
+
+		void updateInputSuggestion()
+		{
+			if (_currentHistory > -1)
+			{
+				_inputSuggestion = _inputHistory[_currentHistory];
+				return;
+			}
+
+			_suggestions.clear();
+
+			// todo: try and find suggestions for command names and paameters
+
+			if (_suggestions.size() > 0)
+			{
+				// todo: set suggestion thing
+			}
 		}
 
 		void clearInput()
 		{
 			_input = "";
 			_caretPosition = 0;
+			_currentHistory = -1;
 
 			resetCaretVisibility();
 		}
@@ -538,26 +701,6 @@ namespace alvere::console
 			_caretIsVisible = true;
 			_timeUntilCaretToggle = _caretFlashSpeed;
 		}
-	}
-
-	void registerCommand(const Command & command)
-	{
-		auto iter = std::find(_commands.begin(), _commands.end(), &command);
-
-		if (iter != _commands.end())
-			return;
-
-		_commands.emplace_back(&command);
-	}
-
-	void unregisterCommand(const Command & command)
-	{
-		auto iter = std::find(_commands.begin(), _commands.end(), &command);
-
-		if (iter == _commands.end())
-			return;
-
-		_commands.erase(iter);
 	}
 
 	std::string submitCommand(const std::string & command)
@@ -586,26 +729,23 @@ namespace alvere::console
 				delim = command[i];
 			}
 
-			for (size_t j = partBegin; ; ++partBegin)
+			for (size_t j = partBegin; ; ++j)
 			{
-				if (j >= command.length())
-				{
-					return (std::string("Expecting matching delimiter (") + command[i]) + ")";
-				}
-
 				if (delim)
 				{
-					if (command[j] == delim)
+					if (j >= command.length())
 					{
-						// stop. j = end
+						return (std::string("Expecting matching delimiter (") + command[i]) + ")";
+					}
+					else if (command[j] == delim)
+					{
 						parts.emplace_back(command.substr(partBegin, j - partBegin));
 						i = j;
 						break;
 					}
 				}
-				else if (isspace(command[j]))
+				else if (j == command.length() || isspace(command[j]))
 				{
-					// stop. j = end
 					parts.emplace_back(command.substr(partBegin, j - partBegin));
 					i = j;
 					break;
@@ -617,7 +757,8 @@ namespace alvere::console
 			return "";
 
 		const std::string & commandName = parts[0];
-		
+		std::vector<std::string> args(parts.begin() + 1, parts.begin() + parts.size());
+
 		std::string output;
 
 		bool commandFound = false;
@@ -628,9 +769,8 @@ namespace alvere::console
 			{
 				commandFound = true;
 
-				if (command->tryParseArgs(parts, output))
+				if (command->tryInvoke(args, output))
 				{
-					return (*command)({});
 					return output;
 				}
 			}
@@ -641,6 +781,28 @@ namespace alvere::console
 			return output;
 		}
 
-		return "No command found for '" + commandName + "'. Type 'help' for a list of available commands.";
+		return "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
+	}
+
+	void registerCommand(const Command & command)
+	{
+		auto iter = std::find(_commands.begin(), _commands.end(), &command);
+
+		if (iter != _commands.end())
+			return;
+
+		_commands.emplace_back(&command);
+
+		std::sort(_commands.begin(), _commands.end(), [](const Command * a, const Command * b) -> bool { return a->getName() < b->getName(); });
+	}
+
+	void unregisterCommand(const Command & command)
+	{
+		auto iter = std::find(_commands.begin(), _commands.end(), &command);
+
+		if (iter == _commands.end())
+			return;
+
+		_commands.erase(iter);
 	}
 }

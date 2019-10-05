@@ -73,6 +73,10 @@ namespace alvere
 				pen.y -= fontFaceBitmap.getFontFaceHeight();
 				continue;
 			}
+			else if (c == '\t')
+			{
+				pen.x = position.x + fontFaceBitmap.getFontFaceMaxAdvance() * 4;
+			}
 
 			if ((glyph = fontFaceBitmap.getGlyph(c)) == nullptr)
 				continue;

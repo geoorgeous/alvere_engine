@@ -7,46 +7,10 @@
 
 #include "alvere/assets.hpp"
 
-// List of commands
-// Command history
 // Command auto-filling and parameter auto-filling
 // Command parameter suggestions based on context
 // Sub commands 
 // comand aliases and ways to modify/print all/edit etc etc
-
-// command subcommand <required> [optional] enum|option|x
-
-//		> help
-//		Below are a list of all of the available commands. To see more information about a particular command, use help with the name of the command.
-//		
-//		[] : Optional parameter.
-//		<> : Required parameter.
-//		() : Parameter type.
-//		
-//		alias <inputstring(str)> : Creates an alias for some console input.
-//		console.clear : Clears the console output.
-//		console.expand : Expands the console window.
-//		console.shrink : Shrinks the console window.
-//		help [command name(str)] : Displays a list of all of the available commands.
-//		log <text(str)> : Logs text to the info log buffer.
-//		quit : Quits the application.
-//		
-//		> help help
-//		help [command name(str)]
-//			 Displays a list of all of the available commands.
-//			 [command name(str)] : The name of a command to display more information about.
-//		
-//		> help quit
-//		quit
-//			 Quits the application.
-//		
-//		> help log
-//		log <text(str)>
-//			 Logs some text to the info log buffer.
-//			 <text(str)> : The text that will be logged to the info log buffer.
-//		
-//		> test123
-//		No command found for 'test123'. Type 'help' for a list of available commands.
 
 namespace alvere
 {
@@ -58,15 +22,54 @@ namespace alvere
 		{
 		public:
 
-			class Arg;
-
-			class Param
+			class IArg
 			{
 			public:
 
-				virtual Param * clone() const = 0;
+				IArg(std::type_index typeIndex);
 
-				virtual bool validateArgString(const std::string & argString, std::string & output) const = 0;
+				inline std::type_index getTypeIndex() const
+				{
+					return m_typeIndex;
+				}
+
+				template <typename T>
+				const T & getValue() const
+				{
+					return *(T *)getValuePtr();
+				}
+
+			protected:
+
+				std::type_index m_typeIndex;
+
+				virtual void * getValuePtr() const = 0;
+			};
+
+			template <typename T>
+			class Arg : public IArg
+			{
+			public:
+
+				Arg(T value)
+					: IArg(typeid(T)), m_value(value)
+				{ }
+
+				void * getValuePtr() const override
+				{
+					return (void *)& m_value;
+				}
+
+			private:
+
+				T m_value;
+			};
+
+			class IParam
+			{
+			public:
+
+				friend class Command;
 
 				inline std::type_index getTypeIndex() const
 				{
@@ -93,9 +96,22 @@ namespace alvere
 					return m_isRequired;
 				}
 
+				const std::vector<std::string> & getValueSuggestions()
+				{
+					updateValueSuggestions();
+
+					return m_valueSuggestions;
+				}
+
 			protected:
 
-				Param(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString);
+				virtual IParam * clone() const = 0;
+
+				virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const = 0;
+
+				virtual void updateValueSuggestions() = 0;
+
+				IParam(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString);
 
 				std::type_index m_typeIndex;
 
@@ -106,140 +122,318 @@ namespace alvere
 				std::string m_description;
 
 				bool m_isRequired;
+
+				std::vector<std::string> m_valueSuggestions;
 			};
 
 			template <typename T>
-			class TParam : public Param
-			{ };
-
-			template <>
-			class TParam<bool> : public Param
+			class ParamBase : public IParam
 			{
 			public:
 
-				TParam(const char * name, const char * description, bool isRequired)
-					: Param(name, description, isRequired, typeid(unsigned int), "uint")
+				ParamBase(const char * name, const char * description, bool isRequired, const char * typeString, const std::vector<T> & typedValueSuggestions)
+					: IParam(name, description, isRequired, typeid(ParamBase<T>), typeString), m_typedValueSuggestions(&typedValueSuggestions)
 				{ }
 
-				Param * clone() const override { return new TParam<bool>(*this); }
-
-				bool validateArgString(const std::string & argString, std::string & output) const override
-				{
-					return true;
-				}
-			};
-
-			template <>
-			class TParam<unsigned int> : public Param
-			{
-			public:
-
-				TParam(const char * name, const char * description, bool isRequired)
-					: Param(name, description, isRequired, typeid(unsigned int), "uint")
+				ParamBase(const char * name, const char * description, bool isRequired, const char * typeString)
+					: IParam(name, description, isRequired, typeid(ParamBase<T>), typeString), m_typedValueSuggestions(nullptr)
 				{ }
-
-				Param * clone() const override { return new TParam<unsigned int>(*this); }
-
-				bool validateArgString(const std::string & argString, std::string & output) const override
-				{
-					// try convert to uint
-					return true;
-				}
-			};
-
-			template <>
-			class TParam<int> : public Param
-			{
-			public:
-
-				TParam(const char * name, const char * description, bool isRequired)
-					: Param(name, description, isRequired, typeid(int), "int")
-				{ }
-
-				Param * clone() const override { return new TParam<int>(*this); }
-
-				bool validateArgString(const std::string & argString, std::string & output) const override
-				{
-					// try convert to int
-					return true;
-				}
-			};
-
-			template <>
-			class TParam<float> : public Param
-			{
-			public:
-
-				TParam(const char * name, const char * description, bool isRequired)
-					: Param(name, description, isRequired, typeid(float), "flt")
-				{ }
-
-				Param * clone() const override { return new TParam<float>(*this); }
-
-				bool validateArgString(const std::string & argString, std::string & output) const override
-				{
-					// try convert to float
-					return true;
-				}
-			};
-
-			template <>
-			class TParam<std::string> : public Param
-			{
-			public:
-
-				TParam(const char * name, const char * description, bool isRequired)
-					: Param(name, description, isRequired, typeid(std::string), "str")
-				{ }
-
-				Param * clone() const override { return new TParam<std::string>(*this); }
-
-				bool validateArgString(const std::string & argString, std::string & output) const override
-				{
-					return true;
-				}
-			};
-
-			class Arg
-			{
-			public:
-
-				virtual std::type_index getTypeIndex() const
-				{
-					return m_typeIndex;
-				}
-
-				virtual void * getValuePtr() const = 0;
 
 			protected:
 
-				std::type_index m_typeIndex;
+				const std::vector<T> * m_typedValueSuggestions;
+
+				virtual std::string valueToString(const T & value) const = 0;
+
+				void updateValueSuggestions() override
+				{
+					if (m_typedValueSuggestions == nullptr)
+						return;
+
+					m_valueSuggestions.resize(m_typedValueSuggestions->size());
+
+					for (size_t i = 0; i < m_typedValueSuggestions->size(); ++i)
+						m_valueSuggestions[i] = valueToString((*m_typedValueSuggestions)[i]);
+				}
 			};
 
 			template <typename T>
-			class TArg : Arg
+			class Param : public ParamBase<T>
+			{ };
+
+			template <>
+			class Param<bool> : public ParamBase<bool>
 			{
 			public:
 
-				TArg(T value)
-					: m_value(value)
+				Param(const char * name, const char * description, bool isRequired)
+					: ParamBase(name, description, isRequired, "bool", m_bools), m_bools({ true, false })
+				{ }
+
+			protected:
+
+				virtual 	IParam * clone() const override { return new Param<bool>(m_name.c_str(), m_description.c_str(), m_isRequired); }
+
+				virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
 				{
-					m_typeIndex(typeid(T));
+					if (argString == "0" || argString == "false")
+						return new Arg<bool>(false);
+					else if (argString == "1" || argString == "true")
+						return new Arg<bool>(true);
+
+					output = "Parameter must be provided with boolean value (0 | 1 | true | false)";
+					return nullptr;
 				}
 
-				void * getValuePtr() const override
+				virtual std::string valueToString(const bool & value) const override
 				{
-					return (void *)& m_value;
+					return value ? "true" : "false";
 				}
 
 			private:
 
-				T m_value;
+				std::vector<bool> m_bools;
 			};
 
-			using Function = std::function<std::string(std::vector<const Arg *>)>;
+			template <>
+			class Param<unsigned int> : public ParamBase<unsigned int>
+			{
+			public:
 
-			Command(const char * name, const char * description, std::vector<Param *> params, Function f);
+				Param(const char * name, const char * description, bool isRequired, const std::vector<unsigned int> & typedValueSuggestions)
+					: ParamBase(name, description, isRequired, "uint", typedValueSuggestions)
+				{ }
+
+				Param(const char * name, const char * description, bool isRequired)
+					: ParamBase(name, description, isRequired, "uint")
+				{ }
+
+			protected:
+
+				virtual IParam * clone() const override { return new Param<unsigned int>(*this); }
+
+				virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+				{
+					if (argString.length() == 0)
+					{
+						output = "Parameter must be provided with positive integer value.";
+						return nullptr;
+					}
+
+					for (size_t c = 0; c < argString.length(); ++c)
+						if (!std::isdigit(argString[c]))
+						{
+							output = "Parameter must be provided with positive integer value.";
+							return nullptr;
+						}
+
+					return new Arg<unsigned int>(std::stoul(argString));
+				}
+
+				virtual std::string valueToString(const unsigned int & value) const override
+				{
+					return std::to_string(value);
+				}
+			};
+
+			template <>
+			class Param<int> : public ParamBase<int>
+			{
+			public:
+
+				Param(const char * name, const char * description, bool isRequired, const std::vector<int> & typedValueSuggestions)
+					: ParamBase(name, description, isRequired, "int", typedValueSuggestions)
+				{ }
+
+				Param(const char * name, const char * description, bool isRequired)
+					: ParamBase(name, description, isRequired, "int")
+				{ }
+
+			protected:
+
+				virtual IParam * clone() const override { return new Param<int>(*this); }
+
+				virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+				{
+					if (argString.length() == 0)
+					{
+						output = "Parameter must be provided with integer value.";
+						return nullptr;
+					}
+
+					size_t c = 0;
+
+					if (argString[c] == '-')
+						++c;
+
+					if (c == argString.length())
+					{
+						output = "Parameter must be provided with integer value.";
+						return nullptr;
+					}
+
+					for (; c < argString.length(); ++c)
+					{
+						if (std::isdigit(argString[c]))
+							continue;
+						output = "Parameter must be provided with integer value.";
+						return nullptr;
+					}
+
+					return new Arg<int>(std::stoi(argString));
+				}
+
+				virtual std::string valueToString(const int & value) const override
+				{
+					return std::to_string(value);
+				}
+			};
+
+			template <>
+			class Param<float> : public ParamBase<float>
+			{
+			public:
+
+				Param(const char * name, const char * description, bool isRequired, const std::vector<float> & typedValueSuggestions)
+					: ParamBase(name, description, isRequired, "flt", typedValueSuggestions)
+				{ }
+
+				Param(const char * name, const char * description, bool isRequired)
+					: ParamBase(name, description, isRequired, "flt")
+				{ }
+
+			protected:
+
+				virtual IParam * clone() const override { return new Param<float>(*this); }
+
+				virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+				{
+					if (argString.length() == 0)
+					{
+						output = "Parameter must be provided with numerical value.";
+						return nullptr;
+					}
+
+					size_t c = 0;
+					bool dotFound = false;
+
+					if (argString[c] == '-')
+						++c;
+
+					if (c == argString.length())
+					{
+						output = "Parameter must be provided with numerical value.";
+						return nullptr;
+					}
+
+					for (; c < argString.length(); ++c)
+					{
+						if (std::isdigit(argString[c]))
+							continue;
+
+						if (argString[c] == '.')
+						{
+							if (!dotFound)
+							{
+								dotFound = true;
+								continue;
+							}
+						}
+						else if (argString[c] == 'f' && c == argString.length() - 1)
+							continue;
+
+						output = "Parameter must be provided with numerical value.";
+						return nullptr;
+					}
+
+					return new Arg<float>(std::stof(argString));
+				}
+
+				virtual std::string valueToString(const float & value) const override
+				{
+					return std::to_string(value);
+				}
+			};
+
+			template <>
+			class Param<std::string> : public ParamBase<std::string>
+			{
+			public:
+
+				Param(const char * name, const char * description, bool isRequired, const std::vector<std::string> & typedValueSuggestions)
+					: ParamBase(name, description, isRequired, "str", typedValueSuggestions)
+				{ }
+
+				Param(const char * name, const char * description, bool isRequired)
+					: ParamBase(name, description, isRequired, "str")
+				{ }
+
+			protected:
+
+				virtual IParam * clone() const override { return new Param<std::string>(*this); }
+
+				virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+				{
+					return new Arg<std::string>(argString);
+				}
+
+				virtual std::string valueToString(const std::string & value) const override
+				{
+					return value;
+				}
+			};
+
+			class EnumParam : public Param<std::string>
+			{
+			public:
+
+				EnumParam(const char * name, const char * description, bool isRequired, const std::vector<std::string> & enums)
+					: Param(name, description, isRequired, m_enums), m_enums(enums)
+				{
+					m_detailedName = isRequired ? "<()>" : "[()]";
+
+					std::string content;
+
+					for (size_t i = 0; i < enums.size(); ++i)
+					{
+						content += enums[i];
+
+						if (i < enums.size() - 1)
+							content += "|";
+					}
+
+					m_detailedName.insert(2, content);
+					m_detailedName.insert(1, m_name);
+				}
+
+			protected:
+
+				virtual IParam * clone() const override { return new EnumParam(m_name.c_str(), m_description.c_str(), m_isRequired, m_enums); }
+
+				virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+				{
+					for (const std::string & str : m_enums)
+						if (argString == str)
+							return new Arg<std::string>(argString);
+
+					output = "Invalid enum argument. See parameter description for possible values.";
+					return nullptr;
+				}
+
+			private:
+
+				std::vector<std::string> m_enums;
+			};
+
+			using BoolParam = Param<bool>;
+			using UIntParam = Param<unsigned int>;
+			using IntParam = Param<int>;
+			using FloatParam = Param<float>;
+			using StringParam = Param<std::string>;
+
+			using Function = std::function<std::string(std::vector<const IArg *>)>;
+
+			Command(const char * name, const char * description, std::vector<IParam *> params, Function f);
 
 			~Command();
 
@@ -258,17 +452,12 @@ namespace alvere
 				return m_signature;
 			}
 
-			inline const std::vector<Param *> & getParams() const
+			inline const std::vector<IParam *> & getParams() const
 			{
 				return m_params;
 			}
 
-			bool tryParseArgs(const std::vector<std::string> & argStrings, std::string & output) const;
-
-			std::string operator()(std::vector<const Arg *> args) const
-			{
-				return m_f(args);
-			}
+			bool tryInvoke(const std::vector<std::string> & argStrings, std::string & output) const;
 
 		private:
 
@@ -278,7 +467,7 @@ namespace alvere
 
 			std::string m_signature;
 
-			std::vector<Param *> m_params;
+			std::vector<IParam *> m_params;
 
 			Function m_f;
 		};
@@ -297,10 +486,6 @@ namespace alvere
 
 			void draw();
 		}
-
-		void registerCommand(const Command & command);
-
-		void unregisterCommand(const Command & command);
 
 		std::string submitCommand(const std::string & command);
 	}

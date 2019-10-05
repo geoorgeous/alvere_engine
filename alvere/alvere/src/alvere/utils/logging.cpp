@@ -54,14 +54,14 @@ namespace alvere
 		std::cout.rdbuf(s_OutFile.rdbuf());
 #endif
 
-		s_logCommand = std::make_unique<console::Command>("log", "Log text to the info log buffer.", std::vector<console::Command::Param *> {
-			&console::Command::TParam<std::string>("text", "The text that will be submitted to the info log buffer.", true)
-			}, [&](std::vector<const console::Command::Arg *> args) -> std::string
+		s_logCommand = std::make_unique<console::Command>("log", "Log text to the info log buffer.", std::vector<console::Command::IParam *> {
+			&console::Command::Param<std::string>("text", "The text that will be submitted to the info log buffer.", true) },
+			[&](std::vector<const console::Command::IArg *> args) -> std::string
 		{
-			return "NOT IMPLEMENTED!";
+			std::string output = args[0]->getValue<std::string>(); + "\n";
+			LogInfo(output.c_str());
+			return "";
 		});
-
-		console::registerCommand(*s_logCommand);
 	}
 
 	std::string FormatString(const char* format, va_list args)
