@@ -4,7 +4,10 @@
 #include <glfw/glfw3.h>
 
 #include "alvere/application/application.hpp"
-#include "alvere/utils/console.hpp"
+#include "alvere/utils/command_console/arg.hpp"
+#include "alvere/utils/command_console/command_console.hpp"
+#include "alvere/utils/command_console/command.hpp"
+#include "alvere/utils/command_console/param.hpp"
 #include "alvere/utils/exceptions.hpp"
 #include "alvere/utils/logging.hpp"
 
@@ -32,7 +35,7 @@ namespace alvere
 
 		console::gui::init(m_window.get());
 
-		s_quitCommand = std::make_unique<console::Command>("quit", "Quits the application.", std::vector<console::Command::IParam *>{}, [&](std::vector<const console::Command::IArg *> args) -> std::string
+		s_quitCommand = std::make_unique<console::Command>("quit", "Quits the application.", std::vector<console::IParam *>{}, [&](std::vector<const console::IArg *> args) -> std::string
 		{
 			m_running = false;
 			return "";

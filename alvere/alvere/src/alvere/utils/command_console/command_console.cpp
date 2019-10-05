@@ -1,4 +1,4 @@
-#include "alvere/utils/console.hpp"
+#include "alvere/utils/command_console/command_console.hpp"
 
 #include <algorithm>
 #include <memory>
@@ -19,126 +19,14 @@
 #include "alvere/graphics/texture.hpp"
 #include "alvere/math/matrix/matrix_4.hpp"
 #include "alvere/math/matrix/transformations.hpp"
+#include "alvere/utils/command_console/arg.hpp"
+#include "alvere/utils/command_console/command.hpp"
+#include "alvere/utils/command_console/command_alias.hpp"
+#include "alvere/utils/command_console/param.hpp"
 #include "alvere/utils/utilities.hpp"
 
 namespace alvere::console
 {
-	void registerCommand(const Command & command);
-
-	void unregisterCommand(const Command & command);
-
-	Command::IParam::IParam(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString)
-		: m_name(name), m_description(description), m_isRequired(isRequired), m_typeIndex(typeIndex)
-	{
-		m_detailedName = isRequired ? "<()>" : "[()]";
-		m_detailedName.insert(2, typeString);
-		m_detailedName.insert(1, m_name);
-	}
-
-	Command::IArg::IArg(std::type_index typeIndex)
-		: m_typeIndex(typeIndex)
-	{ }
-
-	Command::Command(const char * name, const char * description, std::vector<IParam *> params, Function f)
-		: Command(name, description, f)
-	{
-		for (size_t i = 0; i < m_name.length(); ++i)
-			m_name[i] = std::tolower(m_name[i]);
-
-		m_params.resize(params.size());
-		for (int i = 0; i < params.size(); ++i)
-		{
-			m_params[i] = params[i]->clone();
-			m_signature += " " + m_params[i]->getDetailedName();
-		}
-
-		registerCommand(*this);
-	}
-
-	Command::Command(const char * name, const char * description, Function f)
-		: m_name(name), m_description(description), m_signature(m_name), m_f(f)
-	{ }
-
-	Command::~Command()
-	{
-		unregisterCommand(*this);
-
-		for (int i = 0; i < m_params.size(); ++i)
-			delete m_params[i];
-	}
-
-	bool Command::tryInvoke(const std::vector<std::string> & argStrings, std::string & output) const
-	{
-		if (argStrings.size() > m_params.size())
-		{
-			output = "Too many arguments supplied.\nType `help " + m_name + "` to see the expected parameters.";
-			return false;
-		}
-		else if (argStrings.empty() && m_params.empty())
-		{
-			output = m_f({});
-			return true;
-		}
-
-		std::vector<const IArg *> args(m_params.size(), nullptr);
-
-		size_t currentArgString = 0;
-
-		bool parseFailure = false;
-
-		for (size_t p = 0; p < m_params.size(); ++p)
-		{
-			if (currentArgString == argStrings.size())
-			{
-				if (m_params[p]->getIsRequired())
-				{
-					output = "Missing argument for required parameter " + m_params[p]->getDetailedName() + ".\nType `help " + m_name + "` to see the expected parameters.";
-					parseFailure = true;
-					break;
-				}
-				else
-					continue;
-			}
-
-			args[currentArgString] = m_params[p]->tryParseStringToArg(argStrings[currentArgString], output);
-
-			if (args[currentArgString] != nullptr)
-			{
-				++currentArgString;
-			}
-			else if (m_params[p]->getIsRequired())
-			{
-				output = "Failed to parse argument " + std::to_string(currentArgString) + " (" + argStrings[currentArgString] + ") for required parameter " + m_params[p]->getDetailedName() + ((output == "") ? "" : ": " + output);
-				parseFailure = true;
-				break;
-			}
-		}
-
-		if (!parseFailure && currentArgString < argStrings.size())
-		{
-			output = "Too many arguments provided.\nType `help " + m_name + "` to see the expected parameters.";
-			parseFailure = true;
-		}
-
-		if (!parseFailure)
-		{
-			output = m_f(args);
-		}
-
-		for (const IArg * arg : args)
-			delete arg;
-
-		return !parseFailure;
-	}
-
-	CommandAlias::CommandAlias(const char * name, const char * description, const char * command)
-		: m_command(command), Command(name, description,
-			[&](std::vector<const Command::IArg *> args) -> std::string
-			{
-				return m_command + "\n" + submitCommand(m_command);
-			})
-	{ }
-
 	std::vector<const Command *> _commands;
 	std::vector<std::unique_ptr<CommandAlias>> _aliasCommands;
 
@@ -215,11 +103,11 @@ namespace alvere::console
 				return;
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
-				"help", 
-				"Displays a list of all of the available commands, and can optionally be used to display further information about a single command.", 
-				std::vector<Command::IParam *> {
-					&Command::StringParam("command name", "The name of the command to display information about.", false) },
-				[&](std::vector<const Command::IArg *> args) -> std::string
+				"help",
+				"Displays a list of all of the available commands, and can optionally be used to display further information about a single command.",
+				std::vector<IParam *> {
+				&StringParam("command name", "The name of the command to display information about.", false) },
+				[&](std::vector<const IArg *> args) -> std::string
 				{
 					std::string output;
 
@@ -252,9 +140,9 @@ namespace alvere::console
 								output += foundCommand->getSignature() + "\n\t";
 								output += foundCommand->getDescription() + "\n\t";
 
-								const std::vector<Command::IParam *> & params = foundCommand->getParams();
+								const std::vector<IParam *> & params = foundCommand->getParams();
 
-								for (const Command::IParam * param : params)
+								for (const IParam * param : params)
 									output += param->getDetailedName() + " : " + param->getDescription() + "\n\t";
 
 								return output;
@@ -281,47 +169,47 @@ namespace alvere::console
 				}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
-				"console.clear", 
-				"Clears the console output.", 
-				std::vector<Command::IParam *> {},
-				[&](std::vector<const Command::IArg *> args) -> std::string
-				{
-					_output.clear();
-					return "";
-				}));
+				"console.clear",
+				"Clears the console output.",
+				std::vector<IParam *> {},
+				[&](std::vector<const IArg *> args) -> std::string
+			{
+				_output.clear();
+				return "";
+			}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
-				"console.expand", 
-				"Expands the console window.", 
-				std::vector<Command::IParam *> {},
-				[&](std::vector<const Command::IArg *> args) -> std::string
-				{
-					_maxOutputLineCount = _maxOutputLineCountExpanded;
-					_shaderProgram->bind();
-					_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
-					return "";
-				}));
+				"console.expand",
+				"Expands the console window.",
+				std::vector<IParam *> {},
+				[&](std::vector<const IArg *> args) -> std::string
+			{
+				_maxOutputLineCount = _maxOutputLineCountExpanded;
+				_shaderProgram->bind();
+				_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
+				return "";
+			}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
-				"console.shrink", 
-				"Shrinks the console window.", 
-				std::vector<Command::IParam *> {},
-				[&](std::vector<const Command::IArg *> args) -> std::string
-				{
-					_maxOutputLineCount = _maxOutputLineCountShrunk;
-					_shaderProgram->bind();
-					_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
-					return "";
-				}));
+				"console.shrink",
+				"Shrinks the console window.",
+				std::vector<IParam *> {},
+				[&](std::vector<const IArg *> args) -> std::string
+			{
+				_maxOutputLineCount = _maxOutputLineCountShrunk;
+				_shaderProgram->bind();
+				_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
+				return "";
+			}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"alias.new",
 				"Creates an alias for a specified command call.",
-				std::vector<Command::IParam *> {
-					&Command::StringParam("new alias name", "The name of the new command alias being created.", true),
-					& Command::StringParam("command string", "The command to be executed when the command alias is entered.", true),
-					& Command::StringParam("description", "A description of the new command alias.", false), },
-				[&](std::vector<const Command::IArg *> args) -> std::string
+				std::vector<IParam *> {
+				&StringParam("new alias name", "The name of the new command alias being created.", true),
+					& StringParam("command string", "The command to be executed when the command alias is entered.", true),
+					& StringParam("description", "A description of the new command alias.", false), },
+				[&](std::vector<const IArg *> args) -> std::string
 				{
 					std::string name = args[0]->getValue<std::string>();
 
@@ -349,11 +237,11 @@ namespace alvere::console
 						description.c_str(),
 						args[1]->getValue<std::string>().c_str()));
 
-					std::sort(_aliasCommands.begin(), _aliasCommands.end(), 
-						[](const std::unique_ptr<CommandAlias> & a, const std::unique_ptr<CommandAlias> & b) -> bool 
-						{ 
-							return a->getName() < b->getName();
-						});
+					std::sort(_aliasCommands.begin(), _aliasCommands.end(),
+						[](const std::unique_ptr<CommandAlias> & a, const std::unique_ptr<CommandAlias> & b) -> bool
+					{
+						return a->getName() < b->getName();
+					});
 
 					return "Successfully created new alias '" + name + "'.";
 				}));
@@ -361,33 +249,33 @@ namespace alvere::console
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"alias.delete",
 				"Deletes an existing alias.",
-				std::vector<Command::IParam *> {
-					&Command::StringParam("alias name", "The name of the alias to delete.", true), },
-				[&](std::vector<const Command::IArg *> args) -> std::string
+				std::vector<IParam *> {
+				&StringParam("alias name", "The name of the alias to delete.", true), },
+				[&](std::vector<const IArg *> args) -> std::string
 				{
-						const std::string & name = args[0]->getValue<std::string>();
+					const std::string & name = args[0]->getValue<std::string>();
 
-						for (size_t a = 0; a < _aliasCommands.size(); ++a)
-							if (_aliasCommands[a]->getName() == name)
-							{
-								_aliasCommands.erase(_aliasCommands.begin() + a);
-								return "Successfully deleted alias '" + name + "'.";
-							}
+					for (size_t a = 0; a < _aliasCommands.size(); ++a)
+						if (_aliasCommands[a]->getName() == name)
+						{
+							_aliasCommands.erase(_aliasCommands.begin() + a);
+							return "Successfully deleted alias '" + name + "'.";
+						}
 
-						return "Alias '" + name + "' does not exist.";
+					return "Alias '" + name + "' does not exist.";
 				}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"test",
 				"This is a test command.",
-				std::vector<Command::IParam *> {
-					&Command::BoolParam("pbool", "test pool param", true),
-					&Command::UIntParam("puint", "test unsigned int param", true),
-					&Command::IntParam("pint", "test int param", true),
-					&Command::FloatParam("pfloat", "test float param", true),
-					&Command::StringParam("pstring", "test string param", true),
-					&Command::EnumParam("penum", "test enum param", true, { "one", "two", "three" }), },
-				[](std::vector<const Command::IArg *> args) -> std::string
+				std::vector<IParam *> {
+				&BoolParam("pbool", "test pool param", true),
+					& UIntParam("puint", "test unsigned int param", true),
+					& IntParam("pint", "test int param", true),
+					& FloatParam("pfloat", "test float param", true),
+					& StringParam("pstring", "test string param", true),
+					& EnumParam("penum", "test enum param", true, { "one", "two", "three" }), },
+				[](std::vector<const IArg *> args) -> std::string
 				{
 					return "test command";
 				}));
@@ -755,7 +643,7 @@ namespace alvere::console
 
 			_suggestions.clear();
 
-			
+
 
 			// do we have a command name yet?
 
@@ -794,7 +682,7 @@ namespace alvere::console
 		{
 			if (std::isspace(command[i]))
 				continue;
-			
+
 			delim = 0;
 			partBegin = i;
 
@@ -806,7 +694,7 @@ namespace alvere::console
 				{
 					return (std::string("Expecting matching delimiter (") + command[i]) + ")";
 				}
-						
+
 				delim = command[i];
 			}
 
@@ -903,9 +791,9 @@ namespace alvere::console
 
 		std::sort(_commands.begin(), _commands.end(),
 			[](const Command * a, const Command * b) -> bool
-			{
-				return a->getName() < b->getName();
-			});
+		{
+			return a->getName() < b->getName();
+		});
 	}
 
 	void unregisterCommand(const Command & command)

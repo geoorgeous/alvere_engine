@@ -254,7 +254,11 @@
     <ClCompile Include="src\alvere\math\shapes\point_3d.cpp" />
     <ClCompile Include="src\alvere\math\shapes\rect.cpp" />
     <ClCompile Include="src\alvere\math\shapes\sphere.cpp" />
-    <ClCompile Include="src\alvere\utils\console.cpp" />
+    <ClCompile Include="src\alvere\utils\command_console\arg.cpp" />
+    <ClCompile Include="src\alvere\utils\command_console\command.cpp" />
+    <ClCompile Include="src\alvere\utils\command_console\command_alias.cpp" />
+    <ClCompile Include="src\alvere\utils\command_console\command_console.cpp" />
+    <ClCompile Include="src\alvere\utils\command_console\param.cpp" />
     <ClCompile Include="src\alvere\world\application\transform.cpp" />
     <ClCompile Include="src\alvere\world\archetype\archetype.cpp" />
     <ClCompile Include="src\alvere\world\archetype\archetype_handle.cpp" />
@@ -379,7 +383,11 @@
     <ClInclude Include="src\alvere\math\shapes\point_3d.hpp" />
     <ClInclude Include="src\alvere\math\shapes\rect.hpp" />
     <ClInclude Include="src\alvere\math\shapes\sphere.hpp" />
-    <ClInclude Include="src\alvere\utils\console.hpp" />
+    <ClInclude Include="src\alvere\utils\command_console\arg.hpp" />
+    <ClInclude Include="src\alvere\utils\command_console\command.hpp" />
+    <ClInclude Include="src\alvere\utils\command_console\command_alias.hpp" />
+    <ClInclude Include="src\alvere\utils\command_console\command_console.hpp" />
+    <ClInclude Include="src\alvere\utils\command_console\param.hpp" />
     <ClInclude Include="src\alvere\utils\random.hpp" />
     <ClInclude Include="src\alvere\utils\uuid.hpp" />
     <ClInclude Include="src\alvere\world\application\c_direction.hpp" />

@@ -12,7 +12,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "alvere/utils/console.hpp"
+#include "alvere/utils/command_console/arg.hpp"
+#include "alvere/utils/command_console/command.hpp"
+#include "alvere/utils/command_console/param.hpp"
 
 #define ALV_LOG_TIMESTAMP_FMT "[%X]"
 #define ALV_LOG_PREFIXSTRING_DBUG "[## Debug ##] "
@@ -54,9 +56,9 @@ namespace alvere
 		std::cout.rdbuf(s_OutFile.rdbuf());
 #endif
 
-		s_logCommand = std::make_unique<console::Command>("log", "Log text to the info log buffer.", std::vector<console::Command::IParam *> {
-			&console::Command::Param<std::string>("text", "The text that will be submitted to the info log buffer.", true) },
-			[&](std::vector<const console::Command::IArg *> args) -> std::string
+		s_logCommand = std::make_unique<console::Command>("log", "Log text to the info log buffer.", std::vector<console::IParam *> {
+			&console::Param<std::string>("text", "The text that will be submitted to the info log buffer.", true) },
+			[&](std::vector<const console::IArg *> args) -> std::string
 		{
 			std::string output = args[0]->getValue<std::string>() + "\n";
 			LogInfo(output.c_str());

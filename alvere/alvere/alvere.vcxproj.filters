@@ -306,9 +306,6 @@
     <ClCompile Include="src\alvere\graphics\text\font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\alvere\utils\console.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\alvere\world\application\transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -328,6 +325,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\alvere\world\system\systems\renderer_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\utils\command_console\arg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\utils\command_console\param.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\utils\command_console\command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\utils\command_console\command_alias.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alvere\utils\command_console\command_console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -686,9 +698,6 @@
     <ClInclude Include="src\alvere\graphics\text\font.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\alvere\utils\console.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\alvere\events\event_handler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -774,6 +783,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\world\system\systems\renderer_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\utils\command_console\arg.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\utils\command_console\param.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\utils\command_console\command.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\utils\command_console\command_alias.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\utils\command_console\command_console.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
