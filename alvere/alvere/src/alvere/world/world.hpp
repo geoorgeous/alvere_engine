@@ -10,11 +10,15 @@
 #include "alvere/world/archetype/archetype_handle.hpp"
 #include "alvere/world/archetype/archetype_query.hpp"
 #include "alvere/world/entity/entity.hpp"
+#include "alvere/utils/pool.hpp"
+#include "alvere/utils/pool_handle.hpp"
 
 namespace alvere
 {
 	class UpdatedSystem;
 	class RenderedSystem;
+
+	using EntityHandle = Pool<Entity>::Handle;
 
 	class World
 	{
@@ -24,6 +28,8 @@ namespace alvere
 		std::unordered_map<std::type_index, UpdatedSystem *> m_UpdatedSystems;
 		std::unordered_map<std::type_index, RenderedSystem *> m_RenderedSystems;
 
+		Pool<Entity> m_Entities;
+
 	public:
 
 		World();
@@ -32,21 +38,21 @@ namespace alvere
 
 		void Render();
 
-		Entity SpawnEntity();
+		EntityHandle SpawnEntity();
 
 		template <typename... Components>
-		Entity SpawnEntity();
+		EntityHandle SpawnEntity();
 
-		void DestroyEntity(Entity & entity);
-
-		template <typename T>
-		void AddComponent(Entity & e);
+		void DestroyEntity(EntityHandle & entity);
 
 		template <typename T>
-		void RemoveComponent(Entity & e);
+		void AddComponent(EntityHandle & e);
 
 		template <typename T>
-		T & GetComponent(const Entity & e) const;
+		void RemoveComponent(EntityHandle & e);
+
+		template <typename T>
+		T & GetComponent(EntityHandle & e) const;
 
 		template <typename T, typename... Args>
 		T * AddSystem( Args&&... args );
@@ -61,7 +67,7 @@ namespace alvere
 	};
 
 	template <typename... Components>
-	Entity World::SpawnEntity()
+	EntityHandle World::SpawnEntity()
 	{
 		Archetype::Handle archetypeHandle = Archetype::Handle::make_handle<Components...>();
 
@@ -77,15 +83,15 @@ namespace alvere
 			m_Archetypes[archetypeHandle] = archetype;
 		}
 
-		Entity e;
-		archetype->AddEntity(e);
+		EntityHandle e = m_Entities.allocate();
+		archetype->AddEntity(e.get());
 		return e;
 	}
 
 	template <typename T>
-	void World::AddComponent(Entity & entity)
+	void World::AddComponent(EntityHandle & entity)
 	{
-		Archetype * originalArchetype = entity.m_Archetype;
+		Archetype * originalArchetype = entity->m_Archetype;
 
 		Archetype::Handle newArchetypeHandle = originalArchetype->GetHandle();
 		newArchetypeHandle.AddComponent<T>();
@@ -106,13 +112,13 @@ namespace alvere
 			m_Archetypes[newArchetypeHandle] = newArchetype;
 		}
 
-		originalArchetype->MoveEntity(entity, *newArchetype);
+		originalArchetype->MoveEntity(entity.get(), *newArchetype);
 	}
 
 	template <typename T>
-	void World::RemoveComponent(Entity & entity)
+	void World::RemoveComponent(EntityHandle & entity)
 	{
-		Archetype * originalArchetype = entity.m_Archetype;
+		Archetype * originalArchetype = entity->m_Archetype;
 
 		Archetype::Handle newArchetypeHandle = originalArchetype->GetHandle();
 		newArchetypeHandle.RemoveComponent<T>();
@@ -132,13 +138,13 @@ namespace alvere
 			m_Archetypes[newArchetypeHandle] = newArchetype;
 		}
 
-		originalArchetype->MoveEntity(entity, *newArchetype);
+		originalArchetype->MoveEntity(entity.get(), *newArchetype);
 	}
 
 	template <typename T>
-	T & World::GetComponent(const Entity & e) const
+	T & World::GetComponent(EntityHandle & e) const
 	{
-		return e.m_Archetype->GetComponent<T>(e);
+		return e->m_Archetype->GetComponent<T>(e.get());
 	}
 
 	template <typename T, typename... Args>
