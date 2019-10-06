@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <string>
 
 #include "alvere/application/application.hpp"
 #include "alvere/utils/exceptions.hpp"
@@ -22,6 +23,11 @@ int main(int argc, char *argv[])
 	{
 		alvere::LogError("Failed to initialise application: %s\n", e.what());
 		error = 1;
+
+		{ //Wait for user input before closing the terminal
+			std::string temp;
+			std::cin >> temp;
+		}
 	}
 
 	delete app;

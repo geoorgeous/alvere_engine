@@ -85,7 +85,7 @@ struct AlvereApplication : public Application
 
 		m_renderer = Renderer::New();
 
-		Entity entity = world.SpawnEntity<C_Transform, C_RenderableMesh>();
+		EntityHandle entity = world.SpawnEntity<C_Transform, C_RenderableMesh>();
 		C_Transform & transform = world.GetComponent<C_Transform>(entity);
 		transform->setScale(Vector3(0.05f, 0.05f, 0.05f));
 		C_RenderableMesh & renderableMesh = world.GetComponent<C_RenderableMesh>(entity);
