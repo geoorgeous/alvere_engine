@@ -41,8 +41,7 @@ namespace alvere::console
 		Matrix4 _projection;
 
 		Asset<SpriteBatcher> _spriteBatcher;
-		Font::Face _fontFace("res/fonts/consola.ttf");
-		const Font::Face::Bitmap * _fontFaceBitmap;
+		Font _font;
 		unsigned int _fontSize = 14;
 		unsigned int _maxOutputLineCountShrunk = 14;
 		unsigned int _maxOutputLineCountExpanded = 48;
@@ -102,6 +101,11 @@ namespace alvere::console
 			if (_initialised)
 				return;
 
+			_font.loadFontFaceFile("res/fonts/consolas/consola.ttf");
+			_font.loadFontFaceFile("res/fonts/consolas/consolab.ttf");
+			_font.loadFontFaceFile("res/fonts/consolas/consolai.ttf");
+			_font.loadFontFaceFile("res/fonts/consolas/consolaz.ttf");
+
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"help",
 				"Displays a list of all of the available commands, and can optionally be used to display further information about a single command.",
@@ -113,14 +117,14 @@ namespace alvere::console
 
 					if (args[0] == nullptr)
 					{
-						output = "Below is a list of all of the available commands. To see more information about a particular command, type 'help' with the name of the command.\n\nSyntax:\n[optional parameter]\n<required parameter>\n(parameter type)\n(enum|values)\n\n";
+						output = "Below is a list of all of the available commands. To see more information about a particular command, type 'help' with the name of the command.\n\n";
 
 						for (const Command * command : _commands)
 							output += command->getSignature() + " : " + command->getDescription() + "\n";
 
 						if (_aliasCommands.size() > 0)
 						{
-							output += "\nAliases\n\n";
+							output += "\nCommand aliases\n\n";
 
 							for (const std::unique_ptr<CommandAlias> & alias : _aliasCommands)
 								output += alias->getSignature() + " : (" + alias->getCommandString() + ") " + alias->getDescription() + "\n";
@@ -280,8 +284,6 @@ namespace alvere::console
 					return "test command";
 				}));
 
-			_fontFaceBitmap = _fontFace.getBitmap(_fontSize);
-
 			Asset<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core
 					uniform mat4 u_projectionMatrix;
 
@@ -331,7 +333,7 @@ namespace alvere::console
 			_shaderProgram->bind();
 			_shaderProgram->sendUniformMat4x4("u_projectionMatrix", _projection);
 			_shaderProgram->sendUniformFloat3("u_colour", 0.0f, 0.0f, 0.0f);
-			_shaderProgram->sendUniformInt1("u_lineHeight", _fontFaceBitmap->getFontFaceHeight());
+			_shaderProgram->sendUniformInt1("u_lineHeight", _font.getFontFace(Font::Style::Regular)->getBitmap(_fontSize)->getFontFaceHeight());
 			_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
 
 			float vertexData[18] = {
@@ -440,29 +442,31 @@ namespace alvere::console
 			if (!_shown)
 				return;
 
-			float inputXOffset = _fontFaceBitmap->getTextSize(_inputPre).x;
-			float caretXOffset = _fontFaceBitmap->getTextSize(_input.substr(0, _caretPosition)).x;
+			const Font::Face::Bitmap * bitmap = _font.getFontFace(Font::Style::Regular)->getBitmap(_fontSize);
+
+			float inputXOffset = bitmap->getTextSize(_inputPre).x;
+			float caretXOffset = bitmap->getTextSize(_input.substr(0, _caretPosition)).x;
 
 			_spriteBatcher->begin(_projection);
 
-			_spriteBatcher->submit(*_fontFaceBitmap, _inputPre.c_str(), Vector2(3.0f, 6.0f));
+			_spriteBatcher->submit(*bitmap, _inputPre.c_str(), Vector2(3.0f, 6.0f));
 
-			_spriteBatcher->submit(*_fontFaceBitmap, _input.c_str(), Vector2(3.0f + inputXOffset, 6.0f));
+			_spriteBatcher->submit(*bitmap, _input.c_str(), Vector2(3.0f + inputXOffset, 6.0f));
 
 			if (_caretIsVisible)
-				_spriteBatcher->submit(*_fontFaceBitmap, "_", Vector2(3.0f + inputXOffset + caretXOffset, 6.0f));
+				_spriteBatcher->submit(*bitmap, "_", Vector2(3.0f + inputXOffset + caretXOffset, 6.0f));
 
 			int lineCount = 0;
 			for (int i = _outputPageIndex * _maxOutputLineCount; i < _output.size() && lineCount < _maxOutputLineCount; ++i, ++lineCount)
 			{
-				_spriteBatcher->submit(*_fontFaceBitmap, _output[_output.size() - 1 - i], Vector2(3.0f, 6.0f + _fontFaceBitmap->getFontFaceHeight() * (lineCount + 1)));
+				_spriteBatcher->submit(*bitmap, _output[_output.size() - 1 - i], Vector2(3.0f, 6.0f + bitmap->getFontFaceHeight() * (lineCount + 1)));
 			}
 
 			if (_output.size() > _maxOutputLineCount)
 			{
 				int pageCount = _output.size() / _maxOutputLineCount + 1;
 				std::string pageCounter = std::to_string(_outputPageIndex + 1) + "/" + std::to_string(pageCount);
-				_spriteBatcher->submit(*_fontFaceBitmap, pageCounter, Vector2(_window->getWidth() - (3.0f + _fontFaceBitmap->getTextSize(pageCounter).x), 6.0f));
+				_spriteBatcher->submit(*bitmap, pageCounter, Vector2(_window->getWidth() - (3.0f + bitmap->getTextSize(pageCounter).x), 6.0f));
 			}
 
 			_shaderProgram->bind();

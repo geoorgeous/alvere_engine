@@ -230,7 +230,7 @@ namespace alvere
 	}
 
 	Font::Face::Face(const char * fontFilepath)
-		: m_name("INVALID FONT"), m_resourceFilepath(fontFilepath), m_fontStyle(Font::Style::Regular)
+		: m_name("INVALID FONT"), m_resourceFilepath(fontFilepath), m_fontStyle(Font::Style::None)
 	{
 		FT_Library ft;
 
@@ -256,26 +256,54 @@ namespace alvere
 			m_fontStyle = Font::Style::Bold;
 		else if (face->style_flags & FT_STYLE_FLAG_ITALIC)
 			m_fontStyle = Font::Style::Italic;
+		else
+			m_fontStyle = Font::Style::Regular;
 
 		FT_Done_Face(face);
 
 		FT_Done_Library(ft);
 	}
 
-	const Font::Face::Bitmap * Font::Face::getBitmap(unsigned int fontHeightPixels)
+	Font::Face::~Face()
 	{
-		for (const Bitmap & bitmap : m_bitmaps)
-			if (bitmap.getGlyphHeightPixels() == fontHeightPixels)
-				return &bitmap;
+		for (Bitmap * bitmap : m_bitmaps)
+			delete bitmap;
+	}
 
-		m_bitmaps.emplace_back(m_resourceFilepath.c_str(), fontHeightPixels);
+	const Font::Face::Bitmap * Font::Face::getBitmap(unsigned int fontHeightPixels) const
+	{
+		for (const Font::Face::Bitmap * bitmap : m_bitmaps)
+			if (bitmap->getGlyphHeightPixels() == fontHeightPixels)
+				return bitmap;
 
-		if (m_bitmaps.back().getGlyphHeightPixels() == 0)
+		m_bitmaps.emplace_back(new Bitmap(m_resourceFilepath.c_str(), fontHeightPixels));
+
+		if (m_bitmaps.back()->getGlyphHeightPixels() == 0)
 		{
 			m_bitmaps.pop_back();
 			return nullptr;
 		}
 
-		return &m_bitmaps.back();
+		return m_bitmaps.back();
+	}
+
+	const Font::Face * Font::getFontFace(Style style) const
+	{
+		auto iter = m_faces.find(style);
+
+		if (iter != m_faces.end())
+			return &iter->second;
+
+		return nullptr;
+	}
+
+	void Font::loadFontFaceFile(const char * filepath)
+	{
+		Face face(filepath);
+
+		if (face.getStyle() == Style::None)
+			return;
+
+		m_faces.emplace(face.getStyle(), face);
 	}
 }

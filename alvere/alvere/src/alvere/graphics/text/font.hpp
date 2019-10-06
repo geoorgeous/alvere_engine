@@ -18,6 +18,7 @@ namespace alvere
 
 		enum class Style
 		{
+			None = -1,
 			Regular,
 			Bold,
 			Italic,
@@ -86,7 +87,24 @@ namespace alvere
 
 			Face(const char * fontFilepath);
 
-			const Bitmap * getBitmap(unsigned int fontHeightPixels);
+			~Face();
+
+			inline const std::string & getName() const
+			{
+				return m_name;
+			}
+
+			inline const std::string & getResourceFilepath() const
+			{
+				return m_resourceFilepath;
+			}
+
+			inline Style getStyle() const
+			{
+				return m_fontStyle;
+			}
+
+			const Bitmap * getBitmap(unsigned int fontHeightPixels) const;
 
 		private:
 
@@ -96,8 +114,12 @@ namespace alvere
 
 			Style m_fontStyle;
 
-			std::vector<Bitmap> m_bitmaps;
+			mutable std::vector<Bitmap *> m_bitmaps;
 		};
+
+		const Face * getFontFace(Style style) const;
+
+		void loadFontFaceFile(const char * filepath);
 
 	private:
 

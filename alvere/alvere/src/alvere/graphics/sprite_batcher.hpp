@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "alvere/assets.hpp"
+#include "alvere/graphics/sprite.hpp"
 #include "alvere/graphics/text/font.hpp"
 #include "alvere/graphics/texture.hpp"
 #include "alvere/math/vector/vector_4.hpp"
@@ -40,6 +41,8 @@ namespace alvere
 		void submit(const Texture * texture, Rect destination, RectI source, Vector4 tint = Vector4::unit);
 
 		void submit(const Font::Face::Bitmap & fontFaceBitmap, const std::string & text, Vector2 position, Vector4 colour = Vector4::unit);
+
+		void submit(const Sprite & sprite);
 
 	protected:
 

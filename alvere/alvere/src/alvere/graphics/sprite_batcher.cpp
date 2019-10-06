@@ -92,6 +92,11 @@ namespace alvere
 		}
 	}
 
+	void SpriteBatcher::submit(const Sprite & sprite)
+	{
+		submit(&sprite.getTexture(), sprite.bounds(), sprite.textureSource(), sprite.colour());
+	}
+
 	SpriteBatcher::DrawSpriteCommand& SpriteBatcher::DrawSpriteCommand::operator=(const DrawSpriteCommand& rhs)
 	{
 		texture = rhs.texture;
