@@ -119,7 +119,6 @@ namespace alvere
 			mover.m_Speed = 11;
 		}
 
-		player.reset();
 		world.DestroyEntity(player);
 
 		{
