@@ -52,7 +52,7 @@ namespace alvere
 		AssertionFailedException(const char * expression, const char * file, int line, const std::string& message = "");
 
 	protected:
-		std::stringstream& GenerateFullReport(std::stringstream& ss) const override;
+		virtual std::stringstream& GenerateFullReport(std::stringstream& ss) const override;
 
 	private:
 		std::string m_AssertionExpression;

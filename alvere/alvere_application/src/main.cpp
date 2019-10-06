@@ -55,6 +55,8 @@ struct AlvereApplication : public Application
 	{
 		RunTests();
 
+		AlvAssert(false, "grrr failed an assert");
+
 		m_spriteBatcher = SpriteBatcher::New();
 
 		world_generation::Generate(m_worldCellArea, 0);
