@@ -3,6 +3,7 @@
 #include <string>
 #include <typeindex>
 #include <vector>
+#include <cctype>
 
 #include "alvere/utils/command_console/arg.hpp"
 
