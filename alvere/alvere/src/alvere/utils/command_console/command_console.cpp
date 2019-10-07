@@ -284,7 +284,7 @@ namespace alvere::console
 					& FloatParam("pfloat", "test float param", true),
 					& StringParam("pstring", "test string param", true),
 					& EnumParam("penum", "test enum param", true, { "one", "two", "three" }),
-					& EnummedParam<TestEnum>("penummed", "test enummed param", true) },
+					& TEnumParam<TestEnum>("penummed", "test enummed param", true) },
 				[](std::vector<const IArg *> args) -> std::string
 				{
 					return "test command";

@@ -377,7 +377,7 @@ namespace alvere::console
 	public:
 
 		TEnumParam(const char * name, const char * description, bool isRequired)
-			: Param(name, description, isRequired, m_enums)
+			: EnumParam(name, description, isRequired, m_enums)
 		{
 			// EnumType values in to m_enums
 			// https://github.com/Neargye/magic_enum
