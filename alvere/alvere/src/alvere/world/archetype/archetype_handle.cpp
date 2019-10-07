@@ -1,4 +1,5 @@
 #include "alvere/world/archetype/archetype_handle.hpp"
+#include "alvere/utils/exceptions.hpp"
 
 namespace alvere
 {
@@ -8,7 +9,7 @@ namespace alvere
 
 		if (iter != m_Types.end())
 		{
-			//TODO: Log a warning that the component already exists
+			LogWarning( "[Archetype::Handle] Cannot add component as it already exists on this entity" );
 			return;
 		}
 
@@ -22,7 +23,7 @@ namespace alvere
 
 		if (iter == m_Types.end())
 		{
-			//TODO: Log a warning that the component didn't exist
+			LogWarning( "[Archetype::Handle] Cannot remove component as it didn't exist on this entity" );
 			return;
 		}
 
