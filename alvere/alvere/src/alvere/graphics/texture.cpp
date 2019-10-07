@@ -32,7 +32,7 @@ namespace alvere
 		return m_pixelData;
 	}
 
-	RectI Texture::bounds() const
+	RectI Texture::getBounds() const
 	{
 		return RectI{ 0, 0, m_resWidth, m_resWidth };
 	}

@@ -4,6 +4,8 @@
 #include <typeindex>
 #include <vector>
 
+#include <magin_enum/magic_enum.hpp>
+
 #include "alvere/utils/command_console/arg.hpp"
 
 namespace alvere::console
@@ -137,6 +139,7 @@ namespace alvere::console
 
 		std::vector<bool> m_bools;
 	};
+	using BoolParam = Param<bool>;
 
 	template <>
 	class Param<unsigned int> : public ParamBase<unsigned int>
@@ -178,6 +181,7 @@ namespace alvere::console
 			return std::to_string(value);
 		}
 	};
+	using UIntParam = Param<unsigned int>;
 
 	template <>
 	class Param<int> : public ParamBase<int>
@@ -231,6 +235,7 @@ namespace alvere::console
 			return std::to_string(value);
 		}
 	};
+	using IntParam = Param<int>;
 
 	template <>
 	class Param<float> : public ParamBase<float>
@@ -297,6 +302,7 @@ namespace alvere::console
 			return std::to_string(value);
 		}
 	};
+	using FloatParam = Param<float>;
 
 	template <>
 	class Param<std::string> : public ParamBase<std::string>
@@ -325,30 +331,31 @@ namespace alvere::console
 			return value;
 		}
 	};
+	using StringParam = Param<std::string>;
 
-	class EnumParam : public Param<std::string>
+	class OptionParam : public StringParam
 	{
 	public:
 
-		EnumParam(const char * name, const char * description, bool isRequired, const std::vector<std::string> & enums)
-			: Param(name, description, isRequired, m_enums), m_enums(enums)
+		OptionParam(const char * name, const char * description, bool isRequired, const std::vector<std::string> & options)
+			: Param(name, description, isRequired, m_options), m_options(options)
 		{
 			generateDetailedName();
 		}
 
 	protected:
 
-		std::vector<std::string> m_enums;
+		std::vector<std::string> m_options;
 
-		virtual IParam * clone() const override { return new EnumParam(m_name.c_str(), m_description.c_str(), m_isRequired, m_enums); }
+		virtual IParam * clone() const override { return new OptionParam(m_name.c_str(), m_description.c_str(), m_isRequired, m_options); }
 
 		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
 		{
-			for (const std::string & str : m_enums)
+			for (const std::string & str : m_options)
 				if (argString == str)
 					return new Arg<std::string>(argString);
 
-			output = "Invalid enum argument. See parameter description for possible values.";
+			output = "Argument '" + argString + "' is not an avilable option.";
 			return nullptr;
 		}
 
@@ -358,11 +365,11 @@ namespace alvere::console
 
 			std::string content;
 
-			for (size_t i = 0; i < m_enums.size(); ++i)
+			for (size_t i = 0; i < m_options.size(); ++i)
 			{
-				content += m_enums[i];
+				content += m_options[i];
 
-				if (i < m_enums.size() - 1)
+				if (i < m_options.size() - 1)
 					content += "|";
 			}
 
@@ -372,21 +379,64 @@ namespace alvere::console
 	};
 
 	template <typename EnumType>
-	class TEnumParam : public EnumParam
+	class EnumParam : public StringParam
 	{
 	public:
 
-		TEnumParam(const char * name, const char * description, bool isRequired)
-			: Param(name, description, isRequired, m_enums)
+		EnumParam(const char * name, const char * description, bool isRequired)
+			: ParamBase(name, description, isRequired, "", m_options)
 		{
-			// EnumType values in to m_enums
-			// https://github.com/Neargye/magic_enum
+			m_detailedName = m_isRequired ? "<()>" : "[()]";
+
+			std::string typeName = typeid(EnumType).name();
+			size_t lastColonPos = typeName.find_last_of(':');
+
+			if (lastColonPos != std::string::npos)
+				typeName = typeName.substr(lastColonPos + 1);
+
+			m_detailedName.insert(2, typeName);
+			m_detailedName.insert(1, m_name);
+
+			auto enumStrings = magic_enum::enum_names<EnumType>();
+			m_options = std::vector<std::string>(enumStrings.begin(), enumStrings.end());
+
+			m_description += " " + typeName + "=(";
+
+			for (size_t e = 0; e < m_options.size(); ++e)
+			{
+				m_description += m_options[e];
+				if (e != m_options.size() - 1)
+					m_description += "|";
+			}
+
+			m_description += ")";
+		}
+
+	protected:
+
+		std::vector<std::string> m_options;
+
+		virtual IParam * clone() const override
+		{
+			EnumParam<EnumType> * newEnumParam = new EnumParam<EnumType>(*this);
+			newEnumParam->m_typedValueSuggestions = &newEnumParam->m_options;
+			return newEnumParam;
+		}
+
+		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+		{
+			for (const std::string & str : m_options)
+				if (str == argString)
+					return new Arg<EnumType>(magic_enum::enum_cast<EnumType>(str).value());
+
+			output = "Invalid enumerator. See parameter description or the enum definition for all acceptable enumerators.";
+			return nullptr;
+		}
+
+		virtual std::string valueToString(const std::string & value) const override
+		{
+			return value;
 		}
 	};
 
-	using BoolParam = Param<bool>;
-	using UIntParam = Param<unsigned int>;
-	using IntParam = Param<int>;
-	using FloatParam = Param<float>;
-	using StringParam = Param<std::string>;
 }

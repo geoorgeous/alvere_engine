@@ -31,7 +31,7 @@ namespace alvere
 
 		unsigned char * pixelData() const;
 
-		RectI bounds() const;
+		RectI getBounds() const;
 
 		alvere::Vector2 texCoords(const alvere::Vector2i& texPosition) const;
 

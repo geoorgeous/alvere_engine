@@ -269,25 +269,20 @@ namespace alvere::console
 					return "Alias '" + name + "' does not exist.";
 				}));
 
-			enum class TestEnum
-			{
-
-			};
-
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"test",
-				"This is a test command.",
+				"This is a test command with all currently possible types of parameters.",
 				std::vector<IParam *> {
-				&BoolParam("pbool", "test pool param", true),
-					& UIntParam("puint", "test unsigned int param", true),
-					& IntParam("pint", "test int param", true),
-					& FloatParam("pfloat", "test float param", true),
-					& StringParam("pstring", "test string param", true),
-					& EnumParam("penum", "test enum param", true, { "one", "two", "three" }),
-					& EnummedParam<TestEnum>("penummed", "test enummed param", true) },
+					&BoolParam("test1", "A boolean parameter.", true),
+					&UIntParam("test2", "An unsigned int parameter.", true),
+					&IntParam("test3", "An int parameter.", true),
+					&FloatParam("test4", "A float parameter.", true),
+					&StringParam("test5", "A string parameter.", true),
+					&OptionParam("test6", "An option parameter.", true, { "one", "two", "three" }),
+					&EnumParam<Font::Style>("test7", "An enum parameter.", true) },
 				[](std::vector<const IArg *> args) -> std::string
 				{
-					return "test command";
+					return "Test command!";
 				}));
 
 			Asset<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core

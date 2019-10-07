@@ -1,5 +1,6 @@
 #include "alvere/utils/command_console/param.hpp"
 
+
 namespace alvere::console
 {
 	IParam::IParam(const std::string & name, const std::string & description, bool isRequired, std::type_index typeIndex, const char * typeString)
