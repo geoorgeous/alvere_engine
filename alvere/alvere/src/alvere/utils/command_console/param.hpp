@@ -384,7 +384,7 @@ namespace alvere::console
 	public:
 
 		EnumParam(const char * name, const char * description, bool isRequired)
-			: ParamBase(name, description, isRequired, "", m_options)
+			: Param(name, description, isRequired, m_options)
 		{
 			m_detailedName = m_isRequired ? "<()>" : "[()]";
 

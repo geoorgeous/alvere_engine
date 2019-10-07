@@ -94,7 +94,7 @@ namespace alvere
 
 	void SpriteBatcher::submit(const Sprite & sprite)
 	{
-		submit(&sprite.getTexture(), sprite.getBounds(), sprite.textureSource(), sprite.colour());
+		submit(&sprite.getTexture(), sprite.bounds(), sprite.textureSource(), sprite.colour());
 	}
 
 	SpriteBatcher::DrawSpriteCommand& SpriteBatcher::DrawSpriteCommand::operator=(const DrawSpriteCommand& rhs)
