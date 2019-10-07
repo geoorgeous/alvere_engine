@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	}
 	catch (alvere::Exception e)
 	{
-		alvere::LogError("Initialisation error! %s\n", e->what());
+		alvere::LogError("Initialisation error! %s\n", e.what());
 		error = 1;
 
 		{ //Wait for user input before closing the terminal
