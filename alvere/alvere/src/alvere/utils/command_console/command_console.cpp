@@ -141,10 +141,10 @@ namespace alvere::console
 						for (const Command * command : _commands)
 							if (command->getName() == commandName)
 							{
-								output += foundCommand->getSignature() + "\n\t";
-								output += foundCommand->getDescription() + "\n\t";
+								output += command->getSignature() + "\n\t";
+								output += command->getDescription() + "\n\t";
 
-								const std::vector<IParam *> & params = foundCommand->getParams();
+								const std::vector<IParam *> & params = command->getParams();
 
 								for (const IParam * param : params)
 									output += param->getDetailedName() + " : " + param->getDescription() + "\n\t";
@@ -269,6 +269,11 @@ namespace alvere::console
 					return "Alias '" + name + "' does not exist.";
 				}));
 
+			enum class TestEnum
+			{
+
+			};
+
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"test",
 				"This is a test command.",
@@ -278,7 +283,8 @@ namespace alvere::console
 					& IntParam("pint", "test int param", true),
 					& FloatParam("pfloat", "test float param", true),
 					& StringParam("pstring", "test string param", true),
-					& EnumParam("penum", "test enum param", true, { "one", "two", "three" }), },
+					& EnumParam("penum", "test enum param", true, { "one", "two", "three" }),
+					& EnummedParam<TestEnum>("penummed", "test enummed param", true) },
 				[](std::vector<const IArg *> args) -> std::string
 				{
 					return "test command";

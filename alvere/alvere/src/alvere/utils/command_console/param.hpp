@@ -3,7 +3,6 @@
 #include <string>
 #include <typeindex>
 #include <vector>
-#include <cctype>
 
 #include "alvere/utils/command_console/arg.hpp"
 
@@ -334,23 +333,12 @@ namespace alvere::console
 		EnumParam(const char * name, const char * description, bool isRequired, const std::vector<std::string> & enums)
 			: Param(name, description, isRequired, m_enums), m_enums(enums)
 		{
-			m_detailedName = isRequired ? "<()>" : "[()]";
-
-			std::string content;
-
-			for (size_t i = 0; i < enums.size(); ++i)
-			{
-				content += enums[i];
-
-				if (i < enums.size() - 1)
-					content += "|";
-			}
-
-			m_detailedName.insert(2, content);
-			m_detailedName.insert(1, m_name);
+			generateDetailedName();
 		}
 
 	protected:
+
+		std::vector<std::string> m_enums;
 
 		virtual IParam * clone() const override { return new EnumParam(m_name.c_str(), m_description.c_str(), m_isRequired, m_enums); }
 
@@ -364,9 +352,36 @@ namespace alvere::console
 			return nullptr;
 		}
 
-	private:
+		void generateDetailedName()
+		{
+			m_detailedName = m_isRequired ? "<()>" : "[()]";
 
-		std::vector<std::string> m_enums;
+			std::string content;
+
+			for (size_t i = 0; i < m_enums.size(); ++i)
+			{
+				content += m_enums[i];
+
+				if (i < m_enums.size() - 1)
+					content += "|";
+			}
+
+			m_detailedName.insert(2, content);
+			m_detailedName.insert(1, m_name);
+		}
+	};
+
+	template <typename EnumType>
+	class TEnumParam : public EnumParam
+	{
+	public:
+
+		TEnumParam(const char * name, const char * description, bool isRequired)
+			: Param(name, description, isRequired, m_enums)
+		{
+			// EnumType values in to m_enums
+			// https://github.com/Neargye/magic_enum
+		}
 	};
 
 	using BoolParam = Param<bool>;
