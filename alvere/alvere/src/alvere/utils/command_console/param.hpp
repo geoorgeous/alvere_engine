@@ -3,6 +3,7 @@
 #include <string>
 #include <typeindex>
 #include <vector>
+#include <cctype>
 
 #include <magin_enum/magic_enum.hpp>
 
