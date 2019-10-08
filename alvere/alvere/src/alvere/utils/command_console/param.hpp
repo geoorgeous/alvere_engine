@@ -6,6 +6,7 @@
 
 #include <magin_enum/magic_enum.hpp>
 
+#include "alvere/graphics/text/text.hpp"
 #include "alvere/utils/command_console/arg.hpp"
 
 namespace alvere::console
@@ -52,7 +53,7 @@ namespace alvere::console
 
 		virtual IParam * clone() const = 0;
 
-		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const = 0;
+		virtual IArg * tryParseStringToArg(const std::string & argString, CompositeText & output) const = 0;
 
 		virtual void updateValueSuggestions() = 0;
 
@@ -119,7 +120,7 @@ namespace alvere::console
 
 		virtual IParam * clone() const override { return new Param<bool>(m_name.c_str(), m_description.c_str(), m_isRequired); }
 
-		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+		virtual IArg * tryParseStringToArg(const std::string & argString, CompositeText & output) const override
 		{
 			if (argString == "0" || argString == "false")
 				return new Arg<bool>(false);
@@ -158,7 +159,7 @@ namespace alvere::console
 
 		virtual IParam * clone() const override { return new Param<unsigned int>(*this); }
 
-		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+		virtual IArg * tryParseStringToArg(const std::string & argString, CompositeText & output) const override
 		{
 			if (argString.length() == 0)
 			{
@@ -200,7 +201,7 @@ namespace alvere::console
 
 		virtual IParam * clone() const override { return new Param<int>(*this); }
 
-		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+		virtual IArg * tryParseStringToArg(const std::string & argString, CompositeText & output) const override
 		{
 			if (argString.length() == 0)
 			{
@@ -254,7 +255,7 @@ namespace alvere::console
 
 		virtual IParam * clone() const override { return new Param<float>(*this); }
 
-		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+		virtual IArg * tryParseStringToArg(const std::string & argString, CompositeText & output) const override
 		{
 			if (argString.length() == 0)
 			{
@@ -321,7 +322,7 @@ namespace alvere::console
 
 		virtual IParam * clone() const override { return new Param<std::string>(*this); }
 
-		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+		virtual IArg * tryParseStringToArg(const std::string & argString, CompositeText & output) const override
 		{
 			return new Arg<std::string>(argString);
 		}
@@ -349,7 +350,7 @@ namespace alvere::console
 
 		virtual IParam * clone() const override { return new OptionParam(m_name.c_str(), m_description.c_str(), m_isRequired, m_options); }
 
-		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+		virtual IArg * tryParseStringToArg(const std::string & argString, CompositeText & output) const override
 		{
 			for (const std::string & str : m_options)
 				if (argString == str)
@@ -423,7 +424,7 @@ namespace alvere::console
 			return newEnumParam;
 		}
 
-		virtual IArg * tryParseStringToArg(const std::string & argString, std::string & output) const override
+		virtual IArg * tryParseStringToArg(const std::string & argString, CompositeText & output) const override
 		{
 			for (const std::string & str : m_options)
 				if (str == argString)

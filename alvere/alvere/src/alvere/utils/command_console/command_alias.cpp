@@ -7,7 +7,7 @@ namespace alvere::console
 {
 	CommandAlias::CommandAlias(const char * name, const char * description, const char * command)
 		: m_command(command), Command(name, description,
-			[&](std::vector<const IArg *> args) -> std::string
+			[&](std::vector<const IArg *> args) -> CompositeText
 	{
 		return m_command + "\n" + submitCommand(m_command);
 	})

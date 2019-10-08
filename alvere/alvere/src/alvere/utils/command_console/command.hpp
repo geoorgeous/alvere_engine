@@ -2,6 +2,8 @@
 
 #include <functional>
 
+#include "alvere/graphics/text/text.hpp"
+
 namespace alvere::console
 {
 	class IArg;
@@ -11,7 +13,7 @@ namespace alvere::console
 	{
 	public:
 
-		using Function = std::function<std::string(std::vector<const IArg *>)>;
+		using Function = std::function<CompositeText(std::vector<const IArg *>)>;
 
 		Command(const char * name, const char * description, std::vector<IParam *> params, Function f);
 
@@ -37,7 +39,7 @@ namespace alvere::console
 			return m_params;
 		}
 
-		bool tryInvoke(const std::vector<std::string> & argStrings, std::string & output) const;
+		bool tryInvoke(const std::vector<std::string> & argStrings, CompositeText & output) const;
 
 	protected:
 

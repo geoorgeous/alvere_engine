@@ -40,7 +40,7 @@ namespace alvere::console
 			delete m_params[i];
 	}
 
-	bool Command::tryInvoke(const std::vector<std::string> & argStrings, std::string & output) const
+	bool Command::tryInvoke(const std::vector<std::string> & argStrings, CompositeText & output) const
 	{
 		if (argStrings.size() > m_params.size())
 		{
@@ -81,7 +81,7 @@ namespace alvere::console
 			}
 			else if (m_params[p]->getIsRequired())
 			{
-				output = "Failed to parse argument " + std::to_string(currentArgString) + " (" + argStrings[currentArgString] + ") for required parameter " + m_params[p]->getDetailedName() + ((output == "") ? "" : ": " + output);
+				output = "Failed to parse argument " + std::to_string(currentArgString) + " (" + argStrings[currentArgString] + ") for required parameter " + m_params[p]->getDetailedName() + output;
 				parseFailure = true;
 				break;
 			}

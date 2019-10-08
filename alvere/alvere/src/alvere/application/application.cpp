@@ -35,11 +35,11 @@ namespace alvere
 
 		console::gui::init(m_window.get());
 
-		s_quitCommand = std::make_unique<console::Command>("quit", "Quits the application.", std::vector<console::IParam *>{}, [&](std::vector<const console::IArg *> args) -> std::string
+		/*s_quitCommand = std::make_unique<console::Command>("quit", "Quits the application.", std::vector<console::IParam *>{}, [&](std::vector<const console::IArg *> args) -> std::string
 		{
 			m_running = false;
 			return "";
-		});
+		});*/
 	}
 
 	void Application::run()

@@ -106,14 +106,14 @@ namespace alvere::console
 			_font.loadFontFaceFile("res/fonts/consolas/consolai.ttf");
 			_font.loadFontFaceFile("res/fonts/consolas/consolaz.ttf");
 
-			_builtInCommands.emplace_back(std::make_unique<Command>(
+			/*_builtInCommands.emplace_back(std::make_unique<Command>(
 				"help",
 				"Displays a list of all of the available commands, and can optionally be used to display further information about a single command.",
 				std::vector<IParam *> {
 				&StringParam("command name", "The name of the command to display information about.", false) },
-				[&](std::vector<const IArg *> args) -> std::string
+				[&](std::vector<const IArg *> args) -> CompositeText
 				{
-					std::string output;
+					CompositeText output(_font);
 
 					if (args[0] == nullptr)
 					{
@@ -176,7 +176,7 @@ namespace alvere::console
 				"console.clear",
 				"Clears the console output.",
 				std::vector<IParam *> {},
-				[&](std::vector<const IArg *> args) -> std::string
+				[&](std::vector<const IArg *> args) -> CompositeText
 			{
 				_output.clear();
 				return "";
@@ -186,7 +186,7 @@ namespace alvere::console
 				"console.expand",
 				"Expands the console window.",
 				std::vector<IParam *> {},
-				[&](std::vector<const IArg *> args) -> std::string
+				[&](std::vector<const IArg *> args) -> CompositeText
 			{
 				_maxOutputLineCount = _maxOutputLineCountExpanded;
 				_shaderProgram->bind();
@@ -198,7 +198,7 @@ namespace alvere::console
 				"console.shrink",
 				"Shrinks the console window.",
 				std::vector<IParam *> {},
-				[&](std::vector<const IArg *> args) -> std::string
+				[&](std::vector<const IArg *> args) -> CompositeText
 			{
 				_maxOutputLineCount = _maxOutputLineCountShrunk;
 				_shaderProgram->bind();
@@ -213,7 +213,7 @@ namespace alvere::console
 				&StringParam("new alias name", "The name of the new command alias being created.", true),
 					& StringParam("command string", "The command to be executed when the command alias is entered.", true),
 					& StringParam("description", "A description of the new command alias.", false), },
-				[&](std::vector<const IArg *> args) -> std::string
+				[&](std::vector<const IArg *> args) -> CompositeText
 				{
 					std::string name = args[0]->getValue<std::string>();
 
@@ -283,7 +283,7 @@ namespace alvere::console
 				[](std::vector<const IArg *> args) -> std::string
 				{
 					return "Test command!";
-				}));
+				}));*/
 
 			Asset<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core
 					uniform mat4 u_projectionMatrix;
@@ -483,11 +483,11 @@ namespace alvere::console
 			_output.emplace_back(_inputPre + _input);
 			_inputHistory.insert(_inputHistory.begin(), _input);
 
-			std::string output = submitCommand(_input);
+			CompositeText output = submitCommand(_input);
 
-			if (!output.empty())
+			if (!output.getIsEmpty())
 			{
-				std::vector<std::string> lines = utils::splitString(output, '\n', true);
+				std::vector<std::string> lines = utils::splitString(output.getSimpleText(), '\n', true);
 				_output.insert(_output.end(), lines.begin(), lines.end());
 			}
 
@@ -691,11 +691,13 @@ namespace alvere::console
 		}
 	}
 
-	std::string submitCommand(const std::string & command)
+	CompositeText submitCommand(const std::string & command)
 	{
 		std::vector<std::string> parts;
 		size_t partBegin;
 		char delim(0);
+
+		CompositeText output(Text::Formatting{ &gui::_font, Font::Style::Regular, 18, Vector4::unit });
 
 		for (size_t i = 0; i < command.length(); ++i)
 		{
@@ -711,7 +713,7 @@ namespace alvere::console
 
 				if (partBegin >= command.length())
 				{
-					return (std::string("Expecting matching delimiter (") + command[i]) + ")";
+					return output = std::string("Expecting matching delimiter (") + command[i] + ")";
 				}
 
 				delim = command[i];
@@ -723,7 +725,7 @@ namespace alvere::console
 				{
 					if (j >= command.length())
 					{
-						return (std::string("Expecting matching delimiter (") + command[i]) + ")";
+						return output = std::string("Expecting matching delimiter (") + command[i] + ")";
 					}
 					else if (command[j] == delim)
 					{
@@ -742,7 +744,7 @@ namespace alvere::console
 		}
 
 		if (parts.size() == 0)
-			return "";
+			return output = "";
 
 		std::string commandName = parts[0];
 
@@ -750,8 +752,6 @@ namespace alvere::console
 			commandName[i] = std::tolower(commandName[i]);
 
 		std::vector<std::string> args(parts.begin() + 1, parts.begin() + parts.size());
-
-		std::string output;
 
 		const Command * foundCommand = nullptr;
 
@@ -776,7 +776,7 @@ namespace alvere::console
 			return output;
 		}
 
-		return "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
+		return output = "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
 	}
 
 	void registerCommand(const Command & command)

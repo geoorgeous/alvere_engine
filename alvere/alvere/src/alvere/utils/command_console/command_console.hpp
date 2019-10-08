@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "alvere/assets.hpp"
+#include "alvere/graphics/text/text.hpp"
 
 // Command auto-filling and parameter auto-filling
 // Command parameter suggestions based on context
@@ -33,6 +34,6 @@ namespace alvere
 			void draw();
 		}
 
-		std::string submitCommand(const std::string & command);
+		CompositeText submitCommand(const std::string & command);
 	}
 }

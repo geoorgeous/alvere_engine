@@ -56,14 +56,14 @@ namespace alvere
 		std::cout.rdbuf(s_OutFile.rdbuf());
 #endif
 
-		s_logCommand = std::make_unique<console::Command>("log", "Log text to the info log buffer.", std::vector<console::IParam *> {
+		/*s_logCommand = std::make_unique<console::Command>("log", "Log text to the info log buffer.", std::vector<console::IParam *> {
 			&console::Param<std::string>("text", "The text that will be submitted to the info log buffer.", true) },
 			[&](std::vector<const console::IArg *> args) -> std::string
 		{
 			std::string output = args[0]->getValue<std::string>() + "\n";
 			LogInfo(output.c_str());
 			return "";
-		});
+		});*/
 	}
 
 	std::string FormatString(const char* format, va_list args)
