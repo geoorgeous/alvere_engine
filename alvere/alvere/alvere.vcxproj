@@ -279,6 +279,7 @@
     <ClCompile Include="src\alvere\utils\utilities.cpp" />
     <ClCompile Include="src\alvere\utils\uuid.cpp" />
     <ClCompile Include="src\alvere\world\system\systems\renderer_system.cpp" />
+    <ClCompile Include="src\alvere\world\system\systems\spriter_renderer_system.cpp" />
     <ClCompile Include="src\alvere\world\world.cpp" />
     <ClCompile Include="src\graphics_api\opengl\opengl_buffers.cpp" />
     <ClCompile Include="src\alvere\events\application_events.cpp" />
@@ -396,8 +397,10 @@
     <ClInclude Include="src\alvere\utils\uuid.hpp" />
     <ClInclude Include="src\alvere\world\application\c_direction.hpp" />
     <ClInclude Include="src\alvere\world\application\c_mover.hpp" />
+    <ClInclude Include="src\alvere\world\component\components\c_camera.hpp" />
     <ClInclude Include="src\alvere\world\component\components\c_renderable_mesh.hpp" />
     <ClInclude Include="src\alvere\world\component\components\c_saveable.hpp" />
+    <ClInclude Include="src\alvere\world\component\components\c_sprite.hpp" />
     <ClInclude Include="src\alvere\world\component\components\c_transform.hpp" />
     <ClInclude Include="src\alvere\world\application\mover_system.hpp" />
     <ClInclude Include="src\alvere\world\application\transform.hpp" />
@@ -420,6 +423,7 @@
     <ClInclude Include="src\alvere\world\system\rendered_system.hpp" />
     <ClInclude Include="src\alvere\world\system\system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\renderer_system.hpp" />
+    <ClInclude Include="src\alvere\world\system\systems\sprite_renderer_system.hpp" />
     <ClInclude Include="src\alvere\world\system\updated_system.hpp" />
     <ClInclude Include="src\alvere\math\vectors.hpp" />
     <ClInclude Include="src\alvere\math\vector\vector_2.hpp" />

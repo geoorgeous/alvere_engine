@@ -20,7 +20,7 @@ namespace alvere
 		{
 		}
 
-		virtual void Render(World & world) override final
+		virtual void Render(World & world) override
 		{
 			world.QueryArchetypes(m_RenderQuery, m_Archetypes);
 

@@ -11,7 +11,7 @@
 #include <alvere/world/world.hpp>
 #include <alvere/world/ecs_testing.hpp>
 #include <alvere/utils/exceptions.hpp>
-#include <alvere/world/system/systems/renderer_system.hpp>
+#include <alvere/world/system/systems/sprite_renderer_system.hpp>
 
 #include "tile_drawer.hpp"
 #include "world_cell.hpp"
@@ -83,16 +83,16 @@ struct AlvereApplication : public Application
 
 		uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
-		m_renderer = Renderer::New();
+		/*m_renderer = Renderer::New();
 
 		EntityHandle entity = world.SpawnEntity<C_Transform, C_RenderableMesh>();
 		C_Transform & transform = world.GetComponent<C_Transform>(entity);
 		transform->setScale(Vector3(0.05f, 0.05f, 0.05f));
 		C_RenderableMesh & renderableMesh = world.GetComponent<C_RenderableMesh>(entity);
 		renderableMesh.m_material = m_materialInstance;
-		renderableMesh.m_mesh = mesh;
+		renderableMesh.m_mesh = mesh;*/
 
-		world.AddSystem<RendererSystem>( *m_renderer );
+		world.AddSystem<SpriteRendererSystem>(sceneCamera);
 	}
 
 	~AlvereApplication()
@@ -164,11 +164,11 @@ struct AlvereApplication : public Application
 
 		m_spriteBatcher->end();
 
-		m_renderer->begin(sceneCamera);
+		//m_renderer->begin(sceneCamera);
 
 		world.Render();
 
-		m_renderer->end();
+		//m_renderer->end();
 
 		/*m_spriteBatcher->begin(uiCamera.GetProjectionViewMatrix());
 
