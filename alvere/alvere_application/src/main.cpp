@@ -43,7 +43,7 @@ struct AlvereApplication : public Application
 	Camera sceneCamera;
 	Camera uiCamera;
 	Asset<SpriteBatcher> m_spriteBatcher;
-	Renderer * m_renderer;
+	//Renderer * m_renderer;
 
 	TileDrawer m_tileDrawer;
 	WorldCellArea * m_worldCellArea;
@@ -101,7 +101,7 @@ struct AlvereApplication : public Application
 		delete mesh;
 		delete material;
 		delete m_materialInstance;
-		delete m_renderer;
+		//delete m_renderer;
 		delete m_fontFace;
 	}
 
