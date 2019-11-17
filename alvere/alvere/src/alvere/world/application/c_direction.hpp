@@ -4,7 +4,7 @@
 
 namespace alvere
 {
-	class Direction : public PooledComponent<Direction>
+	class C_Direction : public PooledComponent<C_Direction>
 	{
 	public:
 		float m_X;

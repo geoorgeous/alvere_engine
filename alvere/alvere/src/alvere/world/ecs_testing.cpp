@@ -34,7 +34,7 @@ namespace alvere
 			EntityHandle player = world.SpawnEntity();
 			world.AddComponent<C_Transform>(player);
 			world.AddComponent<C_Mover>(player);
-			world.AddComponent<Direction>(player);
+			world.AddComponent<C_Direction>(player);
 
 			world.GetComponent<C_Transform>(player)->setPosition(Vector3(5.0f, 0.0f, 0.0f));
 		}
