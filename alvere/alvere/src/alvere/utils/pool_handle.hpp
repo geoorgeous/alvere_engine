@@ -24,6 +24,7 @@ namespace alvere
 		T & get();
 		T & operator*();
 		T * operator->();
+		bool operator==(const Handle other) const;
 
 		bool isValid() const;
 	};
@@ -74,6 +75,14 @@ namespace alvere
 		AlvAssert(isValid(), "Must check Pool<T>::Handle validity before getting a potentially invalid object");
 
 		return &m_Pool->get(m_Index);
+	}
+	
+	template <typename T>
+	bool Pool<T>::Handle::operator==(const Pool<T>::Handle other) const
+	{
+		return other.m_Index == m_Index
+			&& other.m_Pool == m_Pool
+			&& other.m_Version == m_Version;
 	}
 
 	template <typename T>

@@ -10,15 +10,13 @@
 #include "alvere/world/archetype/archetype_handle.hpp"
 #include "alvere/world/archetype/archetype_query.hpp"
 #include "alvere/world/entity/entity.hpp"
+#include "alvere/world/entity/entity_handle.hpp"
 #include "alvere/utils/pool.hpp"
-#include "alvere/utils/pool_handle.hpp"
 
 namespace alvere
 {
 	class UpdatedSystem;
 	class RenderedSystem;
-
-	using EntityHandle = Pool<Entity>::Handle;
 
 	class World
 	{

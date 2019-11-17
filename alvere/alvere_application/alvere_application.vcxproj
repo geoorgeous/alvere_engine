@@ -155,11 +155,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\scenes\testing_scene.cpp" />
     <ClCompile Include="src\tile_drawer.cpp" />
     <ClCompile Include="src\world_cell_area.cpp" />
     <ClCompile Include="src\world_generation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\scenes\testing_scene.hpp" />
     <ClInclude Include="src\tile_drawer.hpp" />
     <ClInclude Include="src\world_cell.hpp" />
     <ClInclude Include="src\world_cell_area.hpp" />

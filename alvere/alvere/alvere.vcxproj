@@ -278,6 +278,8 @@
     <ClCompile Include="src\alvere\utils\shapes.cpp" />
     <ClCompile Include="src\alvere\utils\utilities.cpp" />
     <ClCompile Include="src\alvere\utils\uuid.cpp" />
+    <ClCompile Include="src\alvere\world\scene\scene.cpp" />
+    <ClCompile Include="src\alvere\world\scene\scene_system.cpp" />
     <ClCompile Include="src\alvere\world\system\systems\renderer_system.cpp" />
     <ClCompile Include="src\alvere\world\system\systems\spriter_renderer_system.cpp" />
     <ClCompile Include="src\alvere\world\world.cpp" />
@@ -393,6 +395,8 @@
     <ClInclude Include="src\alvere\utils\command_console\command_alias.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\command_console.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\param.hpp" />
+    <ClInclude Include="src\alvere\utils\pool.hpp" />
+    <ClInclude Include="src\alvere\utils\pool_handle.hpp" />
     <ClInclude Include="src\alvere\utils\random.hpp" />
     <ClInclude Include="src\alvere\utils\uuid.hpp" />
     <ClInclude Include="src\alvere\world\application\c_direction.hpp" />
@@ -418,6 +422,10 @@
     <ClInclude Include="src\alvere\world\component\tag_component_provider_iterator.hpp" />
     <ClInclude Include="src\alvere\world\ecs_testing.hpp" />
     <ClInclude Include="src\alvere\world\entity\entity.hpp" />
+    <ClInclude Include="src\alvere\world\entity\entity_handle.hpp" />
+    <ClInclude Include="src\alvere\world\scene\scene.hpp" />
+    <ClInclude Include="src\alvere\world\scene\scene_loader.hpp" />
+    <ClInclude Include="src\alvere\world\scene\scene_system.hpp" />
     <ClInclude Include="src\alvere\world\system\query_rendered_system.hpp" />
     <ClInclude Include="src\alvere\world\system\query_updated_system.hpp" />
     <ClInclude Include="src\alvere\world\system\rendered_system.hpp" />

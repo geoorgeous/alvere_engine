@@ -12,11 +12,14 @@
 #include <alvere/world/ecs_testing.hpp>
 #include <alvere/utils/exceptions.hpp>
 #include <alvere/world/system/systems/sprite_renderer_system.hpp>
+#include <alvere/world/scene/scene.hpp>
+#include <alvere\world\scene\scene_system.hpp>
 
 #include "tile_drawer.hpp"
 #include "world_cell.hpp"
 #include "world_cell_area.hpp"
 #include "world_generation.hpp"
+#include "scenes/testing_scene.hpp"
 
 /* todo
  *
@@ -31,6 +34,8 @@ using namespace alvere;
 
 struct AlvereApplication : public Application
 {
+	Scene m_Scene;
+
 	Asset<Shader> m_vertexShader;
 	Asset<Shader> m_fragmentShader;
 	Asset<ShaderProgram> m_shaderProgram;
@@ -92,7 +97,12 @@ struct AlvereApplication : public Application
 		renderableMesh.m_material = m_materialInstance;
 		renderableMesh.m_mesh = mesh;*/
 
+		SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 		world.AddSystem<SpriteRendererSystem>(sceneCamera);
+
+		TestingScene testScene(world);
+		Scene& main = sceneSystem->LoadScene(testScene);
+		sceneSystem->UnloadScene(main);
 	}
 
 	~AlvereApplication()
