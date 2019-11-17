@@ -24,6 +24,7 @@ namespace alvere
 
 		std::vector<Map> m_Mappings;
 		std::size_t m_FirstFree;
+		std::size_t m_Count;
 
 	public:
 
@@ -35,11 +36,15 @@ namespace alvere
 
 		VersionMap()
 			: m_FirstFree(-1)
+			, m_Count(0)
 		{
 		}
 
 		Handle AddMapping(std::size_t toIndex)
 		{
+			//Increase how many mappings we are currently tracking
+			m_Count += 1;
+
 			if (m_FirstFree == -1)
 			{
 				//Nothing left in the pool, must add a new mapping
@@ -64,7 +69,7 @@ namespace alvere
 			Map & toRemove = m_Mappings[handle.m_Index];
 
 			//Update the mapping for the valid element that will be swapped
-			std::size_t swapIndex = m_Mappings.size() - 1;
+			std::size_t swapIndex = m_Count - 1;
 			for (Map & mapping : m_Mappings)
 			{
 				if (mapping.m_Index == swapIndex)
@@ -81,6 +86,9 @@ namespace alvere
 			//Add this mapping to the free list
 			toRemove.m_NextFree = m_FirstFree;
 			m_FirstFree = handle.m_Index;
+
+			//Decrease how many mappings we are currently tracking
+			m_Count -= 1;
 		}
 
 		std::size_t GetMapping(const Handle & handle) const
