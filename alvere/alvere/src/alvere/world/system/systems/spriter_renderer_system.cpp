@@ -22,9 +22,9 @@ namespace alvere
 		Rect destination = Rect{
 			transform->getPosition().x,
 			transform->getPosition().y,
-			sprite.getTexture().width() * transform->getScale().x,
-			sprite.getTexture().height() * transform->getScale().y
+			sprite.m_Sprite.getTexture().width() * transform->getScale().x,
+			sprite.m_Sprite.getTexture().height() * transform->getScale().y
 		};
-		m_spriteBatcher->submit(&sprite.getTexture(), destination, sprite.textureSource(), sprite.colour());
+		m_spriteBatcher->submit(&sprite.m_Sprite.getTexture(), destination, sprite.m_Sprite.textureSource(), sprite.m_Sprite.colour());
 	}
 }

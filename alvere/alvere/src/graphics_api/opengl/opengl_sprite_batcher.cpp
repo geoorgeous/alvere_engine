@@ -32,6 +32,7 @@ namespace alvere::graphics_api::opengl
 			InitStatic();
 		}
 
+		int texCount = ALV_OPENGL_MAX_TEXTUREUNITS_FRAGMENT;
 		m_Textures = new const Texture *[ALV_OPENGL_MAX_TEXTUREUNITS_FRAGMENT];
 
 		m_VBO = alvere::VertexBuffer::New(m_VertexData, sizeof(m_VertexData));
