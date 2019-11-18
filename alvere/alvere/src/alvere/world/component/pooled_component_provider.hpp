@@ -23,6 +23,7 @@ namespace alvere
 
 		virtual void Allocate() override;
 		virtual void Deallocate(int entityIndex) override;
+		virtual void DeallocateAll() override;
 		virtual void MoveEntityProvider(int entityIndex, ComponentProvider & other) override;
 
 		virtual Component & GetComponent(int entityIndex) override;
@@ -42,6 +43,12 @@ namespace alvere
 	{
 		m_Pool[entityIndex] = m_Pool.back();
 		m_Pool.pop_back();
+	}
+
+	template <typename T>
+	void PooledComponent<T>::Provider::DeallocateAll()
+	{
+		m_Pool.clear();
 	}
 
 	template <typename T>

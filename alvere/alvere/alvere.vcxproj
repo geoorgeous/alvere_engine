@@ -265,6 +265,7 @@
     <ClCompile Include="src\alvere\world\archetype\archetype.cpp" />
     <ClCompile Include="src\alvere\world\archetype\archetype_handle.cpp" />
     <ClCompile Include="src\alvere\world\archetype\archetype_query.cpp" />
+    <ClCompile Include="src\alvere\world\archetype\version_map.cpp" />
     <ClCompile Include="src\alvere\world\ecs_testing.cpp" />
     <ClCompile Include="src\alvere\math\vector\vector_2.cpp" />
     <ClCompile Include="src\alvere\math\vector\vector_3.cpp" />
@@ -280,6 +281,7 @@
     <ClCompile Include="src\alvere\utils\uuid.cpp" />
     <ClCompile Include="src\alvere\world\scene\scene.cpp" />
     <ClCompile Include="src\alvere\world\scene\scene_system.cpp" />
+    <ClCompile Include="src\alvere\world\system\systems\destroy_system.cpp" />
     <ClCompile Include="src\alvere\world\system\systems\renderer_system.cpp" />
     <ClCompile Include="src\alvere\world\system\systems\spriter_renderer_system.cpp" />
     <ClCompile Include="src\alvere\world\world.cpp" />
@@ -402,6 +404,7 @@
     <ClInclude Include="src\alvere\world\application\c_direction.hpp" />
     <ClInclude Include="src\alvere\world\application\c_mover.hpp" />
     <ClInclude Include="src\alvere\world\component\components\c_camera.hpp" />
+    <ClInclude Include="src\alvere\world\component\components\c_destroy.hpp" />
     <ClInclude Include="src\alvere\world\component\components\c_renderable_mesh.hpp" />
     <ClInclude Include="src\alvere\world\component\components\c_saveable.hpp" />
     <ClInclude Include="src\alvere\world\component\components\c_sprite.hpp" />
@@ -430,6 +433,7 @@
     <ClInclude Include="src\alvere\world\system\query_updated_system.hpp" />
     <ClInclude Include="src\alvere\world\system\rendered_system.hpp" />
     <ClInclude Include="src\alvere\world\system\system.hpp" />
+    <ClInclude Include="src\alvere\world\system\systems\destroy_system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\renderer_system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\sprite_renderer_system.hpp" />
     <ClInclude Include="src\alvere\world\system\updated_system.hpp" />

@@ -153,7 +153,7 @@ namespace alvere
 		auto iter = m_AllSystems.find( systemType );
 		if ( iter != m_AllSystems.end() )
 		{
-			return nullptr;
+			return dynamic_cast<T*>(iter->second);
 		}
 
 		T * t = new T( std::forward<Args...>( args )... );

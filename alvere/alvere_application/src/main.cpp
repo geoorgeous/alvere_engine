@@ -20,6 +20,8 @@
 #include "world_cell_area.hpp"
 #include "world_generation.hpp"
 #include "scenes/testing_scene.hpp"
+#include "Scenes/platformer_scene.hpp"
+#include <alvere\world\system\systems\destroy_system.hpp>
 
 /* todo
  *
@@ -99,10 +101,14 @@ struct AlvereApplication : public Application
 
 		SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 		world.AddSystem<SpriteRendererSystem>(sceneCamera);
+		world.AddSystem<DestroySystem>();
 
 		TestingScene testScene(world);
-		Scene& main = sceneSystem->LoadScene(testScene);
-		sceneSystem->UnloadScene(main);
+		Scene& test = sceneSystem->LoadScene(testScene);
+		sceneSystem->UnloadScene(test);
+
+		PlatformerScene platformerScene(world);
+		Scene & platformer = sceneSystem->LoadScene(platformerScene);
 	}
 
 	~AlvereApplication()

@@ -35,6 +35,8 @@ namespace alvere
 		void DestroyEntity( Entity& entity );
 		void MoveEntity( Entity& entity, Archetype& other );
 
+		void DestroyAllEntities();
+
 		void CloneAllProviders( const Archetype& other );
 		void CloneAllProvidersExcept( const Archetype& other, const std::type_index& exception );
 

@@ -79,6 +79,17 @@ namespace alvere
 		++other.m_EntityCount;
 	}
 
+	void Archetype::DestroyAllEntities()
+	{
+		for (auto & provider : m_Providers)
+		{
+			provider.second->DeallocateAll();
+		}
+
+		m_VersionMap.Clear();
+		m_EntityCount = 0;
+	}
+
 	void Archetype::CloneAllProviders(const Archetype & other)
 	{
 		for (auto & pair : other.m_Providers)

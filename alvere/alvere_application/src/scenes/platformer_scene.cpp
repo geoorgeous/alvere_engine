@@ -2,6 +2,7 @@
 #include <alvere/graphics/texture.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
 #include <alvere\world\component\components\c_sprite.hpp>
+#include <alvere/world/component/components/c_destroy.hpp>
 
 #include "platformer_scene.hpp"
 

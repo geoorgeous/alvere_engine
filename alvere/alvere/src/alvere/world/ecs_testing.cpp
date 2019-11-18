@@ -9,6 +9,8 @@
 #include "alvere/world/application/mover_system.hpp"
 #include "alvere/world/component/components/c_transform.hpp"
 #include "alvere/world/component/components/c_saveable.hpp"
+#include <alvere\world\component\components\c_destroy.hpp>
+#include <alvere\world\system\systems\destroy_system.hpp>
 
 namespace alvere
 {
@@ -133,9 +135,44 @@ namespace alvere
 		world.DestroyEntity(player3);
 	}
 
+	void DestroyTest()
+	{
+		World world;
+
+		world.AddSystem<DestroySystem>();
+
+		EntityHandle entity1 = world.SpawnEntity<C_Transform>();
+		assert(entity1->m_Archetype->GetEntityCount() == 1);
+
+		EntityHandle entity2 = world.SpawnEntity<C_Transform>();
+		assert(entity2->m_Archetype->GetEntityCount() == 2);
+
+		world.Update(1.0f);
+
+		assert(entity2->m_Archetype->GetEntityCount() == 2);
+
+		world.AddComponent<C_Destroy>(entity1);
+
+		assert(entity1.isValid());
+
+		world.Update(1.0f);
+
+		//assert(entity1.isValid() == false);
+		assert(entity2->m_Archetype->GetEntityCount() == 1);
+
+		world.AddComponent<C_Destroy>(entity2);
+
+		assert(entity2.isValid());
+
+		world.Update(1.0f);
+
+		//assert(entity2.isValid() == false);
+	}
+
 	void RunTests()
 	{
 		UpdateTests();
 		ComponentTests();
+		DestroyTest();
 	}
 }

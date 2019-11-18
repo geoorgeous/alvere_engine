@@ -15,6 +15,7 @@ namespace alvere
 
 		virtual void Allocate() = 0;
 		virtual void Deallocate(int entityIndex) = 0;
+		virtual void DeallocateAll() = 0;
 		virtual Component & GetComponent(int entityIndex) = 0;
 
 		virtual void MoveEntityProvider(int entityIndex, ComponentProvider & other) = 0;

@@ -26,6 +26,10 @@ namespace alvere
 		{
 		}
 
+		virtual void DeallocateAll() override
+		{
+		}
+
 		virtual void MoveEntityProvider(int entityIndex, ComponentProvider & other) override
 		{
 		}
