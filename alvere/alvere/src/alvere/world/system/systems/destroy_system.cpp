@@ -15,9 +15,10 @@ namespace alvere
 
 		for (Archetype & archetype : m_Archetypes)
 		{
-			if (archetype.GetEntityCount() > 0)
+			while (archetype.GetEntityCount() > 0)
 			{
-				archetype.DestroyAllEntities();
+				EntityHandle entityHandle = *archetype.GetEntities().begin();
+				world.DestroyEntity(entityHandle);
 			}
 		}
 	}

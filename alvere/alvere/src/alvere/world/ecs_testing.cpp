@@ -142,6 +142,7 @@ namespace alvere
 		world.AddSystem<DestroySystem>();
 
 		EntityHandle entity1 = world.SpawnEntity<C_Transform>();
+		EntityHandle entity1_copy = entity1;
 		assert(entity1->m_Archetype->GetEntityCount() == 1);
 
 		EntityHandle entity2 = world.SpawnEntity<C_Transform>();
@@ -154,10 +155,12 @@ namespace alvere
 		world.AddComponent<C_Destroy>(entity1);
 
 		assert(entity1.isValid());
+		assert(entity1_copy.isValid());
 
 		world.Update(1.0f);
 
-		//assert(entity1.isValid() == false);
+		assert(entity1.isValid() == false);
+		assert(entity1_copy.isValid() == false);
 		assert(entity2->m_Archetype->GetEntityCount() == 1);
 
 		world.AddComponent<C_Destroy>(entity2);
@@ -166,7 +169,7 @@ namespace alvere
 
 		world.Update(1.0f);
 
-		//assert(entity2.isValid() == false);
+		assert(entity2.isValid() == false);
 	}
 
 	void RunTests()

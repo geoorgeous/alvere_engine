@@ -10,6 +10,8 @@ namespace alvere
 	template <typename T>
 	class Pool<T>::Handle
 	{
+		friend class Pool<T>;
+
 		Pool<T> * m_Pool;
 		std::size_t m_Index;
 		unsigned m_Version;
@@ -24,9 +26,22 @@ namespace alvere
 		T & get();
 		T & operator*();
 		T * operator->();
+		const T * operator->() const;
 		bool operator==(const Handle other) const;
 
 		bool isValid() const;
+
+		struct Hash
+		{
+			size_t operator()(const typename Pool<T>::Handle & k) const
+			{
+				size_t hash = 17;
+				hash = hash * 31 + std::hash<Pool<T>*>()(k.m_Pool);
+				hash = hash * 31 + std::hash<std::size_t>()(k.m_Index);
+				hash = hash * 31 + std::hash<unsigned>()(k.m_Version);
+				return hash;
+			}
+		};
 	};
 
 
@@ -76,6 +91,14 @@ namespace alvere
 
 		return &m_Pool->get(m_Index);
 	}
+
+	template <typename T>
+	const T * Pool<T>::Handle::operator->() const
+	{
+		AlvAssert(isValid(), "Must check Pool<T>::Handle validity before getting a potentially invalid object");
+
+		return &m_Pool->get(m_Index);
+	}
 	
 	template <typename T>
 	bool Pool<T>::Handle::operator==(const Pool<T>::Handle other) const
@@ -88,6 +111,12 @@ namespace alvere
 	template <typename T>
 	bool Pool<T>::Handle::isValid() const
 	{
-		return m_Index != std::numeric_limits<std::size_t>::max() && m_Pool->version(m_Index) == m_Version;
+		if (m_Index == std::numeric_limits<std::size_t>::max())
+		{
+			return false;
+		}
+
+		int pooledVersion = m_Pool->version(m_Index);
+		return pooledVersion == m_Version;
 	}
 }

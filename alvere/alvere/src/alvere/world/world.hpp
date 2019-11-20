@@ -82,7 +82,7 @@ namespace alvere
 		}
 
 		EntityHandle e = m_Entities.allocate();
-		archetype->AddEntity(e.get());
+		archetype->AddEntity(e);
 		return e;
 	}
 
@@ -110,7 +110,7 @@ namespace alvere
 			m_Archetypes[newArchetypeHandle] = newArchetype;
 		}
 
-		originalArchetype->MoveEntity(entity.get(), *newArchetype);
+		originalArchetype->MoveEntity(entity, *newArchetype);
 	}
 
 	template <typename T>
@@ -136,13 +136,13 @@ namespace alvere
 			m_Archetypes[newArchetypeHandle] = newArchetype;
 		}
 
-		originalArchetype->MoveEntity(entity.get(), *newArchetype);
+		originalArchetype->MoveEntity(entity, *newArchetype);
 	}
 
 	template <typename T>
 	T & World::GetComponent(EntityHandle & e) const
 	{
-		return e->m_Archetype->GetComponent<T>(e.get());
+		return e->m_Archetype->GetComponent<T>(e);
 	}
 
 	template <typename T, typename... Args>
