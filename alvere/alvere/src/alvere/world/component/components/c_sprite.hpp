@@ -11,6 +11,6 @@ namespace alvere
 	class C_Sprite : public PooledComponent<C_Sprite>
 	{
 	public:
-		Sprite m_Sprite;
+		Sprite m_sprite;
 	};
 }

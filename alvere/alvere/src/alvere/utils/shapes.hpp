@@ -4,6 +4,8 @@
 
 namespace alvere
 {
+	struct RectI;
+
 	struct Rect
 	{
 		float m_x;
@@ -35,6 +37,8 @@ namespace alvere
 		alvere::Vector2 getBottomRight() const;
 
 		float getArea() const;
+
+		operator explicit RectI() const;
 	};
 
 	struct RectI
@@ -76,5 +80,7 @@ namespace alvere
 				other.getTop() < getBottom() ||
 				other.getBottom() > getTop());
 		}
+
+		operator explicit Rect() const;
 	};
 }

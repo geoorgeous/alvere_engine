@@ -15,15 +15,11 @@ namespace alvere
 
 		Sprite();
 
+		Sprite(const Texture & texture, Vector4 colour = Vector4::unit);
+
+		Sprite(const Texture & texture, Rect bounds, Vector4 colour = Vector4::unit);
+
 		Sprite(const Texture & texture, Rect bounds, RectI textureSource, Vector4 colour = Vector4::unit);
-
-		Sprite(const Texture & texture, Vector2 position, Vector4 colour = Vector4::unit);
-
-		Sprite(const Texture & texture, Vector2 position, Vector2 scale, Vector4 colour = Vector4::unit);
-
-		Sprite(const Texture & texture, Vector2 position, Vector2 scale, RectI textureSource, Vector4 colour = Vector4::unit);
-
-		Sprite(const Texture & texture, Vector2 position, RectI textureSource, Vector4 colour = Vector4::unit);
 
 		inline const Texture & getTexture() const
 		{
@@ -63,12 +59,6 @@ namespace alvere
 		inline Vector4 & colour()
 		{
 			return m_colour;
-		}
-
-		inline void setScale(Vector2 scale)
-		{
-			m_bounds.m_width = m_textureSource.m_width * scale.x;
-			m_bounds.m_height = m_textureSource.m_height * scale.y;
 		}
 
 	private:

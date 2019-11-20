@@ -12,23 +12,11 @@ namespace alvere
 		: m_texture(&texture), m_bounds(bounds), m_textureSource(textureSource), m_colour(colour)
 	{ }
 
-	Sprite::Sprite(const Texture & texture, Vector2 position, Vector4 colour)
-		: Sprite(texture, Rect{ position.x, position.y, (float)texture.width(), (float)texture.height() }, texture.getBounds(), colour)
+	Sprite::Sprite(const Texture & texture, Rect bounds, Vector4 colour)
+		: Sprite(texture, bounds, texture.getBounds(), colour)
 	{ }
 
-	Sprite::Sprite(const Texture & texture, Vector2 position, Vector2 scale, Vector4 colour)
-		: Sprite(texture, Rect{ position.x, position.y, 0, 0 }, texture.getBounds(), colour)
-	{
-		setScale(scale);
-	}
-
-	Sprite::Sprite(const Texture & texture, Vector2 position, Vector2 scale, RectI textureSource, Vector4 colour)
-		: Sprite(texture, Rect{ position.x, position.y, 0, 0 }, textureSource, colour)
-	{
-		setScale(scale);
-	}
-
-	Sprite::Sprite(const Texture & texture, Vector2 position, RectI textureSource, Vector4 colour)
-		: Sprite(texture, Rect{ position.x, position.y, (float)textureSource.m_width, (float)textureSource.m_height }, textureSource, colour)
+	Sprite::Sprite(const Texture & texture, Vector4 colour)
+		: Sprite(texture, (Rect)texture.getBounds(), texture.getBounds(), colour)
 	{ }
 }

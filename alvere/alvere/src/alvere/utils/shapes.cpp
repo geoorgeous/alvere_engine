@@ -55,6 +55,11 @@ namespace alvere
 		return m_width * m_height;
 	}
 
+	Rect::operator explicit RectI() const
+	{
+		return RectI{ (int)m_x, (int)m_y, (int)m_width, (int)m_height };
+	};
+
 	RectI::RectI()
 		: m_x(0), m_y(0), m_width(0), m_height(0)
 	{ }
@@ -107,4 +112,9 @@ namespace alvere
 	{
 		return m_width * m_height;
 	}
+
+	RectI::operator explicit Rect() const
+	{
+		return Rect{ (float)m_x, (float)m_y, (float)m_width, (float)m_height };
+	};
 }
