@@ -38,7 +38,7 @@ namespace alvere
 
 		float getArea() const;
 
-		operator explicit RectI() const;
+		explicit operator RectI() const;
 	};
 
 	struct RectI
@@ -81,6 +81,6 @@ namespace alvere
 				other.getBottom() > getTop());
 		}
 
-		operator explicit Rect() const;
+		explicit operator Rect() const;
 	};
 }

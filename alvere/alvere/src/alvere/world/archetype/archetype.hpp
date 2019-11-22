@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <unordered_set>
 #include <typeinfo>
 #include <typeindex>
 #include <string>
@@ -9,6 +10,7 @@
 #include "alvere/utils/exceptions.hpp"
 #include "alvere/world/component/component_provider.hpp"
 #include "alvere/world/entity/entity.hpp"
+#include "alvere/world/entity/entity_handle.hpp"
 #include "alvere/world/archetype/version_map.hpp"
 
 namespace alvere
@@ -16,26 +18,22 @@ namespace alvere
 	class Archetype
 	{
 		std::unordered_map<std::type_index, ComponentProvider*> m_Providers;
+		std::unordered_set<EntityHandle, EntityHandle::Hash> m_Entities;
 
 		VersionMap m_VersionMap;
 
-		std::size_t m_EntityCount;
-
 	public:
+
 		class Query;
 		class Handle;
 		Handle GetHandle() const;
 
-		Archetype();
-
 		template <typename T>
-		T& GetComponent( const Entity& entity );
+		T& GetComponent( const EntityHandle& entity );
 
-		void AddEntity( Entity& entity );
-		void DestroyEntity( Entity& entity );
-		void MoveEntity( Entity& entity, Archetype& other );
-
-		void DestroyAllEntities();
+		void AddEntity(EntityHandle & entity );
+		void DestroyEntity(EntityHandle & entity );
+		void MoveEntity(EntityHandle & entity, Archetype& other );
 
 		void CloneAllProviders( const Archetype& other );
 		void CloneAllProvidersExcept( const Archetype& other, const std::type_index& exception );
@@ -46,22 +44,23 @@ namespace alvere
 		template <typename T>
 		typename T::Provider& GetProvider();
 
+		const std::unordered_set<EntityHandle, EntityHandle::Hash> & GetEntities() const;
+
 		std::size_t GetEntityCount() const;
 		std::size_t GetProviderCount() const;
-		std::vector<std::string> GetProviders() const;
 
 		template <typename... Components>
 		static Archetype* make_archetype();
 	};
 
 	template <typename T>
-	T& Archetype::GetComponent( const Entity& entity )
+	T& Archetype::GetComponent( const EntityHandle & entity )
 	{
 		auto iter = m_Providers.find( typeid( T ) );
 
 		AlvAssert( iter != m_Providers.end(), "Attempted to get a component provider that is not contained in this archetype" );
 
-		int mappedIndex = (int) m_VersionMap.GetMapping( entity.m_MappingHandle );
+		int mappedIndex = (int) m_VersionMap.GetMapping( entity->m_MappingHandle );
 		typename T::Provider* typedProvider = static_cast<typename T::Provider*>( iter->second );
 		return static_cast<T&>( typedProvider->GetComponent( mappedIndex ) );
 	}

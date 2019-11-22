@@ -6,39 +6,34 @@
 
 namespace alvere
 {
-	Archetype::Archetype()
-		: m_EntityCount(0)
-	{
-	}
-
-	void Archetype::AddEntity(Entity & entity)
+	void Archetype::AddEntity(EntityHandle & entity)
 	{
 		for (auto & provider : m_Providers)
 		{
 			provider.second->Allocate();
 		}
 
-		entity.m_Archetype = this;
-		entity.m_MappingHandle = m_VersionMap.AddMapping(m_EntityCount);
-		++m_EntityCount;
+		entity->m_Archetype = this;
+		entity->m_MappingHandle = m_VersionMap.AddMapping(m_Entities.size());
+		m_Entities.emplace(entity);
 	}
 
-	void Archetype::DestroyEntity(Entity & entity)
+	void Archetype::DestroyEntity(EntityHandle & entity)
 	{
-		int mappedIndex = (int)m_VersionMap.GetMapping(entity.m_MappingHandle);
+		int mappedIndex = (int)m_VersionMap.GetMapping(entity->m_MappingHandle);
 
 		for (auto & provider : m_Providers)
 		{
 			provider.second->Deallocate(mappedIndex);
 		}
 
-		m_VersionMap.RemoveMapping(entity.m_MappingHandle);
-		--m_EntityCount;
+		m_VersionMap.RemoveMapping(entity->m_MappingHandle);
+		m_Entities.erase(entity);
 	}
 
-	void Archetype::MoveEntity(Entity & entity, Archetype & other)
+	void Archetype::MoveEntity(EntityHandle & entity, Archetype & other)
 	{
-		int mappedIndex = (int)m_VersionMap.GetMapping(entity.m_MappingHandle);
+		int mappedIndex = (int)m_VersionMap.GetMapping(entity->m_MappingHandle);
 
 		//TODO: Having to iterate over both collections here should be optimized into traversal of an ordered vector.
 		//		With that method we can compare differences in layout in one iteration rather than two.
@@ -71,23 +66,12 @@ namespace alvere
 			}
 		}
 
-		m_VersionMap.RemoveMapping(entity.m_MappingHandle);
-		entity.m_MappingHandle = other.m_VersionMap.AddMapping(other.m_EntityCount);
-		entity.m_Archetype = &other;
+		m_VersionMap.RemoveMapping(entity->m_MappingHandle);
+		entity->m_MappingHandle = other.m_VersionMap.AddMapping(other.GetEntityCount());
+		entity->m_Archetype = &other;
 
-		--m_EntityCount;
-		++other.m_EntityCount;
-	}
-
-	void Archetype::DestroyAllEntities()
-	{
-		for (auto & provider : m_Providers)
-		{
-			provider.second->DeallocateAll();
-		}
-
-		m_VersionMap.Clear();
-		m_EntityCount = 0;
+		m_Entities.erase(entity);
+		other.m_Entities.emplace(entity);
 	}
 
 	void Archetype::CloneAllProviders(const Archetype & other)
@@ -123,7 +107,7 @@ namespace alvere
 
 	std::size_t Archetype::GetEntityCount() const
 	{
-		return m_EntityCount;
+		return m_Entities.size();
 	}
 
 	std::size_t Archetype::GetProviderCount() const
@@ -131,13 +115,8 @@ namespace alvere
 		return m_Providers.size();
 	}
 
-	std::vector<std::string> Archetype::GetProviders() const
+	const std::unordered_set<EntityHandle, EntityHandle::Hash> & Archetype::GetEntities() const
 	{
-		std::vector<std::string> types;
-		for (auto & pairs : m_Providers)
-		{
-			types.emplace_back(pairs.first.name());
-		}
-		return types;
+		return m_Entities;
 	}
 }
