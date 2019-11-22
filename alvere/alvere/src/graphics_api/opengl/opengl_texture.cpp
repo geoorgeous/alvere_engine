@@ -77,3 +77,8 @@ alvere::Asset<alvere::Texture> alvere::Texture::New(const unsigned char * data, 
 {
 	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(data, width, height, channels));
 }
+
+alvere::Texture * alvere::Texture::loadFromFile(const std::string & filepath)
+{
+	return new graphics_api::opengl::Texture(filepath.c_str());
+}

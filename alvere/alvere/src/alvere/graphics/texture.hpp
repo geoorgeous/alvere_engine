@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "alvere/assets.hpp"
 #include "alvere/math/vectors.hpp"
 #include "alvere/utils/shapes.hpp"
@@ -20,6 +22,8 @@ namespace alvere
 		static Asset<Texture> New(const char * filename, Channels channels = Channels::RGBAlpha);
 
 		static Asset<Texture> New(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
+
+		static Texture * loadFromFile(const std::string & filepath);
 
 		virtual ~Texture();
 

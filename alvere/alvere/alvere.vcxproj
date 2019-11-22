@@ -256,6 +256,7 @@
     <ClCompile Include="src\alvere\math\shapes\point_3d.cpp" />
     <ClCompile Include="src\alvere\math\shapes\rect.cpp" />
     <ClCompile Include="src\alvere\math\shapes\sphere.cpp" />
+    <ClCompile Include="src\alvere\utils\assets.cpp" />
     <ClCompile Include="src\alvere\utils\command_console\arg.cpp" />
     <ClCompile Include="src\alvere\utils\command_console\command.cpp" />
     <ClCompile Include="src\alvere\utils\command_console\command_alias.cpp" />
@@ -392,6 +393,7 @@
     <ClInclude Include="src\alvere\math\shapes\point_3d.hpp" />
     <ClInclude Include="src\alvere\math\shapes\rect.hpp" />
     <ClInclude Include="src\alvere\math\shapes\sphere.hpp" />
+    <ClInclude Include="src\alvere\utils\assets.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\arg.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\command.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\command_alias.hpp" />

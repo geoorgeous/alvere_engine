@@ -363,6 +363,9 @@
     <ClCompile Include="src\alvere\world\archetype\version_map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\alvere\utils\assets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\platform\windows\windows_window.hpp">
@@ -858,6 +861,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\world\system\systems\destroy_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\utils\assets.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
