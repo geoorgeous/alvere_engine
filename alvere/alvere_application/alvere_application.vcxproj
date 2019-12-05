@@ -164,6 +164,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\scenes\platformer_scene.cpp" />
     <ClCompile Include="src\scenes\testing_scene.cpp" />
+    <ClCompile Include="src\tilemap\tilemap_renderer_system.cpp" />
     <ClCompile Include="src\tile_drawer.cpp" />
     <ClCompile Include="src\world_cell_area.cpp" />
     <ClCompile Include="src\world_generation.cpp" />
@@ -180,6 +181,10 @@
     <ClInclude Include="src\imgui\imstb_truetype.h" />
     <ClInclude Include="src\scenes\platformer_scene.hpp" />
     <ClInclude Include="src\scenes\testing_scene.hpp" />
+    <ClInclude Include="src\tilemap\spritesheet.h" />
+    <ClInclude Include="src\tilemap\tile.hpp" />
+    <ClInclude Include="src\tilemap\c_tilemap.hpp" />
+    <ClInclude Include="src\tilemap\tilemap_renderer_system.h" />
     <ClInclude Include="src\tile_drawer.hpp" />
     <ClInclude Include="src\world_cell.hpp" />
     <ClInclude Include="src\world_cell_area.hpp" />
