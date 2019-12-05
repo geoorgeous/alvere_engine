@@ -67,8 +67,8 @@ struct AlvereApplication : public Application
 		world_generation::Generate(m_worldCellArea, 0);
 
 		m_sceneCamera.SetPosition(0, 0, 10);
-		//m_sceneCamera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
-		m_sceneCamera.SetOrthographic(0, 800, 800, 0, 0.0f, 100.0f);
+		m_sceneCamera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
+		//m_sceneCamera.SetOrthographic(0, 800, 800, 0, 0.0f, 100.0f);
 
 		m_uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
