@@ -54,7 +54,7 @@ struct AlvereApplication : public Application
 	ImGuiEditor m_editor;
 
 	AlvereApplication()
-		: Application()
+		: Application(Window::Properties("Platformer", 1024, 768))
 		, m_tileDrawer("res/img/tilesheet.png")
 		, m_toggleEditor(alvere::Key::I)
 		, m_editorEnabled(false)
@@ -62,26 +62,24 @@ struct AlvereApplication : public Application
 	{
 		RunTests();
 
-		m_spriteBatcher = SpriteBatcher::New();
 
-		world_generation::Generate(m_worldCellArea, 0);
+		float screenRatio = m_window->getWidth() / m_window->getHeight();
 
-		m_sceneCamera.SetPosition(0, 0, 10);
-		m_sceneCamera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
-		//m_sceneCamera.SetOrthographic(0, 800, 800, 0, 0.0f, 100.0f);
-
+		m_sceneCamera.SetPosition(0, 0, 0);
+		m_sceneCamera.SetOrthographic(0, 20 * screenRatio, 20, 0, -1.0f, 1.0f);
 		m_uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
+
 
 		SceneSystem * sceneSystem = m_world.AddSystem<SceneSystem>(m_world);
 		m_world.AddSystem<SpriteRendererSystem>(m_sceneCamera);
 		m_world.AddSystem<DestroySystem>();
 
-		TestingScene testScene(m_world);
-		Scene& test = sceneSystem->LoadScene(testScene);
-		sceneSystem->UnloadScene(test);
-
 		PlatformerScene platformerScene(m_world);
 		Scene & platformer = sceneSystem->LoadScene(platformerScene);
+
+
+		m_spriteBatcher = SpriteBatcher::New();
+		world_generation::Generate(m_worldCellArea, 0);
 	}
 
 	~AlvereApplication()
@@ -128,13 +126,13 @@ struct AlvereApplication : public Application
 		if (m_window->getKey(Key::E)) rotation += Camera::forward * turnSpeed;
 		if (m_window->getKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
+		m_sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
+
 		m_toggleEditor.Update(*m_window);
 		if (m_toggleEditor.IsPressed())
 		{
 			m_editorEnabled = !m_editorEnabled;
 		}
-
-		m_sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
 
 		m_world.Update(deltaTime);
 	}

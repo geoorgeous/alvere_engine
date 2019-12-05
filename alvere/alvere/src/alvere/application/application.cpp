@@ -24,8 +24,8 @@ namespace alvere
 {
 	static std::unique_ptr<console::Command> s_quitCommand;
 
-	Application::Application()
-		: m_window(Window::New()), m_targetFrameRate(60.0f), m_running(true)
+	Application::Application(const Window::Properties & properties)
+		: m_window(Window::New(properties)), m_targetFrameRate(60.0f), m_running(true)
 	{
 		m_windowCloseEventHandler.setFunction([&]() {
 			m_running = false;

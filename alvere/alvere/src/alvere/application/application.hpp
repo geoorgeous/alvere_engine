@@ -11,7 +11,7 @@ namespace alvere
 	{
 	public:
 
-		Application();
+		Application(const Window::Properties & properties = Window::Properties::s_default);
 
 		virtual ~Application() = default;
 
