@@ -24,6 +24,7 @@ namespace alvere::platform::windows
 
 		void enableCursor() override;
 
+		GLFWwindow * m_windowHandle;
 	private:
 
 		struct WindowUserPointerData
@@ -34,7 +35,6 @@ namespace alvere::platform::windows
 			MouseData * mouse;
 		};
 
-		GLFWwindow * m_windowHandle;
 
 		WindowUserPointerData m_windowUserPointerData;
 

@@ -14,6 +14,8 @@
 #include <alvere/world/system/systems/sprite_renderer_system.hpp>
 #include <alvere/world/scene/scene.hpp>
 #include <alvere\world\scene\scene_system.hpp>
+#include <alvere\world\system\systems\destroy_system.hpp>
+#include <alvere/input/key_button.hpp>
 
 #include "tile_drawer.hpp"
 #include "world_cell.hpp"
@@ -21,7 +23,8 @@
 #include "world_generation.hpp"
 #include "scenes/testing_scene.hpp"
 #include "Scenes/platformer_scene.hpp"
-#include <alvere\world\system\systems\destroy_system.hpp>
+#include "imgui/imgui.h"
+#include "editor/imgui_editor.hpp"
 
 /* todo
  *
@@ -38,27 +41,24 @@ struct AlvereApplication : public Application
 {
 	Scene m_Scene;
 
-	Asset<Shader> m_vertexShader;
-	Asset<Shader> m_fragmentShader;
-	Asset<ShaderProgram> m_shaderProgram;
-	Asset<Texture> m_texture;
-	Mesh * mesh;
-	Material * material;
-	MaterialInstance * m_materialInstance;
-
-	World world;
-	Camera sceneCamera;
-	Camera uiCamera;
+	World m_world;
+	Camera m_sceneCamera;
+	Camera m_uiCamera;
 	Asset<SpriteBatcher> m_spriteBatcher;
-	//Renderer * m_renderer;
 
 	TileDrawer m_tileDrawer;
 	WorldCellArea * m_worldCellArea;
 
-	Font::Face * m_fontFace;
+	KeyButton m_toggleEditor;
+	bool m_editorEnabled;
+	ImGuiEditor m_editor;
 
-	AlvereApplication() : Application(),
-		m_tileDrawer("res/img/tilesheet.png")
+	AlvereApplication()
+		: Application()
+		, m_tileDrawer("res/img/tilesheet.png")
+		, m_toggleEditor(alvere::Key::I)
+		, m_editorEnabled(false)
+		, m_editor(*m_window)
 	{
 		RunTests();
 
@@ -66,59 +66,27 @@ struct AlvereApplication : public Application
 
 		world_generation::Generate(m_worldCellArea, 0);
 
-		m_fontFace = new Font::Face("res/fonts/arial/arial.ttf");
+		m_sceneCamera.SetPosition(0, 0, 10);
+		//m_sceneCamera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
+		m_sceneCamera.SetOrthographic(0, 800, 800, 0, 0.0f, 100.0f);
 
-		m_vertexShader = Shader::New(Shader::Type::Vertex, file::read("res/shaders/flat_colour.vert"));
-		m_fragmentShader = Shader::New(Shader::Type::Fragment, file::read("res/shaders/flat_colour.frag"));
-		m_shaderProgram = ShaderProgram::New();
-		m_shaderProgram->SetShader(alvere::AssetRef<Shader>(m_vertexShader.get()));
-		m_shaderProgram->SetShader(alvere::AssetRef<Shader>(m_fragmentShader.get()));
-		m_shaderProgram->build();
+		m_uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
-		m_texture = Texture::New("res/img/test.png");
+		SceneSystem * sceneSystem = m_world.AddSystem<SceneSystem>(m_world);
+		m_world.AddSystem<SpriteRendererSystem>(m_sceneCamera);
+		m_world.AddSystem<DestroySystem>();
 
-		mesh = new Mesh("res/meshes/teapot2.obj");
-		
-		material = new Material(m_shaderProgram.get());
-
-		m_materialInstance = new MaterialInstance(material);
-		m_materialInstance->get<Shader::DataType::Float3>("u_colour")->m_value = Vector3(0.8f, 0.1f, 0.3f);
-		m_materialInstance->get<Shader::DataType::Sampler2D>("u_albedo")->m_value = m_texture.get();
-
-		sceneCamera.SetPosition(0, 0, 10);
-		sceneCamera.SetPerspective(67.0f * _TAU_DIV_360, 1.0f, 0.01f, 1000.0f);
-
-		uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
-
-		/*m_renderer = Renderer::New();
-
-		EntityHandle entity = world.SpawnEntity<C_Transform, C_RenderableMesh>();
-		C_Transform & transform = world.GetComponent<C_Transform>(entity);
-		transform->setScale(Vector3(0.05f, 0.05f, 0.05f));
-		C_RenderableMesh & renderableMesh = world.GetComponent<C_RenderableMesh>(entity);
-		renderableMesh.m_material = m_materialInstance;
-		renderableMesh.m_mesh = mesh;*/
-
-		SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
-		world.AddSystem<SpriteRendererSystem>(sceneCamera);
-		world.AddSystem<DestroySystem>();
-
-		TestingScene testScene(world);
+		TestingScene testScene(m_world);
 		Scene& test = sceneSystem->LoadScene(testScene);
 		sceneSystem->UnloadScene(test);
 
-		PlatformerScene platformerScene(world);
+		PlatformerScene platformerScene(m_world);
 		Scene & platformer = sceneSystem->LoadScene(platformerScene);
 	}
 
 	~AlvereApplication()
 	{
 		delete m_worldCellArea;
-		delete mesh;
-		delete material;
-		delete m_materialInstance;
-		//delete m_renderer;
-		delete m_fontFace;
 	}
 
 	void update(float deltaTime) override
@@ -138,7 +106,7 @@ struct AlvereApplication : public Application
 		if (m_window->getKey(Key::LeftShift)) velocity -= Camera::up * moveSpeed;
 
 		velocity *= deltaTime;
-		sceneCamera.Move(velocity * sceneCamera.GetRotation());
+		m_sceneCamera.Move(velocity * m_sceneCamera.GetRotation());
 
 		if (m_window->getMouse().getButton(MouseButton::Left))
 		{
@@ -160,14 +128,20 @@ struct AlvereApplication : public Application
 		if (m_window->getKey(Key::E)) rotation += Camera::forward * turnSpeed;
 		if (m_window->getKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
-		sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
+		m_toggleEditor.Update(*m_window);
+		if (m_toggleEditor.IsPressed())
+		{
+			m_editorEnabled = !m_editorEnabled;
+		}
 
-		world.Update(deltaTime);
+		m_sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
+
+		m_world.Update(deltaTime);
 	}
 
 	void render() override
 	{
-		m_spriteBatcher->begin(sceneCamera.GetProjectionViewMatrix());
+		m_spriteBatcher->begin(m_sceneCamera.GetProjectionViewMatrix());
 		 
 		for (unsigned int x = 0; x < m_worldCellArea->GetWidth(); x++)
 		{
@@ -180,19 +154,13 @@ struct AlvereApplication : public Application
 
 		m_spriteBatcher->end();
 
-		//m_renderer->begin(sceneCamera);
 
-		world.Render();
+		m_world.Render();
 
-		//m_renderer->end();
-
-		/*m_spriteBatcher->begin(uiCamera.GetProjectionViewMatrix());
-
-		std::string cameraPositionString = "x: " + std::to_string(sceneCamera.GetPosition().x) + "\ny: " + std::to_string(sceneCamera.GetPosition().y) + "\nz: " + std::to_string(sceneCamera.GetPosition().z);
-
-		m_spriteBatcher->submit(*m_fontFace->getBitmap(18), cameraPositionString, Vector2(0, 800 - 18), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
-		m_spriteBatcher->end();*/
+		if (m_editorEnabled)
+		{
+			m_editor.Render();
+		}
 	}
 };
 
