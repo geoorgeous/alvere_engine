@@ -7,6 +7,7 @@
 
 namespace alvere
 {
+	struct Vector2i;
 	struct Vector3;
 	struct Vector4;
 	
@@ -55,6 +56,12 @@ namespace alvere
 		 * \param vec4 The Vector4 from which to take the x and y component values from.
 		 */
 		Vector2(const Vector4& vec4);
+		
+		/**
+		 * \brief Constructs a Vector2 by casting the components of a Vector2i to floats.
+		 * \param vec4 The Vector2i from which to cast from.
+		 */
+		explicit Vector2(const Vector2i& vec2i);
 
 		/**
 		 * \brief Calculates and returns the magnitude of the vector multiplied by itself.
