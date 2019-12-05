@@ -1,11 +1,11 @@
+
 /**
  * \file
  * \author \link https://georgemcdonagh.co.uk George McDonagh
  */
 
-#include "alvere/math/vector/vector_2.hpp"
-#include "alvere/math/vector/vector_3.hpp"
-#include "alvere/math/vector/vector_4.hpp"
+#pragma once
+
 #include "alvere/math/vector/vector_x.hpp"
 
 namespace alvere
@@ -14,3 +14,7 @@ namespace alvere
 	typedef Vector<int, 3> Vector3i; //!< A 3-component vector with integer components.
 	typedef Vector<int, 4> Vector4i; //!< A 4-component vector with integer components.
 }
+
+#include "alvere/math/vector/vector_2.hpp"
+#include "alvere/math/vector/vector_3.hpp"
+#include "alvere/math/vector/vector_4.hpp"

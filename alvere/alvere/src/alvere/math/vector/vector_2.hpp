@@ -1,3 +1,4 @@
+
 /**
  * \file
  * \author \link https://georgemcdonagh.co.uk George McDonagh
@@ -5,9 +6,10 @@
 
 #pragma once
 
+#include "alvere/math/vectors.hpp"
+
 namespace alvere
 {
-	struct Vector2i;
 	struct Vector3;
 	struct Vector4;
 	
