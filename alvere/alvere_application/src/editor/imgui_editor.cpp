@@ -1,16 +1,17 @@
-
-#include "imgui_editor.hpp"
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
 #include <stdio.h>
-#include <alvere/application/window.hpp>
-#include <platform/windows/windows_window.hpp>
-
+#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <alvere/application/window.hpp>
+#include <platform/windows/windows_window.hpp>
 
+#include "imgui_editor.hpp"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+#include "editor/imgui_demo_window.hpp"
+#include "dialogs/open_file_dialog.hpp"
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	: m_window(window)
@@ -20,11 +21,20 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
+
+	ImGuiStyle & style = ImGui::GetStyle();
+	style.WindowRounding = 0.0f;
+
 	ImGuiIO & io = ImGui::GetIO(); (void) io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 	ImGui_ImplGlfw_InitForOpenGL(castedWindow.m_windowHandle, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
+
+	AddWindow<ImGui_DemoWindow>();
+
+	m_openLevels.push_back("Castle");
+	m_openLevels.push_back("Not a castle");
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -38,10 +48,140 @@ void ImGuiEditor::Render()
 {
 	StartFrame();
 
-	ImGui::ShowDemoWindow();
+	//Draw all the auxilliary windows first as using the ImGuiWindowFlags_NoBringToFrontOnFocus flag on the 
+	//main window will put it at the back of the draw order, behind any windows using that flag in this list.
+	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	{
+		if (window->m_visible)
+		{
+			window->Draw();
+		}
+	}
+
+	//Always resize the main window to fill the whole background of the SDL window
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2((float) m_window.getWidth(), (float) m_window.getHeight()), ImGuiCond_Always);
+
+	// Main body of the Demo window starts here.
+	if (!ImGui::Begin("Main Window", NULL, m_windowflags))
+	{
+		ImGui::End();
+		return;
+	}
+
+	DrawMenuBar();
+
+	DrawBoardTabs();
+
+	ImGui::End();
 
 	EndFrame();
 }
+
+
+void ImGuiEditor::DrawBoardTabs()
+{
+	static ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_Reorderable
+		| ImGuiTabBarFlags_AutoSelectNewTabs
+		| ImGuiTabBarFlags_FittingPolicyResizeDown;
+
+	if (ImGui::BeginTabBar("Open Levels", tab_bar_flags))
+	{
+		std::vector<int> toRemove;
+		for (int i = 0; i < m_openLevels.size(); ++i)
+		{
+			bool active = true;
+
+			const char * name = m_openLevels[i].c_str();
+
+			if (ImGui::BeginTabItem(name, &active))
+			{
+				//m_openLevels[i].Draw();
+
+				ImGui::EndTabItem();
+			}
+
+			if (active == false)
+			{
+				toRemove.push_back(i);
+			}
+		}
+
+		//Remove any tabs that were closed
+		for (int i = (int) toRemove.size() - 1; i >= 0; --i)
+		{
+			m_openLevels.erase(m_openLevels.begin() + toRemove[i]);
+		}
+
+		ImGui::EndTabBar();
+	}
+}
+
+void ImGuiEditor::DrawMenuBar()
+{
+	if (ImGui::BeginMenuBar() == false)
+	{
+		return;
+	}
+
+	if (ImGui::BeginMenu("File"))
+	{
+		if (ImGui::MenuItem("New", NULL, false, false))
+		{
+			std::cout << "Copied stuff" << std::endl;
+		}
+
+		if (ImGui::MenuItem("Open", NULL, false, true))
+		{
+			alvere::OpenFileDialog openFileDialog("Select a map to open", "", { "*.map" }, false);
+			auto result = openFileDialog.Show();
+
+			std::cout << result.first << std::endl;
+			if (result.first)
+				std::cout << result.second[0] << std::endl;
+		}
+
+		ImGui::EndMenu();
+	}
+
+	if (ImGui::BeginMenu("Edit"))
+	{
+		if (ImGui::MenuItem("Copy", NULL, false, false))
+		{
+			std::cout << "Copied stuff" << std::endl;
+		}
+
+		if (ImGui::MenuItem("Paste", NULL, false, false))
+		{
+			std::cout << "Pasted stuff" << std::endl;
+		}
+
+		ImGui::EndMenu();
+	}
+
+	//Show all the main windows so they can be hidden/shown
+	if (ImGui::BeginMenu("View"))
+	{
+		for (std::unique_ptr<ImGui_Window> & window : m_windows)
+		{
+			if (window->AddToViewMenu() == false)
+			{
+				continue;
+			}
+
+			if (ImGui::MenuItem(window->GetName().c_str(), NULL, window->m_visible))
+			{
+				window->m_visible = !window->m_visible;
+			}
+		}
+
+		ImGui::EndMenu();
+	}
+
+	ImGui::EndMenuBar();
+}
+
+
 
 void ImGuiEditor::StartFrame()
 {
