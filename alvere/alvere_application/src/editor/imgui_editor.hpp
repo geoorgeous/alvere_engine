@@ -37,16 +37,16 @@ private:
 	void DrawMenuBar();
 	void DrawBoardTabs();
 
-	template <typename T>
-	void AddWindow();
+	template <typename T, typename... Args>
+	T & AddWindow(Args &&... args);
 
 };
 
 
-template <typename T>
-void ImGuiEditor::AddWindow()
+template <typename T, typename... Args>
+T & ImGuiEditor::AddWindow(Args &&... args)
 {
-	std::unique_ptr<T> window = std::make_unique<T>();
+	std::unique_ptr<T> window = std::make_unique<T>(std::forward<Args>( args )...);
 
 	if (window->AddToViewMenu() == false)
 	{
@@ -54,4 +54,6 @@ void ImGuiEditor::AddWindow()
 	}
 
 	m_windows.emplace_back(std::move(window));
+
+	return static_cast<T&>(*m_windows.back());
 }

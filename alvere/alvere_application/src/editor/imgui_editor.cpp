@@ -10,8 +10,10 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#include "editor/imgui_demo_window.hpp"
 #include "dialogs/open_file_dialog.hpp"
+#include "editor/imgui_demo_window.hpp"
+#include "editor/tile_window.hpp"
+#include "editor/tile_properties_window.hpp"
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	: m_window(window)
@@ -31,6 +33,8 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	ImGui_ImplGlfw_InitForOpenGL(castedWindow.m_windowHandle, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
 
+	TileWindow & tileWindow = AddWindow<TileWindow>();
+	AddWindow<TilePropertiesWindow>(tileWindow);
 	AddWindow<ImGui_DemoWindow>();
 
 	m_openLevels.push_back("Castle");
