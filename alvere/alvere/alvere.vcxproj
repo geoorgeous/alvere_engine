@@ -243,6 +243,7 @@
     <ClCompile Include="src\alvere\graphics\text\font.cpp" />
     <ClCompile Include="src\alvere\graphics\text\text.cpp" />
     <ClCompile Include="src\alvere\input\key_button.cpp" />
+    <ClCompile Include="src\alvere\input\mouse_button.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_2.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_3.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_4.cpp" />
@@ -377,6 +378,7 @@
     <ClInclude Include="src\alvere\graphics\text\text.hpp" />
     <ClInclude Include="src\alvere\input\input_button.hpp" />
     <ClInclude Include="src\alvere\input\key_button.hpp" />
+    <ClInclude Include="src\alvere\input\mouse_button.hpp" />
     <ClInclude Include="src\alvere\math\constants.hpp" />
     <ClInclude Include="src\alvere\math\math.hpp" />
     <ClInclude Include="src\alvere\math\matrices.hpp" />

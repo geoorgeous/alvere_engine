@@ -46,7 +46,7 @@ struct AlvereApplication : public Application
 	Camera m_sceneCamera;
 	Camera m_uiCamera;
 
-	KeyButton m_toggleEditor;
+	input::KeyButton m_toggleEditor;
 	bool m_editorEnabled;
 	ImGuiEditor m_editor;
 

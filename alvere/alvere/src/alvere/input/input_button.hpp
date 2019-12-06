@@ -4,17 +4,20 @@
 
 namespace alvere
 {
-	class InputButton
+	namespace input
 	{
-	public:
+		class InputButton
+		{
+		public:
 
-		virtual ~InputButton() = default;
+			virtual ~InputButton() = default;
 
-		virtual void Update(Window & window) = 0;
+			virtual void Update(Window & window) = 0;
 
-		virtual bool IsDown() const = 0;
+			virtual bool IsDown() const = 0;
 
-		virtual bool IsPressed() const = 0;
-		virtual bool IsReleased() const = 0;
-	};
+			virtual bool IsPressed() const = 0;
+			virtual bool IsReleased() const = 0;
+		};
+	}
 }
