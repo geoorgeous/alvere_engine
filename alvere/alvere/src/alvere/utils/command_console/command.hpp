@@ -13,7 +13,7 @@ namespace alvere::console
 	{
 	public:
 
-		using Function = std::function<CompositeText(std::vector<const IArg *>)>;
+		using Function = std::function<bool(std::vector<const IArg *>, CompositeText &)>;
 
 		Command(const char * name, const char * description, std::vector<IParam *> params, Function f);
 

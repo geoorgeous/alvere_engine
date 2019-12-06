@@ -50,7 +50,8 @@ namespace alvere::console
 		Window * _window;
 		CharInputEvent::Handler _charInputEventHandler;
 
-		std::vector<std::string> _output;
+		Text::Formatting _outputDefaultFormat = Text::Formatting{ &gui::_font, Font::Style::Regular, 18, Vector4::unit };
+		std::vector<CompositeText> _output;
 		unsigned int _outputPageIndex = 0;
 		std::vector<std::string> _inputHistory;
 		std::string _inputPre = "> ";
@@ -106,15 +107,13 @@ namespace alvere::console
 			_font.loadFontFaceFile("res/fonts/consolas/consolai.ttf");
 			_font.loadFontFaceFile("res/fonts/consolas/consolaz.ttf");
 
-			/*_builtInCommands.emplace_back(std::make_unique<Command>(
+			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"help",
 				"Displays a list of all of the available commands, and can optionally be used to display further information about a single command.",
 				std::vector<IParam *> {
 				&StringParam("command name", "The name of the command to display information about.", false) },
-				[&](std::vector<const IArg *> args) -> CompositeText
+				[&](std::vector<const IArg *> args, CompositeText & output) -> bool
 				{
-					CompositeText output(_font);
-
 					if (args[0] == nullptr)
 					{
 						output = "Below is a list of all of the available commands. To see more information about a particular command, type 'help' with the name of the command.\n\n";
@@ -149,7 +148,7 @@ namespace alvere::console
 								for (const IParam * param : params)
 									output += param->getDetailedName() + " : " + param->getDescription() + "\n\t";
 
-								return output;
+								return true;
 							}
 
 						for (const std::unique_ptr<CommandAlias> & alias : _aliasCommands)
@@ -163,47 +162,47 @@ namespace alvere::console
 								if (!description.empty())
 									output += description + "\n\t";
 
-								return output;
+								return true;
 							}
 
 						output = "Command '" + commandName + "' not found. Type 'help' for a list of available commands.";
 					}
 
-					return output;
+					return false;
 				}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"console.clear",
 				"Clears the console output.",
 				std::vector<IParam *> {},
-				[&](std::vector<const IArg *> args) -> CompositeText
+				[&](std::vector<const IArg *> args, CompositeText & output) -> bool
 			{
 				_output.clear();
-				return "";
+				return true;
 			}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"console.expand",
 				"Expands the console window.",
 				std::vector<IParam *> {},
-				[&](std::vector<const IArg *> args) -> CompositeText
+				[&](std::vector<const IArg *> args, CompositeText & output) -> bool
 			{
 				_maxOutputLineCount = _maxOutputLineCountExpanded;
 				_shaderProgram->bind();
 				_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
-				return "";
+				return true;
 			}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
 				"console.shrink",
 				"Shrinks the console window.",
 				std::vector<IParam *> {},
-				[&](std::vector<const IArg *> args) -> CompositeText
+				[&](std::vector<const IArg *> args, CompositeText & output) -> bool
 			{
 				_maxOutputLineCount = _maxOutputLineCountShrunk;
 				_shaderProgram->bind();
 				_shaderProgram->sendUniformInt1("u_outputLineCount", _maxOutputLineCount);
-				return "";
+				return true;
 			}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
@@ -213,23 +212,32 @@ namespace alvere::console
 				&StringParam("new alias name", "The name of the new command alias being created.", true),
 					& StringParam("command string", "The command to be executed when the command alias is entered.", true),
 					& StringParam("description", "A description of the new command alias.", false), },
-				[&](std::vector<const IArg *> args) -> CompositeText
+				[&](std::vector<const IArg *> args, CompositeText & output) -> bool
 				{
 					std::string name = args[0]->getValue<std::string>();
 
 					if (!std::regex_match(name, std::regex("^[A-Za-z.-_]+$")))
-						return "Command alias bad format.";
+					{
+						output = "Command alias bad format.";
+						return false;
+					}
 
 					for (size_t i = 0; i < name.length(); ++i)
 						name[i] = std::tolower(name[i]);
 
 					for (const Command * command : _commands)
 						if (command->getName() == name)
-							return "Failed to create alias. Command '" + name + "' already exists. Command alias names must be unique.";
+						{
+							output = "Failed to create alias. Command '" + name + "' already exists. Command alias names must be unique.";
+							return false;
+						}
 
 					for (const std::unique_ptr<CommandAlias> & alias : _aliasCommands)
 						if (alias->getName() == name)
-							return "Failed to create alias. Command alias '" + name + "' already exists. Command alias names must be unique.";
+						{
+							output = "Failed to create alias. Command alias '" + name + "' already exists. Command alias names must be unique.";
+							return false;
+						}
 
 					std::string description = "";
 
@@ -247,7 +255,8 @@ namespace alvere::console
 						return a->getName() < b->getName();
 					});
 
-					return "Successfully created new alias '" + name + "'.";
+					output = "Successfully created new alias '" + name + "'.";
+					return true;
 				}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
@@ -255,7 +264,7 @@ namespace alvere::console
 				"Deletes an existing alias.",
 				std::vector<IParam *> {
 				&StringParam("alias name", "The name of the alias to delete.", true), },
-				[&](std::vector<const IArg *> args) -> std::string
+				[&](std::vector<const IArg *> args, CompositeText & output) -> bool
 				{
 					const std::string & name = args[0]->getValue<std::string>();
 
@@ -263,10 +272,12 @@ namespace alvere::console
 						if (_aliasCommands[a]->getName() == name)
 						{
 							_aliasCommands.erase(_aliasCommands.begin() + a);
-							return "Successfully deleted alias '" + name + "'.";
+							output = "Successfully deleted alias '" + name + "'.";
+							return true;
 						}
 
-					return "Alias '" + name + "' does not exist.";
+					output = "Alias '" + name + "' does not exist.";
+					return false;
 				}));
 
 			_builtInCommands.emplace_back(std::make_unique<Command>(
@@ -280,10 +291,11 @@ namespace alvere::console
 					&StringParam("test5", "A string parameter.", true),
 					&OptionParam("test6", "An option parameter.", true, { "one", "two", "three" }),
 					&EnumParam<Font::Style>("test7", "An enum parameter.", true) },
-				[](std::vector<const IArg *> args) -> std::string
+				[](std::vector<const IArg *> args, CompositeText & output) -> bool
 				{
-					return "Test command!";
-				}));*/
+						output = "Test command!";
+						return true;
+				}));
 
 			Asset<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core
 					uniform mat4 u_projectionMatrix;
@@ -360,7 +372,7 @@ namespace alvere::console
 
 			_initialised = true;
 
-			_output.emplace_back("Type 'help' for a list of available commands.");
+			//_output.emplace_back("Type 'help' for a list of available commands.");
 		}
 
 		void destroy()
@@ -438,7 +450,7 @@ namespace alvere::console
 
 		void draw()
 		{
-			// todo: most of this shit to be done by some sort of formatted text renderer
+			// todo: wrap text with window width
 
 			if (!_shown)
 				return;
@@ -450,17 +462,22 @@ namespace alvere::console
 
 			_spriteBatcher->begin(_projection);
 
+			// input prefix
 			_spriteBatcher->submit(*bitmap, _inputPre.c_str(), Vector2(3.0f, 6.0f));
 
+			// user's input
 			_spriteBatcher->submit(*bitmap, _input.c_str(), Vector2(3.0f + inputXOffset, 6.0f));
 
+			// caret
 			if (_caretIsVisible)
 				_spriteBatcher->submit(*bitmap, "_", Vector2(3.0f + inputXOffset + caretXOffset, 6.0f));
 
-			int lineCount = 0;
-			for (int i = _outputPageIndex * _maxOutputLineCount; i < _output.size() && lineCount < _maxOutputLineCount; ++i, ++lineCount)
+			size_t lineCount = 0;
+			for (int o = (int)_output.size() - 1; lineCount < _maxOutputLineCount && o >= 0; --o)
 			{
-				_spriteBatcher->submit(*bitmap, _output[_output.size() - 1 - i], Vector2(3.0f, 6.0f + bitmap->getFontFaceHeight() * (lineCount + 1)));
+				const std::vector<Text> & outputText = _output[o].getText();
+				for (int k = (int)outputText.size() - 1; lineCount < _maxOutputLineCount && k >= 0; --k, ++lineCount)
+					_spriteBatcher->submit(*bitmap, outputText[k].content, Vector2(3.0f, 6.0f + bitmap->getFontFaceHeight() * (lineCount + 1)));
 			}
 
 			if (_output.size() > _maxOutputLineCount)
@@ -471,7 +488,7 @@ namespace alvere::console
 			}
 
 			_shaderProgram->bind();
-			_shaderProgram->sendUniformInt1("u_outputLineCount", lineCount);
+			_shaderProgram->sendUniformInt1("u_outputLineCount", (int)lineCount);
 			_vao->Bind();
 			ALV_LOG_OPENGL_CALL(glDrawArrays(GL_TRIANGLES, 0, 18));
 
@@ -480,18 +497,17 @@ namespace alvere::console
 
 		void submitInput()
 		{
-			_output.emplace_back(_inputPre + _input);
+			_output.emplace_back(CompositeText(_inputPre + _input, _outputDefaultFormat));
 			_inputHistory.insert(_inputHistory.begin(), _input);
 
 			CompositeText output = submitCommand(_input);
 
 			if (!output.getIsEmpty())
 			{
-				std::vector<std::string> lines = utils::splitString(output.getSimpleText(), '\n', true);
-				_output.insert(_output.end(), lines.begin(), lines.end());
+				_output.emplace_back(output);
 			}
 
-			_output.emplace_back("");
+			_output.emplace_back(CompositeText("\n", _outputDefaultFormat));
 
 			_outputPageIndex = 0;
 
@@ -697,7 +713,7 @@ namespace alvere::console
 		size_t partBegin;
 		char delim(0);
 
-		CompositeText output(Text::Formatting{ &gui::_font, Font::Style::Regular, 18, Vector4::unit });
+		CompositeText output(gui::_outputDefaultFormat);
 
 		for (size_t i = 0; i < command.length(); ++i)
 		{
@@ -744,7 +760,7 @@ namespace alvere::console
 		}
 
 		if (parts.size() == 0)
-			return output = "";
+			return CompositeText(gui::_outputDefaultFormat);
 
 		std::string commandName = parts[0];
 

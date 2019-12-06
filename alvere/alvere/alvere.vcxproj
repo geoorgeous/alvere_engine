@@ -392,6 +392,8 @@
     <ClInclude Include="src\alvere\utils\command_console\command_alias.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\command_console.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\param.hpp" />
+    <ClInclude Include="src\alvere\utils\pool.hpp" />
+    <ClInclude Include="src\alvere\utils\pool_handle.hpp" />
     <ClInclude Include="src\alvere\utils\random.hpp" />
     <ClInclude Include="src\alvere\utils\uuid.hpp" />
     <ClInclude Include="src\alvere\world\application\c_direction.hpp" />

@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
 		{ //Wait for user input before closing the terminal
 			std::cout << "\nPress any key to exit ...";
-			std::getchar();
+			char t = std::getchar();
 		}
 	}
 

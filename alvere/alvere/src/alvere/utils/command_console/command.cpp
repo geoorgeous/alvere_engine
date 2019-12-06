@@ -3,7 +3,6 @@
 #include <string>
 
 #include "alvere/utils/command_console/arg.hpp"
-//#include "alvere/utils/command_console/command_console.hpp"
 #include "alvere/utils/command_console/param.hpp"
 
 namespace alvere::console
@@ -49,7 +48,7 @@ namespace alvere::console
 		}
 		else if (argStrings.empty() && m_params.empty())
 		{
-			output = m_f({});
+			m_f({}, output);
 			return true;
 		}
 
@@ -95,7 +94,7 @@ namespace alvere::console
 
 		if (!parseFailure)
 		{
-			output = m_f(args);
+			m_f(args, output);
 		}
 
 		for (const IArg * arg : args)
