@@ -64,7 +64,8 @@ void ImGuiEditor::Render()
 
 	//Always resize the main window to fill the whole background of the SDL window
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-	ImGui::SetNextWindowSize(ImVec2((float) m_window.getWidth(), (float) m_window.getHeight()), ImGuiCond_Always);
+	//ImGui::SetNextWindowSize(ImVec2((float) m_window.getWidth(), (float) m_window.getHeight()), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2((float) m_window.getWidth(), (float) 47.0f), ImGuiCond_Always);
 
 	// Main body of the Demo window starts here.
 	if (!ImGui::Begin("Main Window", NULL, m_windowflags))
