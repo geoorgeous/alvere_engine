@@ -8,13 +8,16 @@
 #include <alvere/math/constants.hpp>
 #include <alvere/math/matrix/transformations.hpp>
 #include <alvere/utils/file_reader.hpp>
+#include <alvere/utils/exceptions.hpp>
 #include <alvere/world/world.hpp>
 #include <alvere/world/ecs_testing.hpp>
-#include <alvere/utils/exceptions.hpp>
 #include <alvere/world/system/systems/sprite_renderer_system.hpp>
 #include <alvere/world/scene/scene.hpp>
 #include <alvere\world\scene\scene_system.hpp>
+#include <alvere\world\system\systems\camera_system.hpp>
 #include <alvere\world\system\systems\destroy_system.hpp>
+#include <alvere/world/component/components/c_camera.hpp>
+#include <alvere/world/component/components/c_transform.hpp>
 #include <alvere/input/key_button.hpp>
 
 #include "tile_drawer.hpp"
@@ -43,7 +46,7 @@ struct AlvereApplication : public Application
 	Scene m_Scene;
 
 	World m_world;
-	Camera m_sceneCamera;
+	Camera * m_sceneCamera;
 	Camera m_uiCamera;
 
 	input::KeyButton m_toggleEditor;
@@ -61,14 +64,15 @@ struct AlvereApplication : public Application
 
 		float screenRatio = (float) m_window->getWidth() / (float) m_window->getHeight();
 
-		m_sceneCamera.SetPosition(0, 0, 0);
-		m_sceneCamera.SetOrthographic(-12 * screenRatio, 12 * screenRatio, 12, -12, -1.0f, 1.0f);
+		EntityHandle cameraEntity = m_world.SpawnEntity<C_Transform, C_Camera>();
+		m_sceneCamera = &m_world.GetComponent<C_Camera>( cameraEntity );
+		m_sceneCamera->SetOrthographic(-12 * screenRatio, 12 * screenRatio, 12, -12, -1.0f, 1.0f);
 		m_uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
-
 		SceneSystem * sceneSystem = m_world.AddSystem<SceneSystem>(m_world);
-		m_world.AddSystem<TilemapRendererSystem>(m_sceneCamera);
-		m_world.AddSystem<SpriteRendererSystem>(m_sceneCamera);
+		m_world.AddSystem<CameraSystem>();
+		m_world.AddSystem<TilemapRendererSystem>(*m_sceneCamera);
+		m_world.AddSystem<SpriteRendererSystem>(*m_sceneCamera);
 		m_world.AddSystem<DestroySystem>();
 
 		PlatformerScene platformerScene(m_world);
@@ -77,6 +81,18 @@ struct AlvereApplication : public Application
 
 	void update(float deltaTime) override
 	{
+		m_toggleEditor.Update(*m_window);
+		if (m_toggleEditor.IsPressed())
+		{
+			m_editorEnabled = !m_editorEnabled;
+		}
+
+		if (m_editorEnabled)
+		{
+			m_editor.Update(deltaTime);
+			return;
+		}
+
 		Vector3 velocity;
 		Vector3 rotation;
 
@@ -89,19 +105,12 @@ struct AlvereApplication : public Application
 		if (m_window->getKey(Key::A)) velocity -= Camera::right * moveSpeed;
 
 		velocity *= deltaTime;
-		m_sceneCamera.Move(velocity * m_sceneCamera.GetRotation());
+		m_sceneCamera->Move(velocity * m_sceneCamera->GetRotation());
 		
 		if (m_window->getKey(Key::E)) rotation += Camera::forward * turnSpeed;
 		if (m_window->getKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
 
-		m_sceneCamera.Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
-
-
-		m_toggleEditor.Update(*m_window);
-		if (m_toggleEditor.IsPressed())
-		{
-			m_editorEnabled = !m_editorEnabled;
-		}
+		m_sceneCamera->Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
 
 
 		m_world.Update(deltaTime);
@@ -109,11 +118,13 @@ struct AlvereApplication : public Application
 
 	void render() override
 	{
-		m_world.Render();
-
 		if (m_editorEnabled)
 		{
 			m_editor.Render();
+		}
+		else
+		{
+			m_world.Render();
 		}
 	}
 };
