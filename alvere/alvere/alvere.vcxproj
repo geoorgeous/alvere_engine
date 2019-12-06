@@ -440,6 +440,7 @@
     <ClInclude Include="src\alvere\world\system\query_updated_system.hpp" />
     <ClInclude Include="src\alvere\world\system\rendered_system.hpp" />
     <ClInclude Include="src\alvere\world\system\system.hpp" />
+    <ClInclude Include="src\alvere\world\system\systems\camera_system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\destroy_system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\renderer_system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\sprite_renderer_system.hpp" />

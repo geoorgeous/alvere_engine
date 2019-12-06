@@ -881,6 +881,9 @@
     <ClInclude Include="src\alvere\input\mouse_button.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\alvere\world\system\systems\camera_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\include\luaplus\LuaCall.inl">
