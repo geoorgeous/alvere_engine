@@ -33,7 +33,7 @@ public:
 
 	virtual std::string GetName() const override
 	{
-		return "Tile Pallete";
+		return "Tile Palette";
 	}
 
 	Tile * GetSelectedTile() const
