@@ -18,6 +18,7 @@
 #include "editor/imgui_demo_window.hpp"
 #include "editor/windows/tile_window.hpp"
 #include "editor/windows/tile_properties_window.hpp"
+#include "editor/windows/tool_window.hpp"
 #include "editor\tool\pan_tool.hpp"
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
@@ -42,13 +43,11 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 
 	TileWindow & tileWindow = AddWindow<TileWindow>();
 	AddWindow<TilePropertiesWindow>(tileWindow);
+	m_toolWindow = &AddWindow<ToolWindow>(*this, window);
 	AddWindow<ImGui_DemoWindow>();
 
 	m_openMaps.push_back(EditorWorld::New("Castle", window));
 	m_openMaps.push_back(EditorWorld::New("Not a castle", window));
-
-	//Default to using a pan tool for now
-	m_currentTool = std::make_unique<PanTool>(*this, window);
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -60,14 +59,19 @@ ImGuiEditor::~ImGuiEditor()
 
 void ImGuiEditor::Update(float deltaTime)
 {
+	//Draw all the auxilliary windows first as using the ImGuiWindowFlags_NoBringToFrontOnFocus flag on the 
+	//main window will put it at the back of the draw order, behind any windows using that flag in this list.
+	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	{
+		if (window->m_visible)
+		{
+			window->Update(deltaTime);
+		}
+	}
+
 	if (m_focusedMap == nullptr)
 	{
 		return;
-	}
-
-	if (m_currentTool)
-	{
-		m_currentTool->Update(deltaTime);
 	}
 
 	m_focusedMap->m_world.Update(deltaTime);
@@ -100,11 +104,6 @@ void ImGuiEditor::Render()
 	DrawMenuBar();
 
 	DrawMapTabs();
-
-	if (m_currentTool)
-	{
-		m_currentTool->Render();
-	}
 
 	ImGui::End();
 

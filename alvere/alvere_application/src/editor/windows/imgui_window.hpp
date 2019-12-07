@@ -6,8 +6,9 @@ class ImGui_Window
 {
 public:
 
-	bool m_visible = false;
+	bool m_visible = true;
 
+	virtual void Update(float deltaTime) {};
 
 	virtual void Draw() = 0;
 
