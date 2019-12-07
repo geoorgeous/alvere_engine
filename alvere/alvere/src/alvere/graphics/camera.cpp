@@ -105,7 +105,7 @@ namespace alvere
 		translatedScreenPos.x -= windowWidth * 0.5f;
 		translatedScreenPos.y -= windowHeight * 0.5f;
 
-		float screenToWorldScale = 0.5f * m_projection[0][0];
+		float screenToWorldScale = 2.0f / m_projection[0][0];
 
 		Vector3 worldPosition = Vector3(translatedScreenPos *= screenToWorldScale / windowWidth);
 		worldPosition = getViewMatrix().inverse() * alvere::Vector4{ worldPosition.x, worldPosition.y, 0.0f, 1.0f };
