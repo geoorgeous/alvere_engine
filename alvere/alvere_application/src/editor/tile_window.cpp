@@ -1,3 +1,5 @@
+#include <alvere/utils/assets.hpp>
+
 #include "tile_window.hpp"
 
 TileWindow::TileWindow()
@@ -14,6 +16,8 @@ TileWindow::TileWindow()
 
 	m_tilePositionMapping[{ 0, 0 }] = 0;
 	m_tilePositionMapping[{ 1, 0 }] = 1;
+
+	m_TEMP_tileTexture = alvere::Texture::New("res/img/cobbles/normal.png");
 }
 
 void TileWindow::Draw()
@@ -47,6 +51,36 @@ void TileWindow::Draw()
 	ImGui::End();
 }
 
+void TileWindow::DrawMenu()
+{
+	if (ImGui::BeginMenuBar() == false)
+	{
+		return;
+	}
+
+	if (ImGui::BeginMenu("New Tile"))
+	{
+		/*if (ImGui::MenuItem("New", NULL, false, false))
+		{
+			std::cout << "Copied stuff" << std::endl;
+		}
+
+		if (ImGui::MenuItem("Open", NULL, false, true))
+		{
+			alvere::OpenFileDialog openFileDialog("Select a map to open", "", { "*.map" }, false);
+			auto result = openFileDialog.Show();
+
+			std::cout << result.first << std::endl;
+			if (result.first)
+				std::cout << result.second[0] << std::endl;
+		}*/
+
+		ImGui::EndMenu();
+	}
+
+	ImGui::EndMenuBar();
+}
+
 void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 {
 	auto tileMappingIter = m_tilePositionMapping.find(position);
@@ -67,13 +101,15 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 
 	ImGui::SameLine();
 
+
 	ImGui::PushID(position[0] + position[1] * gridSize[0]);
+
 	ImGui::PushStyleColor(ImGuiCol_Button, color);
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
 	ImGui::PushStyleColor(ImGuiCol_Border, border);
 	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4) ImColor(0.0f, 0.0f, 0.0f));
-	if (ImGui::Button("", m_tileSize))
+	if (ImGui::ImageButton(m_TEMP_tileTexture->getHandle(), m_tileSize))
 	{
 		m_selectedPosition = position;
 	}
