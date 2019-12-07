@@ -8,15 +8,17 @@ namespace alvere
 	{
 		class KeyButton : public InputButton
 		{
+			Window & m_window;
+
 			Key m_key;
 			bool m_oldState;
 			bool m_newState;
 
 		public:
 
-			KeyButton(Key key);
+			KeyButton(Window & window, Key key);
 
-			void Update(Window & window) override;
+			void Update() override;
 
 			bool IsDown() const override;
 

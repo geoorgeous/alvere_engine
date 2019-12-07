@@ -4,18 +4,19 @@ namespace alvere
 {
 	namespace input
 	{
-		MouseButton::MouseButton(::alvere::MouseButton button)
-			: m_button(button)
+		MouseButton::MouseButton(Window & window, ::alvere::MouseButton button)
+			: m_window(window)
+			, m_button(button)
 			, m_oldState(false)
 			, m_newState(false)
 		{
 		}
 
-		void MouseButton::Update(Window & window)
+		void MouseButton::Update()
 		{
 			m_oldState = m_newState;
 
-			MouseData mouseData = window.getMouse();
+			MouseData mouseData = m_window.getMouse();
 			m_newState = mouseData.getButton(m_button);
 		}
 

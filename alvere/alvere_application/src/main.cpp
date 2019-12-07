@@ -55,7 +55,7 @@ struct AlvereApplication : public Application
 
 	AlvereApplication()
 		: Application(Window::Properties("Platformer", 1024, 768))
-		, m_toggleEditor(alvere::Key::I)
+		, m_toggleEditor(*m_window, alvere::Key::I)
 		, m_editorEnabled(false)
 		, m_editor(*m_window)
 	{
@@ -80,7 +80,7 @@ struct AlvereApplication : public Application
 
 	void update(float deltaTime) override
 	{
-		m_toggleEditor.Update(*m_window);
+		m_toggleEditor.Update();
 		if (m_toggleEditor.IsPressed())
 		{
 			m_editorEnabled = !m_editorEnabled;

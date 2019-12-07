@@ -161,8 +161,9 @@
     <ClCompile Include="src\dialogs\tiny_file_dialogs.c" />
     <ClCompile Include="src\editor\editor_world.cpp" />
     <ClCompile Include="src\editor\imgui_editor.cpp" />
-    <ClCompile Include="src\editor\tile_properties_window.cpp" />
-    <ClCompile Include="src\editor\tile_window.cpp" />
+    <ClCompile Include="src\editor\windows\tile_properties_window.cpp" />
+    <ClCompile Include="src\editor\windows\tile_window.cpp" />
+    <ClCompile Include="src\editor\tool\pan_tool.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
     <ClCompile Include="src\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
@@ -187,9 +188,11 @@
     <ClInclude Include="src\editor\editor_world.hpp" />
     <ClInclude Include="src\editor\imgui_demo_window.hpp" />
     <ClInclude Include="src\editor\imgui_editor.hpp" />
-    <ClInclude Include="src\editor\imgui_window.hpp" />
-    <ClInclude Include="src\editor\tile_properties_window.hpp" />
-    <ClInclude Include="src\editor\tile_window.hpp" />
+    <ClInclude Include="src\editor\windows\imgui_window.hpp" />
+    <ClInclude Include="src\editor\windows\tile_properties_window.hpp" />
+    <ClInclude Include="src\editor\windows\tile_window.hpp" />
+    <ClInclude Include="src\editor\tool\editor_tool.hpp" />
+    <ClInclude Include="src\editor\tool\pan_tool.hpp" />
     <ClInclude Include="src\imgui\imconfig.h" />
     <ClInclude Include="src\imgui\imgui.h" />
     <ClInclude Include="src\imgui\imgui_impl_glfw.h" />
