@@ -10,7 +10,7 @@ TilemapRendererSystem::TilemapRendererSystem(alvere::Camera & camera)
 
 void TilemapRendererSystem::Render(C_Tilemap & tilemap)
 {
-	m_spriteBatcher->begin(m_camera.GetProjectionViewMatrix());
+	m_spriteBatcher->begin(m_camera.getProjectionViewMatrix());
 
 	for (std::size_t y = 0; y < tilemap.m_size[1]; ++y)
 	{

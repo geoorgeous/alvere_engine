@@ -3,108 +3,118 @@
 
 namespace alvere
 {
-	const Vector3 Camera::right = Vector3::posX;
-	const Vector3 Camera::up = Vector3::posY;
-	const Vector3 Camera::forward = Vector3::negZ;
+	const Vector3 Camera::s_right = Vector3::posX;
+	const Vector3 Camera::s_up = Vector3::posY;
+	const Vector3 Camera::s_forward = Vector3::negZ;
 
 	Camera::Camera()
-		: m_View(Matrix4::identity), m_Projection(Matrix4::identity), m_Rotation(Quaternion::identity)
+		: m_view(Matrix4::identity), m_projection(Matrix4::identity), m_rotation(Quaternion::identity)
 	{ }
 
-	const Vector3& Camera::GetPosition() const
+	const Vector3& Camera::getPosition() const
 	{
-		return m_Position;
+		return m_position;
 	}
 
-	const Quaternion& Camera::GetRotation() const
+	const Quaternion& Camera::getRotation() const
 	{
-		return m_Rotation;
+		return m_rotation;
 	}
 
-	const Matrix4& Camera::GetViewMatrix() const
+	const Matrix4& Camera::getViewMatrix() const
 	{
-		if (m_ViewDirty)
+		if (m_viewDirty)
 		{
-			m_View = transform_r(m_Rotation) * transform_t(-m_Position);
-			m_ViewDirty = false;
+			m_view = transform_r(m_rotation) * transform_t(-m_position);
+			m_viewDirty = false;
 		}
-		return m_View;
+		return m_view;
 	}
 
-	const Matrix4& Camera::GetProjectionMatrix() const
+	const Matrix4& Camera::getProjectionMatrix() const
 	{
-		return m_Projection;
+		return m_projection;
 	}
 
-	const Matrix4& Camera::GetProjectionViewMatrix() const
+	const Matrix4& Camera::getProjectionViewMatrix() const
 	{
-		if (m_ProjectionViewDirty)
+		if (m_projectionViewDirty)
 		{
-			m_ProjectionView = GetProjectionMatrix() * GetViewMatrix();
-			m_ProjectionViewDirty = false;
+			m_projectionView = getProjectionMatrix() * getViewMatrix();
+			m_projectionViewDirty = false;
 		}
-		return m_ProjectionView;
+		return m_projectionView;
 	}
 
-	void Camera::SetPosition(const Vector3& position)
+	void Camera::setPosition(const Vector3& position)
 	{
-		m_Position = position;
-		m_ViewDirty = m_ProjectionViewDirty = true;
+		m_position = position;
+		m_viewDirty = m_projectionViewDirty = true;
 	}
 
-	void Camera::SetPosition(float x, float y, float z)
+	void Camera::setPosition(float x, float y, float z)
 	{
-		m_Position.x = x;
-		m_Position.y = y;
-		m_Position.z = z;
-		m_ViewDirty = m_ProjectionViewDirty = true;
+		m_position.x = x;
+		m_position.y = y;
+		m_position.z = z;
+		m_viewDirty = m_projectionViewDirty = true;
 	}
 
-	void Camera::Move(const Vector3& offset)
+	void Camera::move(const Vector3& offset)
 	{
-		m_Position += offset;
-		m_ViewDirty = m_ProjectionViewDirty = true;
+		m_position += offset;
+		m_viewDirty = m_projectionViewDirty = true;
 	}
 
-	void Camera::Move(float x, float y, float z)
+	void Camera::move(float x, float y, float z)
 	{
-		m_Position.x += x;
-		m_Position.y += y;
-		m_Position.z += z;
-		m_ViewDirty = m_ProjectionViewDirty = true;
+		m_position.x += x;
+		m_position.y += y;
+		m_position.z += z;
+		m_viewDirty = m_projectionViewDirty = true;
 	}
 
-	void Camera::SetRotation(const Quaternion& rotation)
+	void Camera::setRotation(const Quaternion& rotation)
 	{
-		m_Rotation = rotation;
-		m_ViewDirty = m_ProjectionViewDirty = true;
+		m_rotation = rotation;
+		m_viewDirty = m_projectionViewDirty = true;
 	}
 
-	void Camera::Rotate(const Quaternion& rotation)
+	void Camera::rotate(const Quaternion& rotation)
 	{
-		m_Rotation *= rotation;
-		m_ViewDirty = m_ProjectionViewDirty = true;
+		m_rotation *= rotation;
+		m_viewDirty = m_projectionViewDirty = true;
 	}
 
-	void Camera::SetPerspective(float horizontalFOVDegrees, float aspectRatio, float near, float far)
+	void Camera::setPerspective(float horizontalFOVDegrees, float aspectRatio, float near, float far)
 	{
-		m_Projection = alvere::perspective(horizontalFOVDegrees * aspectRatio, aspectRatio, near, far);
-		m_ProjectionViewDirty = true;
+		m_projection = alvere::perspective(horizontalFOVDegrees * aspectRatio, aspectRatio, near, far);
+		m_projectionViewDirty = true;
 	}
 
-	void Camera::SetOrthographic(float left, float right, float top, float bottom, float near, float far)
+	void Camera::setOrthographic(float left, float right, float top, float bottom, float near, float far)
 	{
-		m_Projection = alvere::orthographic(left, right, top, bottom, near, far);
-		m_ProjectionViewDirty = true;
+		m_projection = alvere::orthographic(left, right, top, bottom, near, far);
+		m_projectionViewDirty = true;
 	}
 
-	alvere::Vector3 Camera::ScreenToWorld(const Vector2 & screenPosition) const
+	alvere::Vector3 Camera::screenToWorld(const Vector2 & screenPosition, int windowWidth, int windowHeight) const
 	{
-		return GetProjectionMatrix() * Vector4( screenPosition.x, screenPosition.y, 0.0f, 1.0f );
+		Vector2 translatedScreenPos = screenPosition;
+		translatedScreenPos.y = windowHeight - translatedScreenPos.y;
+		translatedScreenPos.x -= windowWidth * 0.5f;
+		translatedScreenPos.y -= windowHeight * 0.5f;
+
+		float screenToWorldScale = 0.5f * m_projection[0][0];
+
+		Vector3 worldPosition = Vector3(translatedScreenPos *= screenToWorldScale / windowWidth);
+		worldPosition = getViewMatrix().inverse() * alvere::Vector4{ worldPosition.x, worldPosition.y, 0.0f, 1.0f };
+
+		return worldPosition;
 	}
 
-	alvere::Vector2 Camera::WorldToScreen(const Vector3 & worldPosition) const
+	alvere::Vector2 Camera::worldToScreen(const Vector3 & worldPosition) const
 	{
-		return GetProjectionMatrix().inverse() * Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f);
+		return getProjectionMatrix().inverse() * Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f);
 	}
 }

@@ -10,36 +10,36 @@ namespace alvere
 	class Camera
 	{
 	public:
-		static const Vector3 right;
-		static const Vector3 up;
-		static const Vector3 forward;
+		static const Vector3 s_right;
+		static const Vector3 s_up;
+		static const Vector3 s_forward;
 
 		Camera();
 
-		const Vector3& GetPosition() const;
-		const Quaternion& GetRotation() const;
-		const Matrix4& GetViewMatrix() const;
-		const Matrix4& GetProjectionMatrix() const;
-		const Matrix4& GetProjectionViewMatrix() const;
-		void SetPosition(const Vector3& position);
-		void SetPosition(float x, float y, float z);
-		void Move(const Vector3& offset);
-		void Move(float x, float y, float z);
-		void SetRotation(const Quaternion& rotation);
-		void Rotate(const Quaternion& rotation);
-		void SetPerspective(float horizontalFOVDegrees, float aspectRatio, float near, float far);
-		void SetOrthographic(float left, float right, float top, float bottom, float near, float far);
+		const Vector3& getPosition() const;
+		const Quaternion& getRotation() const;
+		const Matrix4& getViewMatrix() const;
+		const Matrix4& getProjectionMatrix() const;
+		const Matrix4& getProjectionViewMatrix() const;
+		void setPosition(const Vector3& position);
+		void setPosition(float x, float y, float z);
+		void move(const Vector3& offset);
+		void move(float x, float y, float z);
+		void setRotation(const Quaternion& rotation);
+		void rotate(const Quaternion& rotation);
+		void setPerspective(float horizontalFOVDegrees, float aspectRatio, float near, float far);
+		void setOrthographic(float left, float right, float top, float bottom, float near, float far);
 
-		Vector3 ScreenToWorld(const Vector2 & screenPosition) const;
-		Vector2 WorldToScreen(const Vector3 & worldPosition) const;
+		Vector3 screenToWorld(const Vector2 & screenPosition, int windowWidth, int windowHeight) const;
+		Vector2 worldToScreen(const Vector3 & worldPosition) const;
 
 	private:
-		Vector3 m_Position;
-		Quaternion m_Rotation;
-		mutable Matrix4 m_View;
-		mutable Matrix4 m_Projection;
-		mutable Matrix4 m_ProjectionView;
-		mutable bool m_ViewDirty;
-		mutable bool m_ProjectionViewDirty;
+		Vector3 m_position;
+		Quaternion m_rotation;
+		mutable Matrix4 m_view;
+		mutable Matrix4 m_projection;
+		mutable Matrix4 m_projectionView;
+		mutable bool m_viewDirty;
+		mutable bool m_projectionViewDirty;
 	};
 }

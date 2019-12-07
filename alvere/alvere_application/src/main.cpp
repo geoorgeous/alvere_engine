@@ -66,8 +66,8 @@ struct AlvereApplication : public Application
 
 		EntityHandle cameraEntity = m_world.SpawnEntity<C_Transform, C_Camera>();
 		m_sceneCamera = &m_world.GetComponent<C_Camera>( cameraEntity );
-		m_sceneCamera->SetOrthographic(-12 * screenRatio, 12 * screenRatio, 12, -12, -1.0f, 1.0f);
-		m_uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
+		m_sceneCamera->setOrthographic(-12 * screenRatio, 12 * screenRatio, 12, -12, -1.0f, 1.0f);
+		m_uiCamera.setOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
 		SceneSystem * sceneSystem = m_world.AddSystem<SceneSystem>(m_world);
 		m_world.AddSystem<TilemapRendererSystem>(*m_sceneCamera);
@@ -98,18 +98,18 @@ struct AlvereApplication : public Application
 		const float moveSpeed = 4.0f;
 		const float turnSpeed = 2.0f;
 
-		if (m_window->getKey(Key::W)) velocity += Camera::up * moveSpeed;
-		if (m_window->getKey(Key::S)) velocity -= Camera::up * moveSpeed;
-		if (m_window->getKey(Key::D)) velocity += Camera::right * moveSpeed;
-		if (m_window->getKey(Key::A)) velocity -= Camera::right * moveSpeed;
+		if (m_window->getKey(Key::W)) velocity += Camera::s_up * moveSpeed;
+		if (m_window->getKey(Key::S)) velocity -= Camera::s_up * moveSpeed;
+		if (m_window->getKey(Key::D)) velocity += Camera::s_right * moveSpeed;
+		if (m_window->getKey(Key::A)) velocity -= Camera::s_right * moveSpeed;
 
 		velocity *= deltaTime;
-		m_sceneCamera->Move(velocity * m_sceneCamera->GetRotation());
+		m_sceneCamera->move(velocity * m_sceneCamera->getRotation());
 		
-		if (m_window->getKey(Key::E)) rotation += Camera::forward * turnSpeed;
-		if (m_window->getKey(Key::Q)) rotation -= Camera::forward * turnSpeed;
+		if (m_window->getKey(Key::E)) rotation += Camera::s_forward * turnSpeed;
+		if (m_window->getKey(Key::Q)) rotation -= Camera::s_forward * turnSpeed;
 
-		m_sceneCamera->Rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
+		m_sceneCamera->rotate(Quaternion::fromEulerAngles(rotation * deltaTime));
 
 
 		m_world.Update(deltaTime);

@@ -22,7 +22,7 @@ EditorWorld EditorWorld::New(const std::string & name, const alvere::Window & wi
 
 	EntityHandle cameraEntity = world.SpawnEntity<C_Transform, C_Camera>();
 	Camera & camera = world.GetComponent<C_Camera>(cameraEntity);
-	camera.SetOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * screenRatio, -halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
+	camera.setOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * screenRatio, -halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
 
 	SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 	world.AddSystem<CameraSystem>();

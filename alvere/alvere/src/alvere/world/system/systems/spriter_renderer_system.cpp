@@ -10,7 +10,7 @@ namespace alvere
 
 	void SpriteRendererSystem::Render(World & world)
 	{
-		m_spriteBatcher->begin(m_camera.GetProjectionViewMatrix());
+		m_spriteBatcher->begin(m_camera.getProjectionViewMatrix());
 
 		QueryRenderedSystem<C_Transform, C_Sprite>::Render(world);
 

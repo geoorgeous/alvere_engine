@@ -13,7 +13,7 @@ namespace alvere
 		//Since the Camera class is a standalone class, the transform position needs to be pushed into it
 		void Update(C_Transform & transform, C_Camera & camera)
 		{
-			camera.SetPosition(transform->getPosition());
+			camera.setPosition(transform->getPosition());
 		}
 	};
 }
