@@ -15,6 +15,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 #include "dialogs/open_file_dialog.hpp"
+#include "dialogs/save_file_dialog.hpp"
 #include "editor/imgui_demo_window.hpp"
 #include "editor/windows/tile_window.hpp"
 #include "editor/windows/tile_properties_window.hpp"
@@ -46,8 +47,8 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	m_toolWindow = &AddWindow<ToolWindow>(*this, window);
 	AddWindow<ImGui_DemoWindow>();
 
-	m_openMaps.push_back(EditorWorld::New("Castle", window));
-	m_openMaps.push_back(EditorWorld::New("Not a castle", window));
+	m_openMaps.push_back(std::make_unique<EditorWorld>(EditorWorld::New("Castle", window)));
+	m_openMaps.push_back(std::make_unique<EditorWorld>(EditorWorld::New("Not a castle", window)));
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -125,13 +126,13 @@ void ImGuiEditor::DrawMapTabs()
 		{
 			bool active = true;
 
-			const char * name = m_openMaps[i].m_name.c_str();
+			const char * name = m_openMaps[i]->m_name.c_str();
 
 			if (ImGui::BeginTabItem(name, &active))
 			{
-				m_focusedMap = &m_openMaps[i];
+				m_focusedMap = m_openMaps[i].get();
 
-				m_openMaps[i].m_world.Render();
+				m_openMaps[i]->m_world.Render();
 
 				ImGui::EndTabItem();
 			}
@@ -161,9 +162,16 @@ void ImGuiEditor::DrawMenuBar()
 
 	if (ImGui::BeginMenu("File"))
 	{
-		if (ImGui::MenuItem("New", NULL, false, false))
+		if (ImGui::MenuItem("New", NULL, false, true))
 		{
-			std::cout << "Copied stuff" << std::endl;
+			alvere::SaveFileDialog newMapDialog("Create New Map", "", { ".map" });
+
+			std::pair<bool, std::string> newMapValue = newMapDialog.Show();
+
+			if (newMapValue.first)
+			{
+				m_openMaps.push_back(std::make_unique<EditorWorld>(EditorWorld::New(newMapValue.second, m_window)));
+			}
 		}
 
 		if (ImGui::MenuItem("Open", NULL, false, true))

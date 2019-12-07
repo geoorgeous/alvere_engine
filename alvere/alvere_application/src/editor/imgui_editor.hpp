@@ -26,7 +26,7 @@ class ImGuiEditor
 
 	ToolWindow * m_toolWindow;
 
-	std::vector<EditorWorld> m_openMaps;
+	std::vector<std::unique_ptr<EditorWorld>> m_openMaps;
 	EditorWorld * m_focusedMap;
 
 public:
