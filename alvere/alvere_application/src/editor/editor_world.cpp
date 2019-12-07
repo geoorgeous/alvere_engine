@@ -32,5 +32,5 @@ EditorWorld EditorWorld::New(const std::string & name, const alvere::Window & wi
 	PlatformerScene platformerScene(world);
 	Scene & platformer = sceneSystem->LoadScene(platformerScene);
 
-	return { name, std::move(world) };
+	return { name, std::move(world), camera };
 }
