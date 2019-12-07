@@ -8,15 +8,17 @@ namespace alvere
 	{
 		class MouseButton : public InputButton
 		{
+			Window & m_window;
+
 			::alvere::MouseButton m_button;
 			bool m_oldState;
 			bool m_newState;
 
 		public:
 
-			MouseButton(::alvere::MouseButton button);
+			MouseButton(Window & window, ::alvere::MouseButton button);
 
-			void Update(Window & window) override;
+			void Update() override;
 
 			bool IsDown() const override;
 

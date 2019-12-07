@@ -4,17 +4,18 @@ namespace alvere
 {
 	namespace input
 	{
-		KeyButton::KeyButton(Key key)
-			: m_key(key)
+		KeyButton::KeyButton(Window & window, Key key)
+			: m_window(window)
+			, m_key(key)
 			, m_oldState(false)
 			, m_newState(false)
 		{
 		}
 
-		void KeyButton::Update(Window & window)
+		void KeyButton::Update()
 		{
 			m_oldState = m_newState;
-			m_newState = window.getKey(m_key);
+			m_newState = m_window.getKey(m_key);
 		}
 
 		bool KeyButton::IsDown() const

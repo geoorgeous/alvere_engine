@@ -12,7 +12,7 @@ namespace alvere
 
 			virtual ~InputButton() = default;
 
-			virtual void Update(Window & window) = 0;
+			virtual void Update() = 0;
 
 			virtual bool IsDown() const = 0;
 
