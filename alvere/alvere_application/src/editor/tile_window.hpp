@@ -17,7 +17,7 @@ class TileWindow : public ImGui_Window
 		}
 	};
 
-	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar;
+	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_NoScrollbar;
 	const ImVec2 m_tileSize = { 32, 32 };
 
 	TileStore m_tiles;
@@ -25,7 +25,8 @@ class TileWindow : public ImGui_Window
 	alvere::Vector2i m_selectedPosition;
 	std::unordered_map<alvere::Vector2i, int, PositionHash> m_tilePositionMapping;
 
-	std::unique_ptr<alvere::Texture> m_TEMP_tileTexture;
+	std::unique_ptr<alvere::Texture> m_TEMP_tileTextureCollisionOn;
+	std::unique_ptr<alvere::Texture> m_TEMP_tileTextureCollisionOff;
 
 public:
 
@@ -47,8 +48,6 @@ public:
 	}
 
 private:
-
-	void DrawMenu();
 
 	void DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize);
 };

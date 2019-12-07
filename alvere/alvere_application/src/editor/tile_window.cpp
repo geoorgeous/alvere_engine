@@ -17,7 +17,8 @@ TileWindow::TileWindow()
 	m_tilePositionMapping[{ 0, 0 }] = 0;
 	m_tilePositionMapping[{ 1, 0 }] = 1;
 
-	m_TEMP_tileTexture = alvere::Texture::New("res/img/cobbles/normal.png");
+	m_TEMP_tileTextureCollisionOn = alvere::Texture::New("res/img/cobbles/specular.png");
+	m_TEMP_tileTextureCollisionOff = alvere::Texture::New("res/img/cobbles/normal.png");
 }
 
 void TileWindow::Draw()
@@ -28,13 +29,14 @@ void TileWindow::Draw()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 
 	ImVec2 contentSize = ImGui::GetWindowContentRegionMax();
 	contentSize.x -= style.WindowPadding.x;
+	contentSize.y -= style.WindowPadding.y;
 
-	int xCount = contentSize.x / m_tileSize.x;
-	int yCount = contentSize.y / m_tileSize.y;
-	yCount -= 1;
+	int xCount = contentSize.x / (m_tileSize.x + style.FrameBorderSize * 2.0f);
+	int yCount = contentSize.y / (m_tileSize.y + style.FrameBorderSize * 2.0f);
 
 	for (int y = 0; y < yCount; ++y)
 	{
@@ -46,39 +48,9 @@ void TileWindow::Draw()
 		ImGui::NewLine();
 	}
 
-	ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(3);
 
 	ImGui::End();
-}
-
-void TileWindow::DrawMenu()
-{
-	if (ImGui::BeginMenuBar() == false)
-	{
-		return;
-	}
-
-	if (ImGui::BeginMenu("New Tile"))
-	{
-		/*if (ImGui::MenuItem("New", NULL, false, false))
-		{
-			std::cout << "Copied stuff" << std::endl;
-		}
-
-		if (ImGui::MenuItem("Open", NULL, false, true))
-		{
-			alvere::OpenFileDialog openFileDialog("Select a map to open", "", { "*.map" }, false);
-			auto result = openFileDialog.Show();
-
-			std::cout << result.first << std::endl;
-			if (result.first)
-				std::cout << result.second[0] << std::endl;
-		}*/
-
-		ImGui::EndMenu();
-	}
-
-	ImGui::EndMenuBar();
 }
 
 void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
@@ -89,32 +61,37 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 		? m_tiles.m_tiles[tileMappingIter->second].get()
 		: nullptr;
 
-	ImVec4 color;
-	if (tile == nullptr)
-		color = ImColor(0.2f, 0.2f, 0.2f);
-	else if (tile->m_collides)
-		color = ImColor(1.0f, 0.0f, 0.0f);
-	else
-		color = ImColor(0.4f, 0.4f, 0.4f);
-
 	ImVec4 border = m_selectedPosition == position ? ImColor(1.0f, 1.0f, 0.0) : ImColor(0.0f, 0.0f, 0.0f);
+
+	int padding = ImGui::GetStyle().FrameBorderSize;
 
 	ImGui::SameLine();
 
-
 	ImGui::PushID(position[0] + position[1] * gridSize[0]);
 
-	ImGui::PushStyleColor(ImGuiCol_Button, color);
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
 	ImGui::PushStyleColor(ImGuiCol_Border, border);
-	ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4) ImColor(0.0f, 0.0f, 0.0f));
-	if (ImGui::ImageButton(m_TEMP_tileTexture->getHandle(), m_tileSize))
+	if (tile == nullptr)
 	{
-		m_selectedPosition = position;
-	}
+		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(0.2f, 0.2f, 0.2f));
 
-	ImGui::PopStyleColor(5);
+		if (ImGui::Button("", ImVec2(m_tileSize.x + padding * 2, m_tileSize.y + padding * 2)))
+		{
+			m_selectedPosition = position;
+		}
+
+		ImGui::PopStyleColor(1);
+	}
+	else
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+		ImTextureID textureID = tile->m_collides ? m_TEMP_tileTextureCollisionOn->getHandle() : m_TEMP_tileTextureCollisionOff->getHandle();
+		if (ImGui::ImageButton(textureID, m_tileSize))
+		{
+			m_selectedPosition = position;
+		}
+		ImGui::PopStyleVar(1);
+	}
+	ImGui::PopStyleColor(1);
 
 	if (ImGui::BeginPopupContextItem("item context menu"))
 	{
