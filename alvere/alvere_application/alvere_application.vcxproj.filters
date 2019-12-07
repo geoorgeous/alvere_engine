@@ -87,6 +87,9 @@
     <ClCompile Include="src\editor\windows\tile_properties_window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\editor\windows\tool_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\world_cell.hpp">
@@ -183,6 +186,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\editor\windows\imgui_window.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor\windows\tool_window.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor\tool\draw_tool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

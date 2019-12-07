@@ -2,11 +2,12 @@
 
 #include <alvere/application/window.hpp>
 #include <alvere/input/mouse_button.hpp>
-#include <editor\tool\editor_tool.hpp>
 
 #include "imgui/imgui.h"
 #include "windows/imgui_window.hpp"
 #include "editor_world.hpp"
+
+class ToolWindow;
 
 class ImGuiEditor
 {
@@ -23,10 +24,10 @@ class ImGuiEditor
 
 	std::vector<std::unique_ptr<ImGui_Window>> m_windows;
 
+	ToolWindow * m_toolWindow;
+
 	std::vector<EditorWorld> m_openMaps;
 	EditorWorld * m_focusedMap;
-
-	std::unique_ptr<EditorTool> m_currentTool;
 
 public:
 
