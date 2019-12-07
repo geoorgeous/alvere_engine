@@ -138,6 +138,7 @@ namespace alvere
 	{
 		Vector2 position;
 		Vector2 delta;
+		Vector2 scrollOffset;
 		std::unordered_map<MouseButton, bool> buttons;
 
 		bool getButton(MouseButton button) const;

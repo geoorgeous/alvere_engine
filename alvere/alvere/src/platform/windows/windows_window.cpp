@@ -245,6 +245,12 @@ namespace alvere::platform::windows
 			case GLFW_MOUSE_BUTTON_MIDDLE: mouse.buttons[MouseButton::Middle] = isDown; break;
 			}
 		});
+		glfwSetScrollCallback(m_windowHandle, [](GLFWwindow* windowHandle, double xOffset, double yOffset)
+		{
+			MouseData& mouse = *((WindowUserPointerData*)glfwGetWindowUserPointer(windowHandle))->mouse;
+			mouse.scrollOffset.x = xOffset;
+			mouse.scrollOffset.y = yOffset;
+		});
 	}
 
 	void Window::shutdown()
