@@ -25,6 +25,9 @@ class TileWindow : public ImGui_Window
 	alvere::Vector2i m_selectedPosition;
 	std::unordered_map<alvere::Vector2i, int, PositionHash> m_tilePositionMapping;
 
+	std::unique_ptr<alvere::Texture> m_TEMP_tileTextureCollisionOn;
+	std::unique_ptr<alvere::Texture> m_TEMP_tileTextureCollisionOff;
+
 public:
 
 	TileWindow();

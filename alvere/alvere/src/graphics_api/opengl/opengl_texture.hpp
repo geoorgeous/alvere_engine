@@ -17,6 +17,8 @@ namespace alvere::graphics_api::opengl
 
 		void unbind() const override;
 
+		void * getHandle() const override;
+
 	private:
 
 		unsigned int m_Handle;

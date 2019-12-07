@@ -43,6 +43,8 @@ namespace alvere
 
 		virtual void unbind() const = 0;
 
+		virtual void * getHandle() const = 0;
+
 	protected:
 
 		int m_resWidth;

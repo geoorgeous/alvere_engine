@@ -35,6 +35,11 @@ namespace alvere::graphics_api::opengl
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	void * Texture::getHandle() const
+	{
+		return (void *)m_Handle;
+	}
+
 	void Texture::init()
 	{
 		GLenum format = GL_RGBA;
