@@ -17,10 +17,10 @@
 #include "editor/imgui_demo_window.hpp"
 #include "editor/tile_window.hpp"
 #include "editor/tile_properties_window.hpp"
+#include "editor\tool\pan_tool.hpp"
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	: m_window(window)
-	, m_leftMouse(alvere::MouseButton::Left)
 	, m_focusedMap(0)
 {
 	alvere::platform::windows::Window & castedWindow = (alvere::platform::windows::Window &)window;
@@ -44,6 +44,9 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 
 	m_openMaps.push_back(EditorWorld::New("Castle", window));
 	m_openMaps.push_back(EditorWorld::New("Not a castle", window));
+
+	//Default to using a pan tool for now
+	m_currentTool = std::make_unique<PanTool>(*this, window);
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -60,30 +63,9 @@ void ImGuiEditor::Update(float deltaTime)
 		return;
 	}
 
-	m_leftMouse.Update(m_window);
-	if (m_leftMouse.IsDown() && m_focusedMap)
+	if (m_currentTool)
 	{
-		//Eventually we will want to abstract this into a pan tool implementation
-		alvere::Archetype::Query cameraQuery;
-		cameraQuery.Include<alvere::C_Transform>();
-		cameraQuery.Include<alvere::C_Camera>();
-
-		std::vector<std::reference_wrapper<alvere::Archetype>> cameras;
-		m_focusedMap->m_world.QueryArchetypes(cameraQuery, cameras);
-		alvere::C_Transform & cameraTransform = *cameras[0].get().GetProvider<alvere::C_Transform>().begin();
-		alvere::C_Camera & camera = *cameras[0].get().GetProvider<alvere::C_Camera>().begin();
-
-		//alvere::Vector3 newMousePos = camera.ScreenToWorld(m_window.getMouse().position);
-		alvere::Vector3 newMousePos = m_window.getMouse().position;
-
-		if (m_leftMouse.IsPressed() == false)
-		{
-			alvere::Vector3 mouseDifference = newMousePos - m_mouseWorldPosition;
-			mouseDifference /= 17.5;
-			cameraTransform->move({ -mouseDifference.x, mouseDifference.y, 0 });
-		}
-
-		m_mouseWorldPosition = newMousePos;
+		m_currentTool->Update(deltaTime);
 	}
 
 	m_focusedMap->m_world.Update(deltaTime);
@@ -116,6 +98,11 @@ void ImGuiEditor::Render()
 	DrawMenuBar();
 
 	DrawMapTabs();
+
+	if (m_currentTool)
+	{
+		m_currentTool->Render();
+	}
 
 	ImGui::End();
 
@@ -244,4 +231,9 @@ void ImGuiEditor::EndFrame()
 	alvere::platform::windows::Window & castedWindow = (alvere::platform::windows::Window &)m_window;
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+EditorWorld * ImGuiEditor::GetFocusedWorld() const
+{
+	return m_focusedMap;
 }

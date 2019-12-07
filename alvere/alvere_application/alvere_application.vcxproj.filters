@@ -84,6 +84,9 @@
     <ClCompile Include="src\editor\editor_world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\editor\tool\pan_tool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\world_cell.hpp">
@@ -174,6 +177,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\editor\editor_world.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor\tool\pan_tool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor\tool\editor_tool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

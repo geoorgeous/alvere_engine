@@ -2,6 +2,7 @@
 
 #include <alvere/application/window.hpp>
 #include <alvere/input/mouse_button.hpp>
+#include <editor\tool\editor_tool.hpp>
 
 #include "imgui/imgui.h"
 #include "imgui_window.hpp"
@@ -25,8 +26,7 @@ class ImGuiEditor
 	std::vector<EditorWorld> m_openMaps;
 	EditorWorld * m_focusedMap;
 
-	alvere::input::MouseButton m_leftMouse;
-	alvere::Vector3 m_mouseWorldPosition;
+	std::unique_ptr<EditorTool> m_currentTool;
 
 public:
 
@@ -35,6 +35,8 @@ public:
 
 	void Update(float deltaTime);
 	void Render();
+
+	EditorWorld * GetFocusedWorld() const;
 
 private:
 

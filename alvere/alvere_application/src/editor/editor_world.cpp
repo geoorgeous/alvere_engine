@@ -19,7 +19,8 @@ EditorWorld EditorWorld::New(const std::string & name, const alvere::Window & wi
 
 	EntityHandle cameraEntity = world.SpawnEntity<C_Transform, C_Camera>();
 	Camera & camera = world.GetComponent<C_Camera>(cameraEntity);
-	camera.SetOrthographic(-35 * screenRatio, 35 * screenRatio, 35, -35, -1.0f, 1.0f);
+	float cameraHalfWidth = 19.5;
+	camera.SetOrthographic(-cameraHalfWidth * screenRatio, cameraHalfWidth * screenRatio, cameraHalfWidth, -cameraHalfWidth, -1.0f, 1.0f);
 
 	SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 	world.AddSystem<CameraSystem>();
