@@ -34,6 +34,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 
 	ImGuiIO & io = ImGui::GetIO(); (void) io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
 	ImGui_ImplGlfw_InitForOpenGL(castedWindow.m_windowHandle, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
