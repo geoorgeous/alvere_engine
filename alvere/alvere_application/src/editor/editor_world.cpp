@@ -15,12 +15,11 @@ EditorWorld EditorWorld::New(const std::string & name, const alvere::Window & wi
 {
 	World world;
 
-	float screenRatio = (float) window.getWidth() / (float) window.getHeight();
+	float screenRatio = (float) window.getHeight() / (float) window.getWidth();
 
 	EntityHandle cameraEntity = world.SpawnEntity<C_Transform, C_Camera>();
 	Camera & camera = world.GetComponent<C_Camera>(cameraEntity);
-	float cameraHalfWidth = 19.5;
-	camera.SetOrthographic(-cameraHalfWidth * screenRatio, cameraHalfWidth * screenRatio, cameraHalfWidth, -cameraHalfWidth, -1.0f, 1.0f);
+	camera.SetOrthographic(-16, 16, 16 * screenRatio, -16 * screenRatio, -1.0f, 1.0f);
 
 	SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 	world.AddSystem<CameraSystem>();

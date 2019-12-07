@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <alvere/application/window.hpp>
+#include <alvere/math/matrix/transformations.hpp>
 #include <alvere/world/archetype/archetype_query.hpp>
 #include <platform/windows/windows_window.hpp>
 #include <alvere\world\component\components\c_camera.hpp>
