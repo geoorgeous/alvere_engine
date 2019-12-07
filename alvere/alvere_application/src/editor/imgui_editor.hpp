@@ -5,7 +5,7 @@
 #include <editor\tool\editor_tool.hpp>
 
 #include "imgui/imgui.h"
-#include "imgui_window.hpp"
+#include "windows/imgui_window.hpp"
 #include "editor_world.hpp"
 
 class ImGuiEditor

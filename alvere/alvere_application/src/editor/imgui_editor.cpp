@@ -15,8 +15,8 @@
 
 #include "dialogs/open_file_dialog.hpp"
 #include "editor/imgui_demo_window.hpp"
-#include "editor/tile_window.hpp"
-#include "editor/tile_properties_window.hpp"
+#include "editor/windows/tile_window.hpp"
+#include "editor/windows/tile_properties_window.hpp"
 #include "editor\tool\pan_tool.hpp"
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)

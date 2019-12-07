@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imgui/imgui.h"
-#include "imgui_window.hpp"
+#include "windows/imgui_window.hpp"
 
 class ImGui_DemoWindow : public ImGui_Window
 {
