@@ -79,10 +79,10 @@ void ImGuiEditor::Update(float deltaTime)
 	if (m_window.getMouse().scrollDelta.y != 0.0f)
 	{
 		float aspect = (float)m_window.getHeight() / (float)m_window.getWidth();
-		float currentScale = m_focusedMap->m_camera.getOrthographicsScale() / 2.0f;
+		float currentScale = m_focusedMap->m_camera->getOrthographicsScale() / 2.0f;
 		float newScale = currentScale - m_window.getMouse().scrollDelta.y;
 
-		m_focusedMap->m_camera.setOrthographic(-newScale, newScale, newScale * aspect, -newScale * aspect, -1.0f, 1.0f);
+		m_focusedMap->m_camera->setOrthographic(-newScale, newScale, newScale * aspect, -newScale * aspect, -1.0f, 1.0f);
 	}
 
 	m_focusedMap->m_world.Update(deltaTime);

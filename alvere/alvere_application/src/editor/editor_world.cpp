@@ -25,13 +25,13 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const al
 	float screenRatio = (float) window.getHeight() / (float) window.getWidth();
 
 	EntityHandle cameraEntity = world.SpawnEntity<C_Transform, C_Camera>();
-	Camera & camera = world.GetComponent<C_Camera>(cameraEntity);
-	camera.setOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * screenRatio, -halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
+	editorWorld->m_camera = &world.GetComponent<C_Camera>(cameraEntity);
+	editorWorld->m_camera->setOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * screenRatio, -halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
 
 	SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 	world.AddSystem<CameraSystem>();
-	world.AddSystem<TilemapRendererSystem>(camera);
-	world.AddSystem<SpriteRendererSystem>(camera);
+	world.AddSystem<TilemapRendererSystem>(*editorWorld->m_camera);
+	world.AddSystem<SpriteRendererSystem>(*editorWorld->m_camera);
 
 	PlatformerScene platformerScene(world);
 	Scene & platformer = sceneSystem->LoadScene(platformerScene);
