@@ -1,9 +1,11 @@
 #pragma once
 
 #include <alvere/application/window.hpp>
+#include <alvere/input/mouse_button.hpp>
 
 #include "imgui/imgui.h"
 #include "imgui_window.hpp"
+#include "editor_world.hpp"
 
 class ImGuiEditor
 {
@@ -20,13 +22,17 @@ class ImGuiEditor
 
 	std::vector<std::unique_ptr<ImGui_Window>> m_windows;
 
-	std::vector<std::string> m_openLevels;
+	std::vector<EditorWorld> m_openMaps;
+	EditorWorld * m_focusedMap;
+
+	alvere::input::MouseButton m_leftMouse;
 
 public:
 
 	ImGuiEditor(alvere::Window & window);
 	~ImGuiEditor();
 
+	void Update(float deltaTime);
 	void Render();
 
 private:
@@ -35,11 +41,10 @@ private:
 	void EndFrame();
 
 	void DrawMenuBar();
-	void DrawBoardTabs();
+	void DrawMapTabs();
 
 	template <typename T, typename... Args>
 	T & AddWindow(Args &&... args);
-
 };
 
 

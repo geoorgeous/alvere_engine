@@ -4,7 +4,10 @@
 #include <GLFW/glfw3.h>
 
 #include <alvere/application/window.hpp>
+#include <alvere/world/archetype/archetype_query.hpp>
 #include <platform/windows/windows_window.hpp>
+#include <alvere\world\component\components\c_camera.hpp>
+#include <alvere\world\component\components\c_transform.hpp>
 
 #include "imgui_editor.hpp"
 #include "imgui/imgui_impl_glfw.h"
@@ -17,8 +20,10 @@
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	: m_window(window)
+	, m_leftMouse(alvere::MouseButton::Left)
+	, m_focusedMap(0)
 {
-	alvere::platform::windows::Window & castedWindow = (alvere::platform::windows::Window &)m_window;
+	alvere::platform::windows::Window & castedWindow = (alvere::platform::windows::Window &)window;
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -37,8 +42,8 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	AddWindow<TilePropertiesWindow>(tileWindow);
 	AddWindow<ImGui_DemoWindow>();
 
-	m_openLevels.push_back("Castle");
-	m_openLevels.push_back("Not a castle");
+	m_openMaps.push_back(EditorWorld::New("Castle", window));
+	m_openMaps.push_back(EditorWorld::New("Not a castle", window));
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -46,6 +51,29 @@ ImGuiEditor::~ImGuiEditor()
 	ImGui_ImplOpenGL3_Shutdown();
 	//ImGui_ImplGlfw_Shutdown(); //causes several nullrefs as the window is currently destroyed before this is called
 	ImGui::DestroyContext();
+}
+
+void ImGuiEditor::Update(float deltaTime)
+{
+	m_leftMouse.Update(m_window);
+	if (m_leftMouse.IsDown())
+	{
+		//Eventually we will want to abstract this into a pan tool implementation
+		alvere::Archetype::Query cameraQuery;
+		cameraQuery.Include<alvere::C_Transform>();
+		cameraQuery.Include<alvere::C_Camera>();
+
+		std::vector<std::reference_wrapper<alvere::Archetype>> cameras;
+		m_focusedMap->m_world.QueryArchetypes(cameraQuery, cameras);
+
+		alvere::C_Transform & cameraTransform = *cameras[0].get().GetProvider<alvere::C_Transform>().begin();
+		cameraTransform->move({ 1, 1, 0 });
+	}
+
+	if (m_focusedMap != nullptr)
+	{
+		m_focusedMap->m_world.Update(deltaTime);
+	}
 }
 
 void ImGuiEditor::Render()
@@ -62,11 +90,10 @@ void ImGuiEditor::Render()
 		}
 	}
 
-	//Always resize the main window to fill the whole background of the SDL window
+	//Always resize the main window to fill the whole background of the given window
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-	ImGui::SetNextWindowSize(ImVec2((float) m_window.getWidth(), (float) m_window.getHeight()), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2((float) m_window.getWidth(), (float) 47.0f), ImGuiCond_Always);
 
-	// Main body of the Demo window starts here.
 	if (!ImGui::Begin("Main Window", NULL, m_windowflags))
 	{
 		ImGui::End();
@@ -75,7 +102,7 @@ void ImGuiEditor::Render()
 
 	DrawMenuBar();
 
-	DrawBoardTabs();
+	DrawMapTabs();
 
 	ImGui::End();
 
@@ -83,7 +110,7 @@ void ImGuiEditor::Render()
 }
 
 
-void ImGuiEditor::DrawBoardTabs()
+void ImGuiEditor::DrawMapTabs()
 {
 	static ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_Reorderable
 		| ImGuiTabBarFlags_AutoSelectNewTabs
@@ -91,16 +118,19 @@ void ImGuiEditor::DrawBoardTabs()
 
 	if (ImGui::BeginTabBar("Open Levels", tab_bar_flags))
 	{
+		m_focusedMap = nullptr;
 		std::vector<int> toRemove;
-		for (int i = 0; i < m_openLevels.size(); ++i)
+		for (int i = 0; i < m_openMaps.size(); ++i)
 		{
 			bool active = true;
 
-			const char * name = m_openLevels[i].c_str();
+			const char * name = m_openMaps[i].m_name.c_str();
 
 			if (ImGui::BeginTabItem(name, &active))
 			{
-				//m_openLevels[i].Draw();
+				m_focusedMap = &m_openMaps[i];
+
+				m_openMaps[i].m_world.Render();
 
 				ImGui::EndTabItem();
 			}
@@ -114,7 +144,7 @@ void ImGuiEditor::DrawBoardTabs()
 		//Remove any tabs that were closed
 		for (int i = (int) toRemove.size() - 1; i >= 0; --i)
 		{
-			m_openLevels.erase(m_openLevels.begin() + toRemove[i]);
+			m_openMaps.erase(m_openMaps.begin() + toRemove[i]);
 		}
 
 		ImGui::EndTabBar();

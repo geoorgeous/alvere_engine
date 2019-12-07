@@ -243,6 +243,7 @@
     <ClCompile Include="src\alvere\graphics\text\font.cpp" />
     <ClCompile Include="src\alvere\graphics\text\text.cpp" />
     <ClCompile Include="src\alvere\input\key_button.cpp" />
+    <ClCompile Include="src\alvere\input\mouse_button.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_2.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_3.cpp" />
     <ClCompile Include="src\alvere\math\matrix\matrix_4.cpp" />
@@ -377,6 +378,7 @@
     <ClInclude Include="src\alvere\graphics\text\text.hpp" />
     <ClInclude Include="src\alvere\input\input_button.hpp" />
     <ClInclude Include="src\alvere\input\key_button.hpp" />
+    <ClInclude Include="src\alvere\input\mouse_button.hpp" />
     <ClInclude Include="src\alvere\math\constants.hpp" />
     <ClInclude Include="src\alvere\math\math.hpp" />
     <ClInclude Include="src\alvere\math\matrices.hpp" />
@@ -438,6 +440,7 @@
     <ClInclude Include="src\alvere\world\system\query_updated_system.hpp" />
     <ClInclude Include="src\alvere\world\system\rendered_system.hpp" />
     <ClInclude Include="src\alvere\world\system\system.hpp" />
+    <ClInclude Include="src\alvere\world\system\systems\camera_system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\destroy_system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\renderer_system.hpp" />
     <ClInclude Include="src\alvere\world\system\systems\sprite_renderer_system.hpp" />

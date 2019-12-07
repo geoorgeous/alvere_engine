@@ -159,6 +159,7 @@
     <ClCompile Include="src\dialogs\save_file_dialog.cpp" />
     <ClCompile Include="src\dialogs\select_folder_dialog.cpp" />
     <ClCompile Include="src\dialogs\tiny_file_dialogs.c" />
+    <ClCompile Include="src\editor\editor_world.cpp" />
     <ClCompile Include="src\editor\imgui_editor.cpp" />
     <ClCompile Include="src\editor\tile_properties_window.cpp" />
     <ClCompile Include="src\editor\tile_window.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="src\dialogs\save_file_dialog.hpp" />
     <ClInclude Include="src\dialogs\select_folder_dialog.hpp" />
     <ClInclude Include="src\dialogs\tiny_file_dialogs.h" />
+    <ClInclude Include="src\editor\editor_world.hpp" />
     <ClInclude Include="src\editor\imgui_demo_window.hpp" />
     <ClInclude Include="src\editor\imgui_editor.hpp" />
     <ClInclude Include="src\editor\imgui_window.hpp" />

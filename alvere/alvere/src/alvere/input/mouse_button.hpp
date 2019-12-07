@@ -6,15 +6,15 @@ namespace alvere
 {
 	namespace input
 	{
-		class KeyButton : public InputButton
+		class MouseButton : public InputButton
 		{
-			Key m_key;
+			::alvere::MouseButton m_button;
 			bool m_oldState;
 			bool m_newState;
 
 		public:
 
-			KeyButton(Key key);
+			MouseButton(::alvere::MouseButton button);
 
 			void Update(Window & window) override;
 
