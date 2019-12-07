@@ -152,6 +152,7 @@ namespace alvere::graphics_api::opengl
 
 		m_VAO.Bind();
 		ALV_LOG_OPENGL_CALL(glDrawElements(GL_TRIANGLES, m_SpriteCount * 6, GL_UNSIGNED_INT, nullptr));
+		m_VAO.Unbind();
 
 		glDisable(GL_BLEND);
 	}
