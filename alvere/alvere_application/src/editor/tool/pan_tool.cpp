@@ -18,7 +18,8 @@ void PanTool::Update(float deltaTime)
 {
 	m_leftMouse.Update();
 
-	if (m_leftMouse.IsDown() == false)
+	EditorWorld * focusedWorld = m_editor.GetFocusedWorld();
+	if (m_leftMouse.IsDown() == false || focusedWorld == nullptr)
 	{
 		return;
 	}
@@ -28,7 +29,7 @@ void PanTool::Update(float deltaTime)
 	cameraQuery.Include<alvere::C_Camera>();
 
 	std::vector<std::reference_wrapper<alvere::Archetype>> cameras;
-	m_editor.GetFocusedWorld()->m_world.QueryArchetypes(cameraQuery, cameras);
+	focusedWorld->m_world.QueryArchetypes(cameraQuery, cameras);
 	alvere::C_Transform & cameraTransform = *cameras[0].get().GetProvider<alvere::C_Transform>().begin();
 	alvere::C_Camera & camera = *cameras[0].get().GetProvider<alvere::C_Camera>().begin();
 
