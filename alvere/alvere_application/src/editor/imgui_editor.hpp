@@ -29,6 +29,8 @@ class ImGuiEditor
 	std::vector<std::unique_ptr<EditorWorld>> m_openMaps;
 	EditorWorld * m_focusedMap;
 
+	float m_currentUnitsOnX;
+
 public:
 
 	ImGuiEditor(alvere::Window & window);

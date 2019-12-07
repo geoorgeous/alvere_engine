@@ -9,6 +9,7 @@
 #include <platform/windows/windows_window.hpp>
 #include <alvere\world\component\components\c_camera.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
+#include <alvere/utils/logging.hpp>
 
 #include "imgui_editor.hpp"
 #include "imgui/imgui_impl_glfw.h"
@@ -73,6 +74,15 @@ void ImGuiEditor::Update(float deltaTime)
 	if (m_focusedMap == nullptr)
 	{
 		return;
+	}
+
+	if (m_window.getMouse().scrollDelta.y != 0.0f)
+	{
+		float aspect = (float)m_window.getHeight() / (float)m_window.getWidth();
+		float currentScale = m_focusedMap->m_camera.getOrthographicsScale() / 2.0f;
+		float newScale = currentScale - m_window.getMouse().scrollDelta.y;
+
+		m_focusedMap->m_camera.setOrthographic(-newScale, newScale, newScale * aspect, -newScale * aspect, -1.0f, 1.0f);
 	}
 
 	m_focusedMap->m_world.Update(deltaTime);

@@ -24,8 +24,6 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const al
 	float halfWorldUnitsOnX = 0.5f * worldUnitsOnX;
 	float screenRatio = (float) window.getHeight() / (float) window.getWidth();
 
-	world.SpawnEntity();
-
 	EntityHandle cameraEntity = world.SpawnEntity<C_Transform, C_Camera>();
 	Camera & camera = world.GetComponent<C_Camera>(cameraEntity);
 	camera.setOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * screenRatio, -halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);

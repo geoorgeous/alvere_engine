@@ -29,7 +29,7 @@ namespace alvere
 		void rotate(const Quaternion& rotation);
 		void setPerspective(float horizontalFOVDegrees, float aspectRatio, float near, float far);
 		void setOrthographic(float left, float right, float top, float bottom, float near, float far);
-
+		float getOrthographicsScale() const;
 		Vector3 screenToWorld(const Vector2 & screenPosition, int windowWidth, int windowHeight) const;
 		Vector2 worldToScreen(const Vector3 & worldPosition) const;
 

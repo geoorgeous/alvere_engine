@@ -98,6 +98,11 @@ namespace alvere
 		m_projectionViewDirty = true;
 	}
 
+	float Camera::getOrthographicsScale() const
+	{
+		return 2.0f / m_projection[0][0];
+	}
+
 	alvere::Vector3 Camera::screenToWorld(const Vector2 & screenPosition, int windowWidth, int windowHeight) const
 	{
 		Vector2 translatedScreenPos = screenPosition;
@@ -105,9 +110,7 @@ namespace alvere
 		translatedScreenPos.x -= windowWidth * 0.5f;
 		translatedScreenPos.y -= windowHeight * 0.5f;
 
-		float screenToWorldScale = 2.0f / m_projection[0][0];
-
-		Vector3 worldPosition = Vector3(translatedScreenPos *= screenToWorldScale / windowWidth);
+		Vector3 worldPosition = Vector3(translatedScreenPos *= getOrthographicsScale() / windowWidth);
 		worldPosition = getViewMatrix().inverse() * alvere::Vector4{ worldPosition.x, worldPosition.y, 0.0f, 1.0f };
 
 		return worldPosition;

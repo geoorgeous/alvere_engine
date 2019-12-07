@@ -30,6 +30,7 @@ namespace alvere::platform::windows
 		}
 
 		m_mouse.delta = Vector2::zero;
+		m_mouse.scrollDelta = Vector2::zero;
 
 		glfwPollEvents();
 	}
@@ -248,8 +249,8 @@ namespace alvere::platform::windows
 		glfwSetScrollCallback(m_windowHandle, [](GLFWwindow* windowHandle, double xOffset, double yOffset)
 		{
 			MouseData& mouse = *((WindowUserPointerData*)glfwGetWindowUserPointer(windowHandle))->mouse;
-			mouse.scrollOffset.x = xOffset;
-			mouse.scrollOffset.y = yOffset;
+			mouse.scrollDelta.x = xOffset;
+			mouse.scrollDelta.y = yOffset;
 		});
 	}
 
