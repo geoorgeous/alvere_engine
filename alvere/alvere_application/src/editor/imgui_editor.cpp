@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <alvere/application/window.hpp>
+#include <alvere/math/matrix/transformations.hpp>
 #include <alvere/world/archetype/archetype_query.hpp>
 #include <platform/windows/windows_window.hpp>
 #include <alvere\world\component\components\c_camera.hpp>
@@ -72,14 +73,16 @@ void ImGuiEditor::Update(float deltaTime)
 		m_focusedMap->m_world.QueryArchetypes(cameraQuery, cameras);
 		alvere::C_Transform & cameraTransform = *cameras[0].get().GetProvider<alvere::C_Transform>().begin();
 		alvere::C_Camera & camera = *cameras[0].get().GetProvider<alvere::C_Camera>().begin();
+		camera.SetRotation(alvere::Quaternion::fromEulerAngles(alvere::Vector3{0.0f, 0.0f, 3.1415f * 0.01f}));
 
-		//alvere::Vector3 newMousePos = camera.ScreenToWorld(m_window.getMouse().position);
 		alvere::Vector3 newMousePos = m_window.getMouse().position;
 
 		if (m_leftMouse.IsPressed() == false)
 		{
-			alvere::Vector3 mouseDifference = newMousePos - m_mouseWorldPosition;
-			mouseDifference /= 17.5;
+			alvere::Vector4 mouseDifference = newMousePos - m_mouseWorldPosition;
+
+			mouseDifference = (alvere::transform_r(camera.GetRotation())) /* * camera.GetProjectionMatrix()) */ * mouseDifference * (32.0f / m_window.getWidth());
+
 			cameraTransform->move({ -mouseDifference.x, mouseDifference.y, 0 });
 		}
 
