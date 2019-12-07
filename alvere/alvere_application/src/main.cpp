@@ -70,7 +70,6 @@ struct AlvereApplication : public Application
 		m_uiCamera.SetOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
 		SceneSystem * sceneSystem = m_world.AddSystem<SceneSystem>(m_world);
-		m_world.AddSystem<CameraSystem>();
 		m_world.AddSystem<TilemapRendererSystem>(*m_sceneCamera);
 		m_world.AddSystem<SpriteRendererSystem>(*m_sceneCamera);
 		m_world.AddSystem<DestroySystem>();

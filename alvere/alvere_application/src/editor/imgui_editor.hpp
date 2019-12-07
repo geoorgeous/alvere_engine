@@ -26,6 +26,7 @@ class ImGuiEditor
 	EditorWorld * m_focusedMap;
 
 	alvere::input::MouseButton m_leftMouse;
+	alvere::Vector3 m_mouseWorldPosition;
 
 public:
 

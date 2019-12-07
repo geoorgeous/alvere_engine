@@ -3,6 +3,7 @@
 #include "alvere/math/matrix/matrix_4.hpp"
 #include "alvere/math/quaternion.hpp"
 #include "alvere/math/vector/vector_3.hpp"
+#include "alvere/math/vector/vector_2.hpp"
 
 namespace alvere
 {
@@ -28,6 +29,9 @@ namespace alvere
 		void Rotate(const Quaternion& rotation);
 		void SetPerspective(float horizontalFOVDegrees, float aspectRatio, float near, float far);
 		void SetOrthographic(float left, float right, float top, float bottom, float near, float far);
+
+		Vector3 ScreenToWorld(const Vector2 & screenPosition) const;
+		Vector2 WorldToScreen(const Vector3 & worldPosition) const;
 
 	private:
 		Vector3 m_Position;

@@ -97,4 +97,14 @@ namespace alvere
 		m_Projection = alvere::orthographic(left, right, top, bottom, near, far);
 		m_ProjectionViewDirty = true;
 	}
+
+	alvere::Vector3 Camera::ScreenToWorld(const Vector2 & screenPosition) const
+	{
+		return GetProjectionMatrix() * Vector4( screenPosition.x, screenPosition.y, 0.0f, 1.0f );
+	}
+
+	alvere::Vector2 Camera::WorldToScreen(const Vector3 & worldPosition) const
+	{
+		return GetProjectionMatrix().inverse() * Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f);
+	}
 }

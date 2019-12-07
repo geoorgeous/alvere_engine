@@ -55,8 +55,13 @@ ImGuiEditor::~ImGuiEditor()
 
 void ImGuiEditor::Update(float deltaTime)
 {
+	if (m_focusedMap == nullptr)
+	{
+		return;
+	}
+
 	m_leftMouse.Update(m_window);
-	if (m_leftMouse.IsDown())
+	if (m_leftMouse.IsDown() && m_focusedMap)
 	{
 		//Eventually we will want to abstract this into a pan tool implementation
 		alvere::Archetype::Query cameraQuery;
@@ -65,15 +70,23 @@ void ImGuiEditor::Update(float deltaTime)
 
 		std::vector<std::reference_wrapper<alvere::Archetype>> cameras;
 		m_focusedMap->m_world.QueryArchetypes(cameraQuery, cameras);
-
 		alvere::C_Transform & cameraTransform = *cameras[0].get().GetProvider<alvere::C_Transform>().begin();
-		cameraTransform->move({ 1, 1, 0 });
+		alvere::C_Camera & camera = *cameras[0].get().GetProvider<alvere::C_Camera>().begin();
+
+		//alvere::Vector3 newMousePos = camera.ScreenToWorld(m_window.getMouse().position);
+		alvere::Vector3 newMousePos = m_window.getMouse().position;
+
+		if (m_leftMouse.IsPressed() == false)
+		{
+			alvere::Vector3 mouseDifference = newMousePos - m_mouseWorldPosition;
+			mouseDifference /= 17.5;
+			cameraTransform->move({ -mouseDifference.x, mouseDifference.y, 0 });
+		}
+
+		m_mouseWorldPosition = newMousePos;
 	}
 
-	if (m_focusedMap != nullptr)
-	{
-		m_focusedMap->m_world.Update(deltaTime);
-	}
+	m_focusedMap->m_world.Update(deltaTime);
 }
 
 void ImGuiEditor::Render()
