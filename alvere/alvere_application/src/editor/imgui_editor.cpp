@@ -39,7 +39,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-	ImGui_ImplGlfw_InitForOpenGL(castedWindow.m_windowHandle, true);
+	ImGui_ImplGlfw_InitForOpenGL(castedWindow.m_windowHandle, false);
 	ImGui_ImplOpenGL3_Init("#version 130");
 
 	TileWindow & tileWindow = AddWindow<TileWindow>();
@@ -47,8 +47,8 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	m_toolWindow = &AddWindow<ToolWindow>(*this, window);
 	AddWindow<ImGui_DemoWindow>();
 
-	m_openMaps.push_back(std::make_unique<EditorWorld>(EditorWorld::New("Castle", window)));
-	m_openMaps.push_back(std::make_unique<EditorWorld>(EditorWorld::New("Not a castle", window)));
+	m_openMaps.push_back(EditorWorld::New("Castle", window));
+	m_openMaps.push_back(EditorWorld::New("Not a castle", window));
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -170,7 +170,7 @@ void ImGuiEditor::DrawMenuBar()
 
 			if (newMapValue.first)
 			{
-				m_openMaps.push_back(std::make_unique<EditorWorld>(EditorWorld::New(newMapValue.second, m_window)));
+				m_openMaps.push_back(EditorWorld::New(newMapValue.second, m_window));
 			}
 		}
 

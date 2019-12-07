@@ -14,5 +14,5 @@ struct EditorWorld
 	std::string m_name;
 	alvere::World m_world;
 
-	static EditorWorld New(const std::string & name, const alvere::Window & window);
+	static std::unique_ptr<EditorWorld> New(const std::string & name, const alvere::Window & window);
 };

@@ -1,3 +1,5 @@
+#include <memory>
+
 #include <alvere\world\system\systems\camera_system.hpp>
 #include <alvere\world\system\systems\sprite_renderer_system.hpp>
 #include <alvere\world\scene\scene_system.hpp>
@@ -11,14 +13,18 @@
 
 using namespace alvere;
 
-EditorWorld EditorWorld::New(const std::string & name, const alvere::Window & window)
+std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const alvere::Window & window)
 {
-	World world;
+	std::unique_ptr<EditorWorld> editorWorld = std::make_unique<EditorWorld>();
+	editorWorld->m_name = name;
+	World & world = editorWorld->m_world;
 
 	float worldUnitsOnX = 32;
 
 	float halfWorldUnitsOnX = 0.5f * worldUnitsOnX;
 	float screenRatio = (float) window.getHeight() / (float) window.getWidth();
+
+	world.SpawnEntity();
 
 	EntityHandle cameraEntity = world.SpawnEntity<C_Transform, C_Camera>();
 	Camera & camera = world.GetComponent<C_Camera>(cameraEntity);
@@ -32,5 +38,5 @@ EditorWorld EditorWorld::New(const std::string & name, const alvere::Window & wi
 	PlatformerScene platformerScene(world);
 	Scene & platformer = sceneSystem->LoadScene(platformerScene);
 
-	return { name, std::move(world) };
+	return std::move(editorWorld);
 }

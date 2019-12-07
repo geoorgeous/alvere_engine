@@ -24,6 +24,8 @@ namespace alvere
 
 	public:
 
+		~Archetype();
+
 		class Query;
 		class Handle;
 		Handle GetHandle() const;

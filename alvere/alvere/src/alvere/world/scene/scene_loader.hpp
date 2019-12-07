@@ -11,6 +11,8 @@ namespace alvere
 	{
 	public:
 
+		virtual ~SceneLoader() = default;
+
 		virtual std::unique_ptr<Scene> LoadScene() = 0;
 	};
 }

@@ -31,6 +31,7 @@ namespace alvere
 	public:
 
 		World();
+		~World();
 
 		void Update(float deltaTime);
 
@@ -205,6 +206,7 @@ namespace alvere
 		}
 
 		delete allIter->second;
+		m_AllSystems.erase(allIter);
 	}
 
 	template <typename T>

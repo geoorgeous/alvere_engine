@@ -6,6 +6,14 @@
 
 namespace alvere
 {
+	Archetype::~Archetype()
+	{
+		for (auto iter : m_Providers)
+		{
+			delete iter.second;
+		}
+	}
+
 	void Archetype::AddEntity(EntityHandle & entity)
 	{
 		for (auto & provider : m_Providers)
