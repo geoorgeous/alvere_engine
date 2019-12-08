@@ -28,6 +28,12 @@ namespace alvere::graphics_api::opengl
 
 
 
+	Texture::Texture(int width, int height, Channels channels)
+		: alvere::Texture(width, height, channels)
+	{
+		init();
+	}
+
 	Texture::~Texture()
 	{
 		glDeleteTextures(1, &m_Handle);
@@ -78,6 +84,7 @@ namespace alvere::graphics_api::opengl
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_resWidth, m_resHeight, 0, format, GL_UNSIGNED_BYTE, m_pixelData));
 		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 
@@ -89,6 +96,11 @@ alvere::Asset<alvere::Texture> alvere::Texture::New(const char * filename, Chann
 alvere::Asset<alvere::Texture> alvere::Texture::New(const unsigned char * data, int width, int height, Channels channels)
 {
 	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(data, width, height, channels));
+}
+
+alvere::Asset<alvere::Texture> alvere::Texture::New(int width, int height, Channels channels)
+{
+	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(width, height, channels));
 }
 
 alvere::Texture * alvere::Texture::loadFromFile(const std::string & filepath)

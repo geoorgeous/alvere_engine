@@ -1,5 +1,7 @@
 #include "alvere/application/window.hpp"
 
+#include "alvere/graphics/frame_buffer.hpp"
+
 #define ALV_WINDOW_DEFAULT_TITLE "Alvere Application"
 #define ALV_WINDOW_DEFAULT_SIZE_X 800
 #define ALV_WINDOW_DEFAULT_SIZE_Y 800
@@ -36,6 +38,11 @@ namespace alvere
 	{ }
 
 	Window::~Window() { }
+
+	void Window::swapBuffers()
+	{
+		m_renderingContext->swapBuffers();
+	}
 
 	KeyData Window::getKey(Key key) const
 	{

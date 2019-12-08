@@ -32,17 +32,4 @@ namespace alvere::graphics_api::opengl
 	private:
 		unsigned int m_Handle;
 	};
-
-	class FrameBuffer : public alvere::FrameBuffer
-	{
-	public:
-		FrameBuffer();
-		~FrameBuffer();
-
-		void Bind() override;
-		void Unbind() override;
-
-	private:
-		unsigned int m_Handle;
-	};
 }

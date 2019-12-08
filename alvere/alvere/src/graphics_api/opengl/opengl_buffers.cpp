@@ -70,34 +70,6 @@ namespace alvere::graphics_api::opengl
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
-
-	FrameBuffer::FrameBuffer()
-	{
-		glGenFramebuffers(1, &m_Handle);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_Handle);
-
-		if (glCheckFramebufferStatus(m_Handle) != GL_FRAMEBUFFER_COMPLETE)
-		{
-			LogError("Frame buffer is not complete.\n");
-		}
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
-	FrameBuffer::~FrameBuffer()
-	{
-		glDeleteFramebuffers(1, &m_Handle);
-	}
-
-	void FrameBuffer::Bind()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_Handle);
-	}
-
-	void FrameBuffer::Unbind()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
 }
 
 alvere::VertexBuffer * alvere::VertexBuffer::New()
@@ -113,9 +85,4 @@ alvere::VertexBuffer * alvere::VertexBuffer::New(const float * vertexData, unsig
 alvere::IndexBuffer * alvere::IndexBuffer::New(const unsigned int * indices, unsigned int size)
 {
 	return new alvere::graphics_api::opengl::IndexBuffer(indices, size);
-}
-
-alvere::FrameBuffer* alvere::FrameBuffer::New()
-{
-	return new alvere::graphics_api::opengl::FrameBuffer();
 }
