@@ -22,6 +22,7 @@
 #include "editor/windows/tile_properties_window.hpp"
 #include "editor/windows/tool_window.hpp"
 #include "editor\tool\pan_tool.hpp"
+#include "editor/utils/path_utils.hpp"
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	: m_window(window)
@@ -47,9 +48,6 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	AddWindow<TilePropertiesWindow>(tileWindow);
 	m_toolWindow = &AddWindow<ToolWindow>(*this, window);
 	AddWindow<ImGui_DemoWindow>();
-
-	m_openMaps.push_back(EditorWorld::New("Castle", window));
-	m_openMaps.push_back(EditorWorld::New("Not a castle", window));
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -145,7 +143,9 @@ void ImGuiEditor::DrawMapTabs()
 		{
 			bool active = true;
 
-			const char * name = m_openMaps[i]->m_name.c_str();
+			std::string filename;
+			GetFilenameFromPath(m_openMaps[i]->m_name, filename);
+			const char * name = filename.c_str();
 
 			if (ImGui::BeginTabItem(name, &active))
 			{

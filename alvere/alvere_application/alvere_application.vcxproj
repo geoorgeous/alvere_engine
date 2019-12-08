@@ -161,6 +161,7 @@
     <ClCompile Include="src\dialogs\tiny_file_dialogs.c" />
     <ClCompile Include="src\editor\editor_world.cpp" />
     <ClCompile Include="src\editor\imgui_editor.cpp" />
+    <ClCompile Include="src\editor\utils\path_utils.cpp" />
     <ClCompile Include="src\editor\windows\tile_properties_window.cpp" />
     <ClCompile Include="src\editor\windows\tile_window.cpp" />
     <ClCompile Include="src\editor\tool\pan_tool.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="src\editor\imgui_editor.hpp" />
     <ClInclude Include="src\editor\tilemap\editor_tile.hpp" />
     <ClInclude Include="src\editor\tool\draw_tool.hpp" />
+    <ClInclude Include="src\editor\utils\path_utils.hpp" />
     <ClInclude Include="src\editor\windows\imgui_window.hpp" />
     <ClInclude Include="src\editor\windows\tile_properties_window.hpp" />
     <ClInclude Include="src\editor\windows\tile_window.hpp" />

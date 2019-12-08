@@ -3,6 +3,7 @@
 #include "tile_properties_window.hpp"
 #include "imgui/imgui_internal.h"
 #include "dialogs/open_file_dialog.hpp"
+#include "editor/utils/path_utils.hpp"
 
 TilePropertiesWindow::TilePropertiesWindow(TileWindow & tileWindow)
 	: m_tileWindow(tileWindow)
@@ -32,7 +33,10 @@ void TilePropertiesWindow::Draw()
 
 	ImGui::TextEx("Texture");
 	ImGui::SameLine(textWidth, style.ItemInnerSpacing.x);
-	if (ImGui::Button(textureString.c_str(), { ImGui::CalcItemWidth(), 0 }))
+
+	std::string filename;
+	GetFilenameFromPath(textureString, filename);
+	if (ImGui::Button(filename.c_str(), { ImGui::CalcItemWidth(), 0 }))
 	{
 		UserSetTileTexture(*editorTile);
 	}
