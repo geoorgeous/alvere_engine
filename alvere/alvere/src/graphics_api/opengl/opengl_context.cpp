@@ -116,6 +116,7 @@ namespace alvere::graphics_api::opengl
 		m_screenQuadShaderProgram->bind();
 
 		// send framebuffer texture to shader
+		glActiveTexture(GL_TEXTURE0);
 		m_frameBuffer->getTexture().bind();
 
 		// bind the vao with the screen quad
