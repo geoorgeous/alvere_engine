@@ -19,6 +19,14 @@ namespace alvere::graphics_api::opengl
 	{
 		init();
 	}
+	
+	Texture::Texture(const alvere::Texture & sourceTexture, alvere::RectI sourceRect)
+		: alvere::Texture(sourceTexture, sourceRect)
+	{
+		init();
+	}
+
+
 
 	Texture::~Texture()
 	{
@@ -86,4 +94,9 @@ alvere::Asset<alvere::Texture> alvere::Texture::New(const unsigned char * data, 
 alvere::Texture * alvere::Texture::loadFromFile(const std::string & filepath)
 {
 	return new graphics_api::opengl::Texture(filepath.c_str());
+}
+
+alvere::Asset<alvere::Texture> alvere::Texture::New(const alvere::Texture & sourceTexture, alvere::RectI sourceRect)
+{
+	return alvere::Asset<alvere::Texture>(std::make_unique<graphics_api::opengl::Texture>(sourceTexture, sourceRect));
 }

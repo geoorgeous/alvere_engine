@@ -4,21 +4,8 @@
 
 TileWindow::TileWindow()
 	: m_selectedPosition({ 0, 0 })
+	, m_noTilePreview(alvere::Texture::New("res/img/editor/no_tile_preview.png"))
 {
-	Spritesheet * airSpritesheet = new Spritesheet(alvere::Texture::New("res/img/tiles/air.png"), alvere::Vector2i{ 1, 1 });
-	alvere::Asset<Tile> airTile = std::make_unique<Tile>(Tile{ false, airSpritesheet });
-
-	Spritesheet * wallSpritesheet = new Spritesheet(alvere::Texture::New("res/img/tiles/ground.png"), alvere::Vector2i{ 24, 24 });
-	alvere::Asset<Tile> wallTile = std::make_unique<Tile>(Tile{ true, wallSpritesheet });
-
-	m_tiles.m_tiles.emplace_back(std::move(airTile));
-	m_tiles.m_tiles.emplace_back(std::move(wallTile));
-
-	m_tilePositionMapping[{ 0, 0 }] = 0;
-	m_tilePositionMapping[{ 1, 0 }] = 1;
-
-	m_TEMP_tileTextureCollisionOn = alvere::Texture::New("res/img/cobbles/specular.png");
-	m_TEMP_tileTextureCollisionOff = alvere::Texture::New("res/img/cobbles/normal.png");
 }
 
 void TileWindow::Draw()
@@ -57,8 +44,8 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 {
 	auto tileMappingIter = m_tilePositionMapping.find(position);
 
-	Tile * tile = tileMappingIter != m_tilePositionMapping.end()
-		? m_tiles.m_tiles[tileMappingIter->second].get()
+	EditorTile * tile = tileMappingIter != m_tilePositionMapping.end()
+		? &m_tiles[tileMappingIter->second]
 		: nullptr;
 
 	ImVec4 border = m_selectedPosition == position ? ImColor(1.0f, 1.0f, 0.0) : ImColor(0.0f, 0.0f, 0.0f);
@@ -84,11 +71,20 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 	else
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
-		ImTextureID textureID = tile->m_collides ? m_TEMP_tileTextureCollisionOn->getHandle() : m_TEMP_tileTextureCollisionOff->getHandle();
-		if (ImGui::ImageButton(textureID, m_tileSize))
+
+		alvere::Texture * previewTexture = tile->GetPreviewTexture();
+
+		//In the case that the tile has not yet had a spritesheet assigned
+		if (previewTexture == nullptr)
+		{
+			previewTexture = m_noTilePreview.get();
+		}
+
+		if (ImGui::ImageButton(previewTexture->getHandle(), m_tileSize))
 		{
 			m_selectedPosition = position;
 		}
+
 		ImGui::PopStyleVar(1);
 	}
 	ImGui::PopStyleColor(1);
@@ -99,15 +95,15 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 		{
 			if (ImGui::Selectable("New Tile"))
 			{
-				m_tilePositionMapping[position] = m_tiles.m_tiles.size();
-				m_tiles.m_tiles.emplace_back(std::make_unique<Tile>());
+				m_tilePositionMapping[position] = m_tiles.size();
+				m_tiles.emplace_back();
 			}
 		}
 		else
 		{
 			if (ImGui::Selectable("Delete Tile"))
 			{
-				m_tiles.m_tiles.erase(m_tiles.m_tiles.begin() + tileMappingIter->second);
+				m_tiles.erase(m_tiles.begin() + tileMappingIter->second);
 				m_tilePositionMapping.erase(position);
 			}
 		}

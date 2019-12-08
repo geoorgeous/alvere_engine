@@ -5,6 +5,7 @@
 #include "imgui/imgui.h"
 #include "imgui_window.hpp"
 #include "tilemap/tile_store.hpp"
+#include "editor/tilemap/editor_tile.hpp"
 
 class TileWindow : public ImGui_Window
 {
@@ -20,13 +21,12 @@ class TileWindow : public ImGui_Window
 	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_NoScrollbar;
 	const ImVec2 m_tileSize = { 32, 32 };
 
-	TileStore m_tiles;
+	std::vector<EditorTile> m_tiles;
 
 	alvere::Vector2i m_selectedPosition;
 	std::unordered_map<alvere::Vector2i, int, PositionHash> m_tilePositionMapping;
 
-	std::unique_ptr<alvere::Texture> m_TEMP_tileTextureCollisionOn;
-	std::unique_ptr<alvere::Texture> m_TEMP_tileTextureCollisionOff;
+	alvere::Asset<alvere::Texture> m_noTilePreview;
 
 public:
 
@@ -39,11 +39,11 @@ public:
 		return "Tile Palette";
 	}
 
-	Tile * GetSelectedTile() const
+	EditorTile * GetSelectedTile()
 	{
 		auto iter = m_tilePositionMapping.find(m_selectedPosition);
 		return iter != m_tilePositionMapping.end()
-			? m_tiles.GetTile(iter->second)
+			? &m_tiles[iter->second]
 			: nullptr;
 	}
 
