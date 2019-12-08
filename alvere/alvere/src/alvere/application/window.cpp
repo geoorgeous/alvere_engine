@@ -39,6 +39,11 @@ namespace alvere
 
 	Window::~Window() { }
 
+	void Window::swapBuffers()
+	{
+		m_renderingContext->swapBuffers();
+	}
+
 	KeyData Window::getKey(Key key) const
 	{
 		auto k = m_keys.find(key);
@@ -58,7 +63,5 @@ namespace alvere
 		m_events.emplace(typeid(WindowCloseEvent), new WindowCloseEvent);
 		m_events.emplace(typeid(WindowResizeEvent), new WindowResizeEvent);
 		m_events.emplace(typeid(CharInputEvent), new CharInputEvent);
-
-		m_frameBuffer = FrameBuffer::create(m_properties.resWidth, m_properties.resHeight);
 	}
 }

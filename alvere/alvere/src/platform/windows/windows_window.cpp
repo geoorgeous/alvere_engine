@@ -35,11 +35,6 @@ namespace alvere::platform::windows
 		glfwPollEvents();
 	}
 
-	void Window::swapBuffers()
-	{
-		m_renderingContext->swapBuffers();
-	}
-
 	void Window::disableCursor()
 	{
 		glfwSetInputMode(m_windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

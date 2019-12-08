@@ -18,13 +18,12 @@ namespace alvere::platform::windows
 
 		void pollEvents() override;
 
-		void swapBuffers() override;
-
 		void disableCursor() override;
 
 		void enableCursor() override;
 
 		GLFWwindow * m_windowHandle;
+
 	private:
 
 		struct WindowUserPointerData
@@ -35,10 +34,7 @@ namespace alvere::platform::windows
 			MouseData * mouse;
 		};
 
-
 		WindowUserPointerData m_windowUserPointerData;
-
-		alvere::RenderingContext * m_renderingContext;
 
 		void init(const alvere::Window::Properties& properties);
 

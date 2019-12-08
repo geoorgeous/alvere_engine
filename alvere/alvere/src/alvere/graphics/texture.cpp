@@ -73,4 +73,15 @@ namespace alvere
 			m_channelCount = 0;
 		}
 	}
+
+	Texture::Texture(int width, int height, Channels channels)
+		: m_resWidth(width), m_resHeight(height), m_channelCount((int)channels)
+	{
+		m_pixelData = (unsigned char *)std::calloc(m_resWidth * m_resHeight, m_channelCount);
+
+		if(m_pixelData == nullptr)
+		{
+			m_resWidth = m_resHeight = m_channelCount = 0;
+		}
+	}
 }

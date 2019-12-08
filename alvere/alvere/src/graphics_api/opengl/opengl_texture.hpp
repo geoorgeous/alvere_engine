@@ -11,6 +11,8 @@ namespace alvere::graphics_api::opengl
 
 		Texture(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
 
+		Texture(int width, int height, Channels channels = Channels::RGBAlpha);
+
 		~Texture();
 
 		void bind() const override;

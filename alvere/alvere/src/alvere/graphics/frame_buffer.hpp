@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include "alvere/graphics/texture.hpp"
+
 namespace alvere
 {
 	class FrameBuffer
@@ -36,6 +38,11 @@ namespace alvere
 			return m_aspect;
 		}
 
+		inline const Texture & getTexture() const
+		{
+			return *m_texture;
+		}
+
 		FrameBuffer & operator=(const FrameBuffer & frameBuffer);
 
 	protected:
@@ -49,5 +56,7 @@ namespace alvere
 		unsigned int m_height;
 
 		float m_aspect;
+
+		std::unique_ptr<Texture> m_texture;
 	};
 }

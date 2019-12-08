@@ -87,6 +87,8 @@ namespace alvere
 					update(timeStepSeconds);
 				}
 
+				m_window->getRenderingContext().bindFrameBuffer();
+
 				render_commands::Clear();
 
 				render();

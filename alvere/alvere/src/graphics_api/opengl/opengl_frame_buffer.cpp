@@ -11,19 +11,13 @@ namespace alvere::graphics_api::opengl
 	{}
 
 	FrameBuffer::FrameBuffer(unsigned int width, unsigned int height)
-		: ::alvere::FrameBuffer(width, height)
+		: ::alvere::FrameBuffer(width, height), m_handle(0), m_textureHandle(0), m_depthStencilBufferHandle(0)
 	{
 		glGenFramebuffers(1, &m_handle);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
 
-		glGenTextures(1, &m_textureHandle);
-		glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureHandle, 0);
+		m_texture = Texture::New(width, height, Texture::Channels::RGB);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, (unsigned int)m_texture->getHandle(), 0);
 
 		glGenRenderbuffers(1, &m_depthStencilBufferHandle);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBufferHandle);
@@ -98,5 +92,5 @@ namespace alvere::graphics_api::opengl
 
 std::unique_ptr<alvere::FrameBuffer> alvere::FrameBuffer::create(unsigned int width, unsigned int height)
 {
-	return std::make_unique<alvere::graphics_api::opengl::FrameBuffer>();
+	return std::make_unique<alvere::graphics_api::opengl::FrameBuffer>(width, height);
 }
