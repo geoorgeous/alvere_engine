@@ -4,7 +4,6 @@
 
 #include "imgui/imgui.h"
 #include "imgui_window.hpp"
-#include "tilemap/tile_store.hpp"
 #include "editor/tilemap/editor_tile.hpp"
 
 class TileWindow : public ImGui_Window

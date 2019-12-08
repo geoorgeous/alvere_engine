@@ -28,13 +28,26 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const al
 	editorWorld->m_camera = &world.GetComponent<C_Camera>(cameraEntity);
 	editorWorld->m_camera->setOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * screenRatio, -halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
 
+
+	alvere::EntityHandle map = world.SpawnEntity<C_Tilemap>();
+
+	Spritesheet airSpritesheet = { alvere::Texture::New("res/img/tiles/air.png"), { 1, 1 } };
+	Spritesheet wallSpritesheet = { alvere::Texture::New("res/img/tiles/ground.png"), { 24, 24 } };
+
+	editorWorld->m_tilemap = &world.GetComponent<C_Tilemap>(map);
+	*editorWorld->m_tilemap = C_Tilemap({ 7, 7 });
+	editorWorld->m_tilemap->m_tiles.push_back(Tile{ false, std::move(airSpritesheet) });
+	editorWorld->m_tilemap->m_tiles.push_back(Tile{ true, std::move(wallSpritesheet) });
+
+	editorWorld->m_tilemap->DemoFill();
+
+	editorWorld->m_tilemap->Resize(5, -1, -1, 2);
+	editorWorld->m_tilemap->UpdateAllTiles();
+
 	SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 	world.AddSystem<CameraSystem>();
 	world.AddSystem<TilemapRendererSystem>(*editorWorld->m_camera);
 	world.AddSystem<SpriteRendererSystem>(*editorWorld->m_camera);
-
-	PlatformerScene platformerScene(world);
-	Scene & platformer = sceneSystem->LoadScene(platformerScene);
 
 	return std::move(editorWorld);
 }

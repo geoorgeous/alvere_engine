@@ -11,6 +11,12 @@ class ToolWindow;
 
 class ImGuiEditor
 {
+	enum class ModalPopupState
+	{
+		None,
+		ResizeTilemap,
+	};
+
 	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_NoTitleBar
 		| ImGuiWindowFlags_MenuBar
 		| ImGuiWindowFlags_NoMove
@@ -29,7 +35,7 @@ class ImGuiEditor
 	std::vector<std::unique_ptr<EditorWorld>> m_openMaps;
 	EditorWorld * m_focusedMap;
 
-	float m_currentUnitsOnX;
+	ModalPopupState m_currentPopup;
 
 public:
 
@@ -47,7 +53,15 @@ private:
 	void EndFrame();
 
 	void DrawMenuBar();
+	void DrawFileMenu();
+	void DrawEditMenu();
+	void DrawViewMenu();
+
 	void DrawMapTabs();
+
+	void OpenPopup(ModalPopupState popup);
+	void DrawPopups();
+	void DrawResizePopup();
 
 	template <typename T, typename... Args>
 	T & AddWindow(Args &&... args);

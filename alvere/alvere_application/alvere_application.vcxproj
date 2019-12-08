@@ -177,8 +177,8 @@
     <ClCompile Include="src\states\editor_state.cpp" />
     <ClCompile Include="src\states\gameplay_state.cpp" />
     <ClCompile Include="src\states\game_state_machine.cpp" />
+    <ClCompile Include="src\tilemap\c_tilemap.cpp" />
     <ClCompile Include="src\tilemap\tilemap_renderer_system.cpp" />
-    <ClCompile Include="src\tilemap\tile_store.cpp" />
     <ClCompile Include="src\tile_drawer.cpp" />
     <ClCompile Include="src\world_cell_area.cpp" />
     <ClCompile Include="src\world_generation.cpp" />
@@ -218,7 +218,6 @@
     <ClInclude Include="src\tilemap\tile.hpp" />
     <ClInclude Include="src\tilemap\c_tilemap.hpp" />
     <ClInclude Include="src\tilemap\tilemap_renderer_system.hpp" />
-    <ClInclude Include="src\tilemap\tile_store.hpp" />
     <ClInclude Include="src\tile_drawer.hpp" />
     <ClInclude Include="src\world_cell.hpp" />
     <ClInclude Include="src\world_cell_area.hpp" />

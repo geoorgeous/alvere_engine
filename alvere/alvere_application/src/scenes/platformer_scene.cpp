@@ -36,19 +36,15 @@ void PlatformerScene::SpawnMap(std::unique_ptr<alvere::Scene> & scene)
 {
 	alvere::EntityHandle map = m_World.SpawnEntity<C_Tilemap>();
 
-	TileStore* tileStore = new TileStore();
-
-	Spritesheet * airSpritesheet = new Spritesheet(alvere::Texture::New("res/img/tiles/air.png"), alvere::Vector2i{ 1, 1 });
-	alvere::Asset<Tile> airTile = std::make_unique<Tile>(Tile{ false, std::unique_ptr<Spritesheet>(airSpritesheet) });
-
-	Spritesheet * wallSpritesheet = new Spritesheet(alvere::Texture::New("res/img/tiles/ground.png"), alvere::Vector2i{ 24, 24 });
-	alvere::Asset<Tile> wallTile = std::make_unique<Tile>(Tile{ true, std::unique_ptr<Spritesheet>(wallSpritesheet) });
-
-	tileStore->m_tiles.emplace_back(std::move(airTile));
-	tileStore->m_tiles.emplace_back(std::move(wallTile));
+	Spritesheet airSpritesheet = { alvere::Texture::New("res/img/tiles/air.png"), { 1, 1 } };
+	Spritesheet wallSpritesheet = { alvere::Texture::New("res/img/tiles/ground.png"), { 24, 24 } };
 
 	auto & tilemap = m_World.GetComponent<C_Tilemap>(map);
-	tilemap = C_Tilemap(*tileStore, { 25, 20 });
+	tilemap = C_Tilemap({ 25, 20 });
+	tilemap.m_tiles.push_back(Tile{ false, std::move(airSpritesheet) });
+	tilemap.m_tiles.push_back(Tile{ true, std::move(wallSpritesheet) });
+
+	tilemap.DemoFill();
 
 	scene->AddEntity(map);
 }

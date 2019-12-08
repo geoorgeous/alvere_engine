@@ -12,6 +12,8 @@ class TilemapRendererSystem : public alvere::QueryRenderedSystem<C_Tilemap>
 
 	alvere::Asset<alvere::SpriteBatcher> m_spriteBatcher;
 
+	alvere::Asset<alvere::Texture> m_fallbackTexture;
+
 public:
 
 	TilemapRendererSystem(alvere::Camera & camera);
