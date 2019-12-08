@@ -8,7 +8,7 @@
 struct Tile
 {
 	bool m_collides;
-	Spritesheet * m_spritesheet;
+	std::unique_ptr<Spritesheet> m_spritesheet;
 };
 
 struct TileInstance

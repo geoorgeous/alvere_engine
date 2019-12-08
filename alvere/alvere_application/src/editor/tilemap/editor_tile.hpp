@@ -21,12 +21,12 @@ public:
 			return m_previewTexture.get();
 		}
 
-		Spritesheet * spritesheet = m_tile.m_spritesheet;
-
-		if (spritesheet == nullptr)
+		if (m_tile.m_spritesheet == false)
 		{
 			return nullptr;
 		}
+
+		Spritesheet * spritesheet = m_tile.m_spritesheet.get();
 
 		m_previewTexture = alvere::Texture::New(*spritesheet->GetTexture(), spritesheet->GetSourceRect({ 1, 1 }));
 

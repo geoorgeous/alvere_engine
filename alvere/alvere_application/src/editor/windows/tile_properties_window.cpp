@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "tile_properties_window.hpp"
 #include "imgui/imgui_internal.h"
 #include "dialogs/open_file_dialog.hpp"
@@ -24,8 +26,7 @@ void TilePropertiesWindow::Draw()
 
 	const int textWidth = 80.0f;
 
-	bool hasTexture = tile->m_spritesheet != nullptr;
-	std::string textureString = hasTexture ? editorTile->m_texturePath : "None";
+	std::string textureString = tile->m_spritesheet ? editorTile->m_texturePath : "None";
 
 	style.ButtonTextAlign = { 0.0f, 0.5f };
 
@@ -56,5 +57,5 @@ void TilePropertiesWindow::UserSetTileTexture(EditorTile & tile)
 	tile.m_texturePath = output.second[0];
 
 	alvere::Asset<alvere::Texture> texture = alvere::Texture::New(output.second[0].c_str());
-	tile.m_tile.m_spritesheet = new Spritesheet(std::move(texture), { 24, 24 });
+	tile.m_tile.m_spritesheet.reset(new Spritesheet{ std::move(texture), { 24, 24 } });
 }

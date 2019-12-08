@@ -39,10 +39,10 @@ void PlatformerScene::SpawnMap(std::unique_ptr<alvere::Scene> & scene)
 	TileStore* tileStore = new TileStore();
 
 	Spritesheet * airSpritesheet = new Spritesheet(alvere::Texture::New("res/img/tiles/air.png"), alvere::Vector2i{ 1, 1 });
-	alvere::Asset<Tile> airTile = std::make_unique<Tile>(Tile{ false, airSpritesheet });
+	alvere::Asset<Tile> airTile = std::make_unique<Tile>(Tile{ false, std::unique_ptr<Spritesheet>(airSpritesheet) });
 
 	Spritesheet * wallSpritesheet = new Spritesheet(alvere::Texture::New("res/img/tiles/ground.png"), alvere::Vector2i{ 24, 24 });
-	alvere::Asset<Tile> wallTile = std::make_unique<Tile>(Tile{ true, wallSpritesheet });
+	alvere::Asset<Tile> wallTile = std::make_unique<Tile>(Tile{ true, std::unique_ptr<Spritesheet>(wallSpritesheet) });
 
 	tileStore->m_tiles.emplace_back(std::move(airTile));
 	tileStore->m_tiles.emplace_back(std::move(wallTile));
