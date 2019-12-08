@@ -41,6 +41,14 @@ void TilePropertiesWindow::Draw()
 		UserSetTileTexture(*editorTile);
 	}
 
+	alvere::Asset<alvere::Texture> & texture = editorTile->m_tile.m_spritesheet.m_texture;
+	if (texture && ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::Image(texture->getHandle(), { (float)texture->width(), (float)texture->height() });
+		ImGui::EndTooltip();
+	}
+
 	ImGui::TextEx("Collides");
 	ImGui::SameLine(textWidth, style.ItemInnerSpacing.x);
 	ImGui::Checkbox("", &tile->m_collides);
