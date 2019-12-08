@@ -6,7 +6,7 @@
 #include <alvere/world/component/components/c_camera.hpp>
 #include <alvere/world/component/components/c_transform.hpp>
 #include <alvere/application/window.hpp>
-#include <tilemap\tilemap_renderer_system.h>
+#include <tilemap\tilemap_renderer_system.hpp>
 #include <scenes\platformer_scene.hpp>
 
 #include "editor_world.hpp"
