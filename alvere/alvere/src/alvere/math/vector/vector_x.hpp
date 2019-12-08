@@ -7,6 +7,9 @@
 
 #include <cmath>
 
+#undef min
+#undef max
+
 namespace alvere
 {
 	/**
@@ -202,9 +205,41 @@ namespace alvere
 		{
 			return *this * -1.0f;
 		}
+
+		/**
+		 * \brief Computes and returns a component-wise min operation
+		 * \returns A new vector whose components are the minimum between a and b.
+		 */
+		static Vector<T, Size> min(const Vector<T, Size> & a, const Vector<T, Size> & b)
+		{
+			Vector<T, Size> min;
+			for (unsigned int idx = 0; idx < Size; idx++)
+			{
+				min[idx] = a.components[idx] < b.components[idx]
+					? a.components[idx]
+					: b.components[idx];
+			}
+			return min;
+		}
+
+		/**
+		 * \brief Computes and returns a component-wise max operation
+		 * \returns A new vector whose components are the maximum between a and b.
+		 */
+		static Vector<T, Size> max(const Vector<T, Size> & a, const Vector<T, Size> & b)
+		{
+			Vector<T, Size> max;
+			for (unsigned int idx = 0; idx < Size; idx++)
+			{
+				max[idx] = a.components[idx] > b.components[idx]
+					? a.components[idx]
+					: b.components[idx];
+			}
+			return max;
+		}
 	};
 
-	/**
+	/*
 	 * \brief Calculates the addition of two vectors.
 	 * \details Addition is performed component-wise.
 	 * \param lhs The vector on the left-hand-side of the addition operand.
@@ -332,5 +367,4 @@ namespace alvere
 	{
 		return !(lhs == rhs);
 	}
-
 }
