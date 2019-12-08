@@ -84,6 +84,8 @@ void TileWindow::DrawInvalidTile(alvere::Vector2i position)
 
 	ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4) GetBorderColor(position));
 	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4) ImColor(0.2f, 0.2f, 0.2f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4) ImColor(0.4f, 0.4f, 0.4f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4) ImColor(0.5f, 0.5f, 0.5f));
 
 	//The image button does borders differently to normal buttons so we need to draw slightly larger than expected
 	if (ImGui::Button("", ImVec2(m_tileSize.x + padding * 2, m_tileSize.y + padding * 2)))
@@ -91,7 +93,7 @@ void TileWindow::DrawInvalidTile(alvere::Vector2i position)
 		m_selectedPosition = position;
 	}
 
-	ImGui::PopStyleColor(2);
+	ImGui::PopStyleColor(4);
 
 	if (ImGui::BeginPopupContextItem("Tile Context Menu"))
 	{
