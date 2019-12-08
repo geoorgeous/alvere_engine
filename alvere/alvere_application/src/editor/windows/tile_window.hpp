@@ -19,6 +19,7 @@ class TileWindow : public ImGui_Window
 
 	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_NoScrollbar;
 	const ImVec2 m_tileSize = { 32, 32 };
+	const ImColor m_highlightedBorder = { 0.2f, 0.2f, 0.2f };
 
 	std::vector<EditorTile> m_tiles;
 
@@ -49,4 +50,14 @@ public:
 private:
 
 	void DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize);
+
+	void DrawInvalidTile(alvere::Vector2i position);
+	void DrawValidTile(EditorTile & tile, alvere::Vector2i position, int tileIndex);
+
+	inline ImColor GetBorderColor(alvere::Vector2i position)
+	{
+		return m_selectedPosition == position
+			? ImColor(1.0f, 1.0f, 0.0)
+			: ImColor(0.0f, 0.0f, 0.0f);
+	}
 };

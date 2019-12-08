@@ -48,68 +48,103 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 		? &m_tiles[tileMappingIter->second]
 		: nullptr;
 
-	ImVec4 border = m_selectedPosition == position ? ImColor(1.0f, 1.0f, 0.0) : ImColor(0.0f, 0.0f, 0.0f);
-
-	int padding = ImGui::GetStyle().FrameBorderSize;
-
 	ImGui::SameLine();
 
 	ImGui::PushID(position[0] + position[1] * gridSize[0]);
 
-	ImGui::PushStyleColor(ImGuiCol_Border, border);
 	if (tile == nullptr)
 	{
-		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(0.2f, 0.2f, 0.2f));
-
-		if (ImGui::Button("", ImVec2(m_tileSize.x + padding * 2, m_tileSize.y + padding * 2)))
-		{
-			m_selectedPosition = position;
-		}
-
-		ImGui::PopStyleColor(1);
+		DrawInvalidTile(position);
 	}
 	else
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
-
-		alvere::Texture * previewTexture = tile->GetPreviewTexture();
-
-		//In the case that the tile has not yet had a spritesheet assigned
-		if (previewTexture == nullptr)
-		{
-			previewTexture = m_noTilePreview.get();
-		}
-
-		if (ImGui::ImageButton(previewTexture->getHandle(), m_tileSize))
-		{
-			m_selectedPosition = position;
-		}
-
-		ImGui::PopStyleVar(1);
+		DrawValidTile(*tile, position, tileMappingIter->second);
 	}
+
+	//All tiles can be a drop target
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("TILE"))
+		{
+			IM_ASSERT(payload->DataSize == sizeof(alvere::Vector2i));
+			alvere::Vector2i payload_n = *(const alvere::Vector2i *) payload->Data;
+
+			m_tilePositionMapping[position] = m_tilePositionMapping[payload_n];
+			m_tilePositionMapping.erase(payload_n);
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::PopID();
+}
+
+void TileWindow::DrawInvalidTile(alvere::Vector2i position)
+{
+	int padding = ImGui::GetStyle().FrameBorderSize;
+
+	ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4) GetBorderColor(position));
+	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4) ImColor(0.2f, 0.2f, 0.2f));
+
+	//The image button does borders differently to normal buttons so we need to draw slightly larger than expected
+	if (ImGui::Button("", ImVec2(m_tileSize.x + padding * 2, m_tileSize.y + padding * 2)))
+	{
+		m_selectedPosition = position;
+	}
+
+	ImGui::PopStyleColor(2);
+
+	if (ImGui::BeginPopupContextItem("Tile Context Menu"))
+	{
+		//Only thing we can do with an invalid tile is give the user the option to make it valid
+		if (ImGui::Selectable("New Tile"))
+		{
+			m_tilePositionMapping[position] = m_tiles.size();
+			m_tiles.emplace_back();
+		}
+
+		ImGui::EndPopup();
+	}
+}
+
+void TileWindow::DrawValidTile(EditorTile & tile, alvere::Vector2i position, int tileIndex)
+{
+	int padding = ImGui::GetStyle().FrameBorderSize;
+
+	ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4) GetBorderColor(position));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+
+	alvere::Texture * previewTexture = tile.GetPreviewTexture();
+
+	//In the case that the tile has not yet had a spritesheet assigned
+	if (previewTexture == nullptr)
+	{
+		previewTexture = m_noTilePreview.get();
+	}
+
+	if (ImGui::ImageButton(previewTexture->getHandle(), m_tileSize))
+	{
+		m_selectedPosition = position;
+	}
+
+	ImGui::PopStyleVar(1);
 	ImGui::PopStyleColor(1);
 
-	if (ImGui::BeginPopupContextItem("item context menu"))
+	if (ImGui::BeginPopupContextItem("Tile Context Menu"))
 	{
-		if (tile == nullptr)
+		if (ImGui::Selectable("Delete Tile"))
 		{
-			if (ImGui::Selectable("New Tile"))
-			{
-				m_tilePositionMapping[position] = m_tiles.size();
-				m_tiles.emplace_back();
-			}
-		}
-		else
-		{
-			if (ImGui::Selectable("Delete Tile"))
-			{
-				m_tiles.erase(m_tiles.begin() + tileMappingIter->second);
-				m_tilePositionMapping.erase(position);
-			}
+			m_tiles.erase(m_tiles.begin() + tileIndex);
+			m_tilePositionMapping.erase(position);
 		}
 
 		ImGui::EndPopup();
 	}
 
-	ImGui::PopID();
+	//Only buttons with valid tiles can be a move source
+	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptNoDrawDefaultRect))
+	{
+		ImGui::SetDragDropPayload("TILE", &position, sizeof(alvere::Vector2i));
+		ImGui::Image(previewTexture->getHandle(), m_tileSize);
+		ImGui::EndDragDropSource();
+	}
 }

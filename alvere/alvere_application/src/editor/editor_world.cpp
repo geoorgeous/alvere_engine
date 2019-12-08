@@ -41,9 +41,6 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const al
 
 	editorWorld->m_tilemap->DemoFill();
 
-	editorWorld->m_tilemap->Resize(5, -1, -1, 2);
-	editorWorld->m_tilemap->UpdateAllTiles();
-
 	SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 	world.AddSystem<CameraSystem>();
 	world.AddSystem<TilemapRendererSystem>(*editorWorld->m_camera);
