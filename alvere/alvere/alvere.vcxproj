@@ -229,6 +229,7 @@
     <ClCompile Include="src\alvere\application\window.cpp" />
     <ClCompile Include="src\alvere\graphics\buffers.cpp" />
     <ClCompile Include="src\alvere\graphics\camera.cpp" />
+    <ClCompile Include="src\alvere\graphics\frame_buffer.cpp" />
     <ClCompile Include="src\alvere\graphics\material.cpp" />
     <ClCompile Include="src\alvere\graphics\material_instance.cpp" />
     <ClCompile Include="src\alvere\graphics\mesh.cpp" />
@@ -293,6 +294,7 @@
     <ClCompile Include="src\alvere\events\event.cpp" />
     <ClCompile Include="src\graphics_api\opengl\opengl_context.cpp" />
     <ClCompile Include="src\graphics_api\opengl\opengl_errors.cpp" />
+    <ClCompile Include="src\graphics_api\opengl\opengl_frame_buffer.cpp" />
     <ClCompile Include="src\graphics_api\opengl\opengl_renderer.cpp" />
     <ClCompile Include="src\graphics_api\opengl\opengl_renderer_api.cpp" />
     <ClCompile Include="src\graphics_api\opengl\opengl_shader.cpp" />
@@ -363,6 +365,7 @@
     <ClInclude Include="src\alvere\events\event_handler.hpp" />
     <ClInclude Include="src\alvere\graphics\buffers.hpp" />
     <ClInclude Include="src\alvere\graphics\camera.hpp" />
+    <ClInclude Include="src\alvere\graphics\frame_buffer.hpp" />
     <ClInclude Include="src\alvere\graphics\material.hpp" />
     <ClInclude Include="src\alvere\graphics\material_instance.hpp" />
     <ClInclude Include="src\alvere\graphics\mesh.hpp" />
@@ -461,6 +464,7 @@
     <ClInclude Include="src\alvere\utils\shapes.hpp" />
     <ClInclude Include="src\alvere\utils\utilities.hpp" />
     <ClInclude Include="src\alvere\world\world.hpp" />
+    <ClInclude Include="src\graphics_api\opengl\opengl_frame_buffer.hpp" />
     <ClInclude Include="src\graphics_api\opengl\opengl_context.hpp" />
     <ClInclude Include="src\graphics_api\opengl\opengl_buffers.hpp" />
     <ClInclude Include="src\alvere\application\window.hpp" />

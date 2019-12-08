@@ -201,7 +201,7 @@ namespace alvere
 
 		Properties m_properties;
 
-		FrameBuffer * m_frameBuffer;
+		std::unique_ptr<FrameBuffer> m_frameBuffer;
 
 		std::unordered_map<Key, std::pair<KeyData, KeyData>> m_keys;
 

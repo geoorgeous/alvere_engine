@@ -78,18 +78,4 @@ namespace alvere
 	protected:
 		unsigned int m_Count;
 	};
-
-	class FrameBuffer
-	{
-	public:
-		static FrameBuffer * New();
-
-		FrameBuffer() = default;
-		FrameBuffer(const FrameBuffer& frameBuffer) = delete;
-		FrameBuffer& operator=(const FrameBuffer& frameBuffer) = delete;
-		virtual ~FrameBuffer() = default;
-
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
-	};
 }

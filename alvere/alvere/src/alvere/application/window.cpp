@@ -1,5 +1,7 @@
 #include "alvere/application/window.hpp"
 
+#include "alvere/graphics/frame_buffer.hpp"
+
 #define ALV_WINDOW_DEFAULT_TITLE "Alvere Application"
 #define ALV_WINDOW_DEFAULT_SIZE_X 800
 #define ALV_WINDOW_DEFAULT_SIZE_Y 800
@@ -56,5 +58,7 @@ namespace alvere
 		m_events.emplace(typeid(WindowCloseEvent), new WindowCloseEvent);
 		m_events.emplace(typeid(WindowResizeEvent), new WindowResizeEvent);
 		m_events.emplace(typeid(CharInputEvent), new CharInputEvent);
+
+		m_frameBuffer = FrameBuffer::create(m_properties.resWidth, m_properties.resHeight);
 	}
 }
