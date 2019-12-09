@@ -70,6 +70,13 @@ namespace alvere
 		: m_x(x), m_y(y), m_width(width), m_height(height)
 	{ }
 
+	RectI::RectI(Vector2i position, Vector2i size)
+		: m_x(position[0])
+		, m_y(position[1])
+		, m_width(size[0])
+		, m_height(size[1])
+	{ }
+
 	int RectI::getLeft() const
 	{
 		return m_x;
@@ -110,15 +117,6 @@ namespace alvere
 		return alvere::Vector2i{ getRight(), getBottom() };
 	}
 
-	RectI RectI::overlap(RectI a, RectI b)
-	{
-		Vector2i min = Vector2i::max(a.getBottomLeft(), b.getBottomLeft());
-		Vector2i max = Vector2i::min(a.getTopRight(), b.getTopRight());
-		Vector2i size = Vector2i::max({ 0, 0 }, max - min);
-
-		return { min[0], min[1], size[0], size[1] };
-	}
-
 	int RectI::getArea() const
 	{
 		return m_width * m_height;
@@ -128,4 +126,22 @@ namespace alvere
 	{
 		return Rect{ (float)m_x, (float)m_y, (float)m_width, (float)m_height };
 	};
+
+	RectI RectI::overlap(RectI a, RectI b)
+	{
+		Vector2i min = Vector2i::max(a.getBottomLeft(), b.getBottomLeft());
+		Vector2i max = Vector2i::min(a.getTopRight(), b.getTopRight());
+		Vector2i size = Vector2i::max({ 0, 0 }, max - min);
+
+		return { min, size };
+	}
+
+	RectI RectI::pad(RectI rect, alvere::Vector2i amount)
+	{
+		Vector2i min = rect.getBottomLeft() - amount;
+		Vector2i max = rect.getTopRight() + amount;
+		Vector2i size = Vector2i::max({ 0, 0 }, max - min);
+
+		return { min, size };
+	}
 }
