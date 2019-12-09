@@ -14,20 +14,28 @@ struct C_Tilemap : public alvere::PooledComponent<C_Tilemap>
 	std::unique_ptr<TileInstance[]> m_map;
 	std::vector<Tile> m_tiles;
 
+
+
 	C_Tilemap();
 
 	C_Tilemap(alvere::Vector2i size, alvere::Vector2 tileSize = { 1, 1 });
+
+
+	void SetTile(alvere::Vector2i position, Tile * tile);
+	void SetTile_s(alvere::Vector2i position, Tile * tile);
 
 	//These values can be negative
 	void Resize(int left, int right, int top, int bottom);
 
 	void UpdateAllTiles();
+	void UpdateTiles(alvere::RectI area);
+	void UpdateTile(alvere::Vector2i position);
 
-	void UpdateTile(std::size_t x, std::size_t y);
+	TileDirection GetUnmatchingSurroundings(alvere::Vector2i position, bool collides) const;
 
-	TileDirection GetUnmatchingSurroundings(std::size_t x, std::size_t y, bool collides) const;
+	bool TileCollides_s(alvere::Vector2i position) const;
 
-	bool TileCollides_s(std::size_t x, std::size_t y) const;
+	alvere::Vector2i WorldToTilemap(alvere::Vector2 worldPosition) const;
 
 
 	void DemoFill()

@@ -6,8 +6,8 @@
 #include "imgui/imgui.h"
 #include "windows/imgui_window.hpp"
 #include "editor_world.hpp"
-
-class ToolWindow;
+#include "editor/windows/tile_window.hpp"
+#include "editor/windows/tile_properties_window.hpp"
 
 class ImGuiEditor
 {
@@ -28,9 +28,7 @@ class ImGuiEditor
 
 	alvere::Window & m_window;
 
-	std::vector<std::unique_ptr<ImGui_Window>> m_windows;
-
-	ToolWindow * m_toolWindow;
+	std::vector<std::unique_ptr<ImGui_Window>> m_editorWindows;
 
 	std::vector<std::unique_ptr<EditorWorld>> m_openMaps;
 	EditorWorld * m_focusedMap;
@@ -46,6 +44,9 @@ public:
 	void Render();
 
 	EditorWorld * GetFocusedWorld() const;
+
+	template <typename T>
+	T * GetEditorWindow();
 
 private:
 
@@ -78,7 +79,22 @@ T & ImGuiEditor::AddWindow(Args &&... args)
 		window->m_visible = true;
 	}
 
-	m_windows.emplace_back(std::move(window));
+	m_editorWindows.emplace_back(std::move(window));
 
-	return static_cast<T&>(*m_windows.back());
+	return static_cast<T&>(*m_editorWindows.back());
+}
+
+template <typename T>
+T * ImGuiEditor::GetEditorWindow()
+{
+	for (auto & window : m_editorWindows)
+	{
+		T * casted = dynamic_cast<T *>(window.get());
+		if (casted != nullptr)
+		{
+			return casted;
+		}
+	}
+
+	return nullptr;
 }

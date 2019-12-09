@@ -45,7 +45,7 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 	auto tileMappingIter = m_tilePositionMapping.find(position);
 
 	EditorTile * tile = tileMappingIter != m_tilePositionMapping.end()
-		? &m_tiles[tileMappingIter->second]
+		? m_tiles[tileMappingIter->second].get()
 		: nullptr;
 
 	ImGui::SameLine();
@@ -101,7 +101,7 @@ void TileWindow::DrawInvalidTile(alvere::Vector2i position)
 		if (ImGui::Selectable("New Tile"))
 		{
 			m_tilePositionMapping[position] = m_tiles.size();
-			m_tiles.emplace_back();
+			m_tiles.emplace_back(std::make_unique<EditorTile>());
 		}
 
 		ImGui::EndPopup();

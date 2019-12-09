@@ -29,7 +29,8 @@ void ToolWindow::Draw()
 
 	if (ImGui::Button("Draw", m_toolButtonSize))
 	{
-		m_currentTool = std::make_unique<DrawTool>();
+		EditorWorld & currentWorld = *m_editor.GetFocusedWorld();
+		m_currentTool = std::make_unique<DrawTool>(*m_editor.GetEditorWindow<TileWindow>(), m_window, *currentWorld.m_camera, *currentWorld.m_tilemap);
 	}
 
 	ImGui::End();

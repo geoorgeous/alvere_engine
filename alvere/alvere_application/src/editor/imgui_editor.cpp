@@ -18,8 +18,6 @@
 #include "dialogs/open_file_dialog.hpp"
 #include "dialogs/save_file_dialog.hpp"
 #include "editor/imgui_demo_window.hpp"
-#include "editor/windows/tile_window.hpp"
-#include "editor/windows/tile_properties_window.hpp"
 #include "editor/windows/tool_window.hpp"
 #include "editor\tool\pan_tool.hpp"
 #include "editor/utils/path_utils.hpp"
@@ -46,7 +44,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 
 	TileWindow & tileWindow = AddWindow<TileWindow>();
 	AddWindow<TilePropertiesWindow>(tileWindow);
-	m_toolWindow = &AddWindow<ToolWindow>(*this, window);
+	AddWindow<ToolWindow>(*this, window);
 	AddWindow<ImGui_DemoWindow>();
 }
 
@@ -61,7 +59,7 @@ void ImGuiEditor::Update(float deltaTime)
 {
 	//Draw all the auxilliary windows first as using the ImGuiWindowFlags_NoBringToFrontOnFocus flag on the 
 	//main window will put it at the back of the draw order, behind any windows using that flag in this list.
-	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	for (std::unique_ptr<ImGui_Window> & window : m_editorWindows)
 	{
 		if (window->m_visible)
 		{
@@ -92,7 +90,7 @@ void ImGuiEditor::Render()
 
 	//Draw all the auxilliary windows first as using the ImGuiWindowFlags_NoBringToFrontOnFocus flag on the 
 	//main window will put it at the back of the draw order, behind any windows using that flag in this list.
-	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	for (std::unique_ptr<ImGui_Window> & window : m_editorWindows)
 	{
 		if (window->m_visible)
 		{
@@ -255,7 +253,7 @@ void ImGuiEditor::DrawViewMenu()
 	}
 
 	//Draw all the registered windows so they can be hidden/shown by the user
-	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	for (std::unique_ptr<ImGui_Window> & window : m_editorWindows)
 	{
 		if (window->AddToViewMenu() == false)
 		{
