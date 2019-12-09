@@ -20,7 +20,7 @@ public:
 
 	DrawTilesCommand(C_Tilemap & tilemap, alvere::RectI area, Tile * tile)
 		: m_tilemap(tilemap)
-		, m_area(area)
+		, m_area(alvere::RectI::overlap(area, tilemap.GetBounds()))
 		, m_tile(tile)
 		, m_oldTiles(std::make_unique<TileInstance[]>(area.m_width * area.m_height))
 	{
@@ -33,7 +33,7 @@ public:
 			for (int x = 0; x < m_area.m_width; ++x)
 			{
 				int localIndex = x + y * m_area.m_width;
-				int tilemapIndex = (m_area.m_x + x) + (m_area.m_y + y) * m_area.m_width;
+				int tilemapIndex = (m_area.m_x + x) + (m_area.m_y + y) * m_tilemap.m_size[0];
 
 				m_oldTiles[localIndex] = m_tilemap.m_map[tilemapIndex];
 			}
@@ -49,7 +49,7 @@ public:
 			for (int x = 0; x < m_area.m_width; ++x)
 			{
 				int localIndex = x + y * m_area.m_width;
-				int tilemapIndex = (m_area.m_x + x) + (m_area.m_y + y) * m_area.m_width;
+				int tilemapIndex = (m_area.m_x + x) + (m_area.m_y + y) * m_tilemap.m_size[0];
 
 				m_tilemap.m_map[tilemapIndex] = m_oldTiles[localIndex];
 			}
