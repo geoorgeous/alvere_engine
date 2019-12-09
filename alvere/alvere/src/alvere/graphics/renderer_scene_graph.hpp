@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "alvere/assets.hpp"
 #include "alvere/graphics/material_instance.hpp"
 #include "alvere/graphics/mesh.hpp"
 #include "alvere/graphics/renderer_light.hpp"
