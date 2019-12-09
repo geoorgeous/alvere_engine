@@ -55,7 +55,7 @@ public:
 			}
 		}
 
-		m_tilemap.UpdateTiles(m_area);
+		m_tilemap.UpdateTiles(alvere::RectI::pad(m_area, { 1, 1 }));
 	}
 
 	std::string GetDescription() override

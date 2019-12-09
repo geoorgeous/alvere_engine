@@ -126,7 +126,7 @@ void C_Tilemap::SetTile_Unsafe(alvere::Vector2i position, Tile * tile)
 alvere::Vector2i C_Tilemap::WorldToTilemap(alvere::Vector2 worldPosition) const
 {
 	alvere::Vector2 tileSpace = worldPosition / m_tileSize;
-	return { (int) tileSpace.x, (int) tileSpace.y };
+	return { (int) std::floor(tileSpace.x), (int) std::floor(tileSpace.y) };
 }
 
 alvere::Vector2 C_Tilemap::TilemapToWorld(alvere::Vector2i tilemapPosition) const
