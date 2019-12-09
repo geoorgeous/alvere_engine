@@ -3,12 +3,12 @@
 #include <alvere/assets.hpp>
 #include <alvere/math/vectors.hpp>
 
-#include "spritesheet.h"
+#include "spritesheet.hpp"
 
 struct Tile
 {
 	bool m_collides;
-	Spritesheet * m_spritesheet;
+	Spritesheet m_spritesheet;
 };
 
 struct TileInstance

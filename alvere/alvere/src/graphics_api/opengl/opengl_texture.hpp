@@ -13,6 +13,8 @@ namespace alvere::graphics_api::opengl
 
 		Texture(int width, int height, Channels channels = Channels::RGBAlpha);
 
+		Texture(const alvere::Texture & sourceTexture, alvere::RectI sourceRect);
+
 		~Texture();
 
 		void bind() const override;

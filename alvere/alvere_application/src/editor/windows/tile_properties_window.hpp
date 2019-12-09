@@ -21,4 +21,8 @@ public:
 	{
 		return "Tile Properties";
 	}
+
+private:
+
+	void UserSetTileTexture(EditorTile & tile);
 };

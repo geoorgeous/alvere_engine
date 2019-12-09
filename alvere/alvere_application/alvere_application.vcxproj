@@ -161,6 +161,7 @@
     <ClCompile Include="src\dialogs\tiny_file_dialogs.c" />
     <ClCompile Include="src\editor\editor_world.cpp" />
     <ClCompile Include="src\editor\imgui_editor.cpp" />
+    <ClCompile Include="src\editor\utils\path_utils.cpp" />
     <ClCompile Include="src\editor\windows\tile_properties_window.cpp" />
     <ClCompile Include="src\editor\windows\tile_window.cpp" />
     <ClCompile Include="src\editor\tool\pan_tool.cpp" />
@@ -177,8 +178,8 @@
     <ClCompile Include="src\states\editor_state.cpp" />
     <ClCompile Include="src\states\gameplay_state.cpp" />
     <ClCompile Include="src\states\game_state_machine.cpp" />
+    <ClCompile Include="src\tilemap\c_tilemap.cpp" />
     <ClCompile Include="src\tilemap\tilemap_renderer_system.cpp" />
-    <ClCompile Include="src\tilemap\tile_store.cpp" />
     <ClCompile Include="src\tile_drawer.cpp" />
     <ClCompile Include="src\world_cell_area.cpp" />
     <ClCompile Include="src\world_generation.cpp" />
@@ -192,7 +193,9 @@
     <ClInclude Include="src\editor\editor_world.hpp" />
     <ClInclude Include="src\editor\imgui_demo_window.hpp" />
     <ClInclude Include="src\editor\imgui_editor.hpp" />
+    <ClInclude Include="src\editor\tilemap\editor_tile.hpp" />
     <ClInclude Include="src\editor\tool\draw_tool.hpp" />
+    <ClInclude Include="src\editor\utils\path_utils.hpp" />
     <ClInclude Include="src\editor\windows\imgui_window.hpp" />
     <ClInclude Include="src\editor\windows\tile_properties_window.hpp" />
     <ClInclude Include="src\editor\windows\tile_window.hpp" />
@@ -213,11 +216,10 @@
     <ClInclude Include="src\states\gameplay_state.hpp" />
     <ClInclude Include="src\states\game_state.hpp" />
     <ClInclude Include="src\states\game_state_machine.hpp" />
-    <ClInclude Include="src\tilemap\spritesheet.h" />
+    <ClInclude Include="src\tilemap\spritesheet.hpp" />
     <ClInclude Include="src\tilemap\tile.hpp" />
     <ClInclude Include="src\tilemap\c_tilemap.hpp" />
-    <ClInclude Include="src\tilemap\tilemap_renderer_system.h" />
-    <ClInclude Include="src\tilemap\tile_store.hpp" />
+    <ClInclude Include="src\tilemap\tilemap_renderer_system.hpp" />
     <ClInclude Include="src\tile_drawer.hpp" />
     <ClInclude Include="src\world_cell.hpp" />
     <ClInclude Include="src\world_cell_area.hpp" />

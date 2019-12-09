@@ -12,7 +12,7 @@
 #include "gameplay_state.hpp"
 #include "scenes/platformer_scene.hpp"
 #include "states/editor_state.hpp"
-#include "tilemap/tilemap_renderer_system.h"
+#include "tilemap/tilemap_renderer_system.hpp"
 
 GameplayState::GameplayState(alvere::Window & window)
 	: m_window(window), m_toggleEditor(window, alvere::Key::I), m_halfWorldUnitsOnX(32 * 0.5f)

@@ -22,6 +22,7 @@
 #include "editor/windows/tile_properties_window.hpp"
 #include "editor/windows/tool_window.hpp"
 #include "editor\tool\pan_tool.hpp"
+#include "editor/utils/path_utils.hpp"
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	: m_window(window)
@@ -47,15 +48,12 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	AddWindow<TilePropertiesWindow>(tileWindow);
 	m_toolWindow = &AddWindow<ToolWindow>(*this, window);
 	AddWindow<ImGui_DemoWindow>();
-
-	m_openMaps.push_back(EditorWorld::New("Castle", window));
-	m_openMaps.push_back(EditorWorld::New("Not a castle", window));
 }
 
 ImGuiEditor::~ImGuiEditor()
 {
 	ImGui_ImplOpenGL3_Shutdown();
-	//ImGui_ImplGlfw_Shutdown(); //causes several nullrefs as the window is currently destroyed before this is called
+	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 
@@ -112,9 +110,18 @@ void ImGuiEditor::Render()
 		return;
 	}
 
+	m_currentPopup = ModalPopupState::None;
+
 	DrawMenuBar();
 
 	DrawMapTabs();
+
+	if (m_currentPopup != ModalPopupState::None)
+	{
+		OpenPopup(m_currentPopup);
+	}
+
+	DrawResizePopup();
 
 	ImGui::End();
 
@@ -136,7 +143,9 @@ void ImGuiEditor::DrawMapTabs()
 		{
 			bool active = true;
 
-			const char * name = m_openMaps[i]->m_name.c_str();
+			std::string filename;
+			GetFilenameFromPath(m_openMaps[i]->m_name, filename);
+			const char * name = filename.c_str();
 
 			if (ImGui::BeginTabItem(name, &active))
 			{
@@ -170,68 +179,161 @@ void ImGuiEditor::DrawMenuBar()
 		return;
 	}
 
-	if (ImGui::BeginMenu("File"))
-	{
-		if (ImGui::MenuItem("New", NULL, false, true))
-		{
-			alvere::SaveFileDialog newMapDialog("Create New Map", "", { ".map" });
+	DrawFileMenu();
 
-			std::pair<bool, std::string> newMapValue = newMapDialog.Show();
+	DrawEditMenu();
 
-			if (newMapValue.first)
-			{
-				m_openMaps.push_back(EditorWorld::New(newMapValue.second, m_window));
-			}
-		}
-
-		if (ImGui::MenuItem("Open", NULL, false, true))
-		{
-			alvere::OpenFileDialog openFileDialog("Select a map to open", "", { "*.map" }, false);
-			auto result = openFileDialog.Show();
-
-			std::cout << result.first << std::endl;
-			if (result.first)
-				std::cout << result.second[0] << std::endl;
-		}
-
-		ImGui::EndMenu();
-	}
-
-	if (ImGui::BeginMenu("Edit"))
-	{
-		if (ImGui::MenuItem("Copy", NULL, false, false))
-		{
-			std::cout << "Copied stuff" << std::endl;
-		}
-
-		if (ImGui::MenuItem("Paste", NULL, false, false))
-		{
-			std::cout << "Pasted stuff" << std::endl;
-		}
-
-		ImGui::EndMenu();
-	}
-
-	//Show all the main windows so they can be hidden/shown
-	if (ImGui::BeginMenu("View"))
-	{
-		for (std::unique_ptr<ImGui_Window> & window : m_windows)
-		{
-			if (window->AddToViewMenu() == false)
-			{
-				continue;
-			}
-
-			if (ImGui::MenuItem(window->GetName().c_str(), NULL, window->m_visible))
-			{
-				window->m_visible = !window->m_visible;
-			}
-		}
-
-		ImGui::EndMenu();
-	}
+	DrawViewMenu();
 
 	ImGui::EndMenuBar();
+}
+
+void ImGuiEditor::DrawFileMenu()
+{
+	if (ImGui::BeginMenu("File") == false)
+	{
+		return;
+	}
+
+	if (ImGui::MenuItem("New", NULL, false, true))
+	{
+		alvere::SaveFileDialog newMapDialog("Create New Map", "", { "*.map" });
+
+		std::pair<bool, std::string> newMapValue = newMapDialog.Show();
+
+		if (newMapValue.first)
+		{
+			m_openMaps.push_back(EditorWorld::New(newMapValue.second, m_window));
+		}
+	}
+
+	if (ImGui::MenuItem("Open", NULL, false, true))
+	{
+		alvere::OpenFileDialog openFileDialog("Select a map to open", "", { "*.map" }, false);
+		auto result = openFileDialog.Show();
+
+		std::cout << result.first << std::endl;
+		if (result.first)
+			std::cout << result.second[0] << std::endl;
+	}
+
+	ImGui::EndMenu();
+}
+
+void ImGuiEditor::DrawEditMenu()
+{
+	if (ImGui::BeginMenu("Edit") == false)
+	{
+		return;
+	}
+
+	if (ImGui::MenuItem("Copy", NULL, false, false))
+	{
+		std::cout << "Copied stuff" << std::endl;
+	}
+
+	if (ImGui::MenuItem("Paste", NULL, false, false))
+	{
+		std::cout << "Pasted stuff" << std::endl;
+	}
+
+	ImGui::Separator();
+
+	if (ImGui::MenuItem("Resize Tilemap", NULL, false))
+	{
+		m_currentPopup = ModalPopupState::ResizeTilemap;
+	}
+
+	ImGui::EndMenu();
+}
+
+void ImGuiEditor::DrawViewMenu()
+{
+	if (ImGui::BeginMenu("View") == false)
+	{
+		return;
+	}
+
+	//Draw all the registered windows so they can be hidden/shown by the user
+	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	{
+		if (window->AddToViewMenu() == false)
+		{
+			continue;
+		}
+
+		if (ImGui::MenuItem(window->GetName().c_str(), NULL, window->m_visible))
+		{
+			window->m_visible = !window->m_visible;
+		}
+	}
+
+	ImGui::EndMenu();
+}
+
+void ImGuiEditor::OpenPopup(ModalPopupState state)
+{
+	switch (state)
+	{
+		case ModalPopupState::ResizeTilemap:
+			ImGui::OpenPopup("Resize Tilemap");
+			return;
+	}
+}
+
+void ImGuiEditor::DrawPopups()
+{
+	DrawResizePopup();
+}
+
+void ImGuiEditor::DrawResizePopup()
+{
+	static alvere::Vector2i min{ 0, 0 };
+	static alvere::Vector2i max{ 0, 0 };
+
+	EditorWorld * world = GetFocusedWorld();
+	if (world == nullptr)
+	{
+		return;
+	}
+
+	if (ImGui::BeginPopupModal("Resize Tilemap", NULL, ImGuiWindowFlags_AlwaysAutoResize) == false)
+	{
+		min = { 0, 0 };
+		max = { 0, 0 };
+		return;
+	}
+
+	ImGui::Text("Expand or contract the tilemap");
+
+	ImGui::Separator();
+
+	ImGui::InputInt("Left", &min[0]);
+	ImGui::InputInt("Right", &max[0]);
+	ImGui::InputInt("Up", &max[1]);
+	ImGui::InputInt("Down", &min[1]);
+
+	ImGui::Separator();
+
+	if (ImGui::Button("OK", ImVec2(120, 0)))
+	{
+		if (world != nullptr)
+		{
+			world->m_tilemap->Resize(min[0], max[0], max[1], min[1]);
+			world->m_tilemap->UpdateAllTiles();
+		}
+
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Cancel", ImVec2(120, 0)))
+	{
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
 }
 
 
