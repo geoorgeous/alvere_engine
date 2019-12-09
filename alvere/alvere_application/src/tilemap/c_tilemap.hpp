@@ -4,7 +4,7 @@
 
 #include <alvere/world/component/pooled_component.hpp>
 
-#include "tile.hpp"
+#include "tilemap/tile.hpp"
 
 class C_Tilemap : public alvere::PooledComponent<C_Tilemap>
 {
@@ -20,9 +20,6 @@ public:
 
 	C_Tilemap();
 	C_Tilemap(alvere::Vector2i size, alvere::Vector2 tileSize = { 1, 1 });
-
-	void UpdateTiles(alvere::RectI area);
-	void UpdateTile(alvere::Vector2i position);
 
 	void SetTiles(alvere::RectI area, Tile * tile);
 	void SetTile(alvere::Vector2i position, Tile * tile);
@@ -44,4 +41,7 @@ public:
 private:
 
 	void SetTile_Unsafe(alvere::Vector2i position, Tile * tile);
+
+	void UpdateTiles(alvere::RectI area);
+	void UpdateTile(alvere::Vector2i position);
 };

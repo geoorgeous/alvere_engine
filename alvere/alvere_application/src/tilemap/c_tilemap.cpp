@@ -41,6 +41,7 @@ void C_Tilemap::Resize(int left, int right, int top, int bottom)
 
 	m_size = newSize;
 	m_map = std::move(newMap);
+	UpdateTiles(GetBounds());
 }
 
 void C_Tilemap::UpdateTiles(alvere::RectI area)
@@ -100,6 +101,9 @@ void C_Tilemap::SetTiles(alvere::RectI area, Tile * tile)
 			SetTile_Unsafe({ area.m_x + x, area.m_y + y }, tile);
 		}
 	}
+
+	//Bulk update the all tiles effected and their neighbours
+	UpdateTiles(alvere::RectI::pad(area, { 1, 1 }));
 }
 
 void C_Tilemap::SetTile(alvere::Vector2i position, Tile * tile)
@@ -110,14 +114,13 @@ void C_Tilemap::SetTile(alvere::Vector2i position, Tile * tile)
 	}
 
 	SetTile_Unsafe(position, tile);
+	UpdateTiles({ position[0] - 1, position[1] - 1, 3, 3 });
 }
 
 void C_Tilemap::SetTile_Unsafe(alvere::Vector2i position, Tile * tile)
 {
 	TileInstance & tileInstance = m_map[position[0] + position[1] * m_size[0]];
 	tileInstance.m_tile = tile;
-
-	UpdateTiles({ position[0] - 1, position[1] - 1, 3, 3 });
 }
 
 alvere::Vector2i C_Tilemap::WorldToTilemap(alvere::Vector2 worldPosition) const
@@ -166,6 +169,4 @@ void C_Tilemap::DemoFill()
 {
 	SetTiles(GetBounds(), &m_tiles[1]);
 	SetTiles({ 3, 3, m_size[0] - 3, m_size[1] - 3 }, &m_tiles[0]);
-
-	UpdateTiles(GetBounds());
 }

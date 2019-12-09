@@ -311,7 +311,6 @@ void ImGuiEditor::DrawResizePopup()
 		if (world != nullptr)
 		{
 			world->m_tilemap->Resize(min[0], max[0], max[1], min[1]);
-			world->m_tilemap->UpdateTiles(world->m_tilemap->GetBounds());
 		}
 
 		ImGui::CloseCurrentPopup();
