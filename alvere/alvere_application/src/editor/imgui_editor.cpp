@@ -19,6 +19,7 @@
 #include "dialogs/save_file_dialog.hpp"
 #include "editor/imgui_demo_window.hpp"
 #include "editor/windows/tool_window.hpp"
+#include "editor/windows/history_window.hpp"
 #include "editor\tool\pan_tool.hpp"
 #include "editor/utils/path_utils.hpp"
 
@@ -45,6 +46,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	TileWindow & tileWindow = AddWindow<TileWindow>();
 	AddWindow<TilePropertiesWindow>(tileWindow);
 	AddWindow<ToolWindow>(*this, window);
+	AddWindow<HistoryWindow>(window);
 	AddWindow<ImGui_DemoWindow>();
 
 	m_openMaps.push_back(EditorWorld::New("demo", m_window));

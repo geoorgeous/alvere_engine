@@ -12,9 +12,11 @@ namespace alvere
 
 class TileWindow;
 class C_Tilemap;
+class CommandStack;
 
 class DrawTool : public EditorTool
 {
+	CommandStack & m_commandStack;
 	TileWindow & m_tileWindow;
 	alvere::Window & m_window;
 	alvere::Camera & m_camera;
@@ -26,7 +28,7 @@ class DrawTool : public EditorTool
 
 public:
 
-	DrawTool(TileWindow & tileWindow, alvere::Window & window, alvere::Camera & camera, C_Tilemap & tilemap);
+	DrawTool(CommandStack & commandStack, TileWindow & tileWindow, alvere::Window & window, alvere::Camera & camera, C_Tilemap & tilemap);
 
 	void Update(float deltaTime) override;
 

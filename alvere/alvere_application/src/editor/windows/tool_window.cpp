@@ -1,8 +1,8 @@
 #include <alvere/application/window.hpp>
 
-#include "tool_window.hpp"
 #include "editor/imgui_editor.hpp"
-
+#include "editor/windows/tool_window.hpp"
+#include "editor/windows/history_window.hpp"
 #include "editor/tool/pan_tool.hpp"
 #include "editor/tool/draw_tool.hpp"
 
@@ -30,7 +30,8 @@ void ToolWindow::Draw()
 	if (ImGui::Button("Draw", m_toolButtonSize))
 	{
 		EditorWorld & currentWorld = *m_editor.GetFocusedWorld();
-		m_currentTool = std::make_unique<DrawTool>(*m_editor.GetEditorWindow<TileWindow>(), m_window, *currentWorld.m_camera, *currentWorld.m_tilemap);
+		HistoryWindow * historyWindow = m_editor.GetEditorWindow<HistoryWindow>();
+		m_currentTool = std::make_unique<DrawTool>(historyWindow->m_commandStack, *m_editor.GetEditorWindow<TileWindow>(), m_window, *currentWorld.m_camera, *currentWorld.m_tilemap);
 	}
 
 	ImGui::End();

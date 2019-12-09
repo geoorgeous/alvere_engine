@@ -1,13 +1,15 @@
 #pragma once
 
-#include <alvere/application/window.hpp>
-#include <alvere/input/mouse_button.hpp>
-
 #include "imgui/imgui.h"
 #include "windows/imgui_window.hpp"
 #include "editor_world.hpp"
 #include "editor/windows/tile_window.hpp"
 #include "editor/windows/tile_properties_window.hpp"
+
+namespace alvere
+{
+	class Window;
+}
 
 class ImGuiEditor
 {

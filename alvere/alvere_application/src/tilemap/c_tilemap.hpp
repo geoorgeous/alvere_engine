@@ -6,10 +6,8 @@
 
 #include "tilemap/tile.hpp"
 
-class C_Tilemap : public alvere::PooledComponent<C_Tilemap>
+struct C_Tilemap : public alvere::PooledComponent<C_Tilemap>
 {
-public:
-
 	alvere::Vector2i m_size;
 	alvere::Vector2 m_tileSize;
 
@@ -23,6 +21,10 @@ public:
 
 	void SetTiles(alvere::RectI area, Tile * tile);
 	void SetTile(alvere::Vector2i position, Tile * tile);
+	void SetTile_Unsafe(alvere::Vector2i position, Tile * tile);
+
+	void UpdateTiles(alvere::RectI area);
+	void UpdateTile(alvere::Vector2i position);
 
 	void Resize(int left, int right, int top, int bottom); //These values can be negative
 
@@ -37,11 +39,4 @@ public:
 	TileDirection GetUnmatchingSurroundings(alvere::Vector2i position, bool collides) const;
 	bool TileCollides_s(alvere::Vector2i position) const;
 	void DemoFill();
-
-private:
-
-	void SetTile_Unsafe(alvere::Vector2i position, Tile * tile);
-
-	void UpdateTiles(alvere::RectI area);
-	void UpdateTile(alvere::Vector2i position);
 };

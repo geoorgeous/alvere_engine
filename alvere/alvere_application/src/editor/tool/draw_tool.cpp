@@ -4,9 +4,12 @@
 #include "draw_tool.hpp"
 #include "editor/windows/tile_window.hpp"
 #include "tilemap/c_tilemap.hpp"
+#include "editor/command/command_stack.hpp"
+#include "editor/command/draw_tiles_command.h"
 
-DrawTool::DrawTool(TileWindow & tileWindow, alvere::Window & window, alvere::Camera & camera, C_Tilemap & tilemap)
-	: m_tileWindow(tileWindow)
+DrawTool::DrawTool(CommandStack & commandStack, TileWindow & tileWindow, alvere::Window & window, alvere::Camera & camera, C_Tilemap & tilemap)
+	: m_commandStack(commandStack)
+	, m_tileWindow(tileWindow)
 	, m_window(window)
 	, m_camera(camera)
 	, m_tilemap(tilemap)
@@ -20,7 +23,7 @@ void DrawTool::Update(float deltaTime)
 	UpdateDrawSize();
 
 	m_leftMouse.Update();
-	if (m_leftMouse.IsDown())
+	if (m_leftMouse.IsPressed())
 	{
 		UpdateDraw();
 	}
@@ -45,7 +48,13 @@ void DrawTool::UpdateDraw()
 	drawSize = drawSize * 2 + unit;
 
 	alvere::RectI drawRect = { tilePosition, drawSize };
-	m_tilemap.SetTiles(drawRect, &selectedTile->m_tile);
+
+	if (drawRect.intersects(m_tilemap.GetBounds()) == false)
+	{
+		return;
+	}
+
+	m_commandStack.Add(new DrawTilesCommand(m_tilemap, drawRect, &selectedTile->m_tile));
 }
 
 void DrawTool::UpdateDrawSize()
