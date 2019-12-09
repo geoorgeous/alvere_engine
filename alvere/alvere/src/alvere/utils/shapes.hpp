@@ -77,10 +77,10 @@ namespace alvere
 
 		inline bool intersects(const RectI other) const
 		{
-			return !(other.getLeft() > getRight() ||
-				other.getRight() < getLeft() ||
-				other.getTop() < getBottom() ||
-				other.getBottom() > getTop());
+			return !(other.getLeft() >= getRight() ||
+				other.getRight() <= getLeft() ||
+				other.getTop() <= getBottom() ||
+				other.getBottom() >= getTop());
 		}
 
 		explicit operator Rect() const;
