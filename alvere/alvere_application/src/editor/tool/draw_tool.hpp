@@ -22,13 +22,16 @@ class DrawTool : public EditorTool
 
 	alvere::input::MouseButton m_leftMouse;
 
+	int m_drawSize;
+
 public:
 
 	DrawTool(TileWindow & tileWindow, alvere::Window & window, alvere::Camera & camera, C_Tilemap & tilemap);
 
 	void Update(float deltaTime) override;
 
-	void Render() override
-	{
-	}
+private:
+
+	void UpdateDraw();
+	void UpdateDrawSize();
 };

@@ -11,26 +11,52 @@ DrawTool::DrawTool(TileWindow & tileWindow, alvere::Window & window, alvere::Cam
 	, m_camera(camera)
 	, m_tilemap(tilemap)
 	, m_leftMouse(window, alvere::MouseButton::Left)
+	, m_drawSize(0)
 {
 }
 
 void DrawTool::Update(float deltaTime)
 {
+	UpdateDrawSize();
+
 	m_leftMouse.Update();
-
-	if (m_leftMouse.IsDown() == false)
+	if (m_leftMouse.IsDown())
 	{
-		return;
+		UpdateDraw();
 	}
+}
 
+void DrawTool::UpdateDraw()
+{
 	EditorTile * selectedTile = m_tileWindow.GetSelectedTile();
 	if (selectedTile == nullptr)
 	{
 		return;
 	}
+	
+	alvere::Vector2 screenPosition = m_window.getMouse().position;
+	alvere::Vector3 worldPosition = m_camera.screenToWorld(screenPosition, m_window.getWidth(), m_window.getHeight());
+	alvere::Vector2i tilePosition = m_tilemap.WorldToTilemap(worldPosition);
 
-	alvere::Vector2 mouseScreenPosition = m_window.getMouse().position;
-	alvere::Vector3 mouseWorldPosition = m_camera.screenToWorld(mouseScreenPosition, m_window.getWidth(), m_window.getHeight());
-	alvere::Vector2i mouseTilePosition = m_tilemap.WorldToTilemap(mouseWorldPosition);
-	m_tilemap.SetTile(mouseTilePosition, &selectedTile->m_tile);
+	alvere::Vector2i unit{ 1, 1 };
+	alvere::Vector2i drawSize = { m_drawSize, m_drawSize };
+
+	tilePosition -= drawSize;
+	drawSize = drawSize * 2 + unit;
+
+	alvere::RectI drawRect = { tilePosition, drawSize };
+	m_tilemap.SetTiles(drawRect, &selectedTile->m_tile);
+}
+
+void DrawTool::UpdateDrawSize()
+{
+	float scroll = m_window.getMouse().scrollDelta.y;
+	if (scroll > 0)
+	{
+		m_drawSize += 1;
+	}
+	else if (scroll < 0 && m_drawSize > 0)
+	{
+		m_drawSize -= 1;
+	}
 }

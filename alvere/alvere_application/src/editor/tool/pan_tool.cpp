@@ -61,14 +61,15 @@ void PanTool::UpdatePan(EditorWorld & focusedWorld)
 
 void PanTool::UpdateZoom(EditorWorld & focusedWorld)
 {
-	if (m_window.getMouse().scrollDelta.y == 0.0f)
+	float scroll = m_window.getMouse().scrollDelta.y;
+	if (scroll == 0.0f)
 	{
 		return;
 	}
 
 	float aspect = (float) m_window.getProperties().resHeight / m_window.getProperties().resWidth;
 	float currentScale = focusedWorld.m_camera->getOrthographicsScale() / 2.0f;
-	float newScale = currentScale - m_window.getMouse().scrollDelta.y;
+	float newScale = currentScale - scroll;
 
 	newScale = std::max(0.1f, newScale);
 
