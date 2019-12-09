@@ -35,10 +35,7 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const al
 
 	editorWorld->m_tilemap = &world.GetComponent<C_Tilemap>(map);
 	*editorWorld->m_tilemap = C_Tilemap({ 7, 7 });
-	editorWorld->m_tilemap->m_tiles.push_back(Tile{ false, std::move(airSpritesheet) });
-	editorWorld->m_tilemap->m_tiles.push_back(Tile{ true, std::move(wallSpritesheet) });
-
-	editorWorld->m_tilemap->DemoFill();
+	editorWorld->m_tilemap->SetTiles(editorWorld->m_tilemap->GetBounds(), nullptr);
 
 	SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
 	world.AddSystem<CameraSystem>();

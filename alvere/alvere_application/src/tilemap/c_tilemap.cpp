@@ -43,11 +43,6 @@ void C_Tilemap::Resize(int left, int right, int top, int bottom)
 	m_map = std::move(newMap);
 }
 
-void C_Tilemap::UpdateAllTiles()
-{
-	UpdateTiles(alvere::RectI(0, 0, m_size[0], m_size[1]));
-}
-
 void C_Tilemap::UpdateTiles(alvere::RectI area)
 {
 	//Ensure the given area is within the tilemap bounds
@@ -93,6 +88,50 @@ void C_Tilemap::UpdateTile(alvere::Vector2i position)
 	tileInstance.m_spritesheetCoordinate = coordinate;
 }
 
+void C_Tilemap::SetTiles(alvere::RectI area, Tile * tile)
+{
+	//Ensure the given area is within the tilemap bounds
+	area = alvere::RectI::overlap(area, GetBounds());
+
+	for (int y = 0; y < area.m_height; ++y)
+	{
+		for (int x = 0; x < area.m_width; ++x)
+		{
+			SetTile_Unsafe({ area.m_x + x, area.m_y + y }, tile);
+		}
+	}
+}
+
+void C_Tilemap::SetTile(alvere::Vector2i position, Tile * tile)
+{
+	if (position[0] < 0 || position[0] >= m_size[0] || position[1] < 0 || position[1] >= m_size[1])
+	{
+		return;
+	}
+
+	SetTile_Unsafe(position, tile);
+}
+
+void C_Tilemap::SetTile_Unsafe(alvere::Vector2i position, Tile * tile)
+{
+	TileInstance & tileInstance = m_map[position[0] + position[1] * m_size[0]];
+	tileInstance.m_tile = tile;
+
+	UpdateTiles({ position[0] - 1, position[1] - 1, 3, 3 });
+}
+
+alvere::Vector2i C_Tilemap::WorldToTilemap(alvere::Vector2 worldPosition) const
+{
+	alvere::Vector2 tileSpace = worldPosition / m_tileSize;
+	return { (int) tileSpace.x, (int) tileSpace.y };
+}
+
+alvere::Vector2 C_Tilemap::TilemapToWorld(alvere::Vector2i tilemapPosition) const
+{
+	alvere::Vector2 centerPosition = alvere::Vector2(tilemapPosition) + alvere::Vector2{ 0.5f, 0.5f };
+	return centerPosition * m_tileSize;
+}
+
 TileDirection C_Tilemap::GetUnmatchingSurroundings(alvere::Vector2i position, bool collides) const
 {
 	return TileDirection(
@@ -123,26 +162,10 @@ bool C_Tilemap::TileCollides_s(alvere::Vector2i position) const
 	return tile == nullptr ? false : tile->m_collides;
 }
 
-alvere::Vector2i C_Tilemap::WorldToTilemap(alvere::Vector2 worldPosition) const
+void C_Tilemap::DemoFill()
 {
-	alvere::Vector2 tileSpace = worldPosition / m_tileSize;
-	return { (int) tileSpace.x, (int) tileSpace.y };
-}
+	SetTiles(GetBounds(), &m_tiles[1]);
+	SetTiles({ 3, 3, m_size[0] - 3, m_size[1] - 3 }, &m_tiles[0]);
 
-void C_Tilemap::SetTile(alvere::Vector2i position, Tile * tile)
-{
-	TileInstance & tileInstance = m_map[position[0] + position[1] * m_size[0]];
-	tileInstance.m_tile = tile;
-
-	UpdateTiles({ position[0] - 1, position[1] - 1, 3, 3 });
-}
-
-void C_Tilemap::SetTile_s(alvere::Vector2i position, Tile * tile)
-{
-	if (position[0] < 0 || position[0] >= m_size[0] || position[1] < 0 || position[1] >= m_size[1])
-	{
-		return;
-	}
-
-	SetTile(position, tile);
+	UpdateTiles(GetBounds());
 }

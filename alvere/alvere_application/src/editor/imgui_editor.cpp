@@ -46,6 +46,8 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	AddWindow<TilePropertiesWindow>(tileWindow);
 	AddWindow<ToolWindow>(*this, window);
 	AddWindow<ImGui_DemoWindow>();
+
+	m_openMaps.push_back(EditorWorld::New("demo", m_window));
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -318,7 +320,7 @@ void ImGuiEditor::DrawResizePopup()
 		if (world != nullptr)
 		{
 			world->m_tilemap->Resize(min[0], max[0], max[1], min[1]);
-			world->m_tilemap->UpdateAllTiles();
+			world->m_tilemap->UpdateTiles(world->m_tilemap->GetBounds());
 		}
 
 		ImGui::CloseCurrentPopup();

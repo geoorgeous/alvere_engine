@@ -32,5 +32,5 @@ void DrawTool::Update(float deltaTime)
 	alvere::Vector2 mouseScreenPosition = m_window.getMouse().position;
 	alvere::Vector3 mouseWorldPosition = m_camera.screenToWorld(mouseScreenPosition, m_window.getWidth(), m_window.getHeight());
 	alvere::Vector2i mouseTilePosition = m_tilemap.WorldToTilemap(mouseWorldPosition);
-	m_tilemap.SetTile_s(mouseTilePosition, &selectedTile->m_tile);
+	m_tilemap.SetTile(mouseTilePosition, &selectedTile->m_tile);
 }
