@@ -360,7 +360,6 @@
     <ClInclude Include="dependencies\include\luaplus\tilde\SendMessageBuffer.h" />
     <ClInclude Include="src\alvere\alvere.hpp" />
     <ClInclude Include="src\alvere\application\application.hpp" />
-    <ClInclude Include="src\alvere\assets.hpp" />
     <ClInclude Include="src\alvere\entry.hpp" />
     <ClInclude Include="src\alvere\events\event_handler.hpp" />
     <ClInclude Include="src\alvere\graphics\buffers.hpp" />

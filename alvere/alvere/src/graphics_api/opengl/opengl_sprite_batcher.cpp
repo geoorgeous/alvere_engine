@@ -1,6 +1,7 @@
+#include <memory>
+
 #include <glad/glad.h>
 
-#include "alvere/assets.hpp"
 #include "alvere/utils/file_reader.hpp"
 #include "graphics_api/opengl/opengl_errors.hpp"
 #include "graphics_api/opengl/opengl_sprite_batcher.hpp"
@@ -20,9 +21,9 @@ namespace alvere::graphics_api::opengl
 
 	unsigned int SpriteBatcher::s_Indices[ALV_MAX_SPRITEBATCH_SPRITES * 6];
 
-	Asset<Shader> SpriteBatcher::s_vertexShader;
-	Asset<Shader> SpriteBatcher::s_fragmentShader;
-	Asset<ShaderProgram> SpriteBatcher::s_shaderProgram;
+	std::unique_ptr<Shader> SpriteBatcher::s_vertexShader;
+	std::unique_ptr<Shader> SpriteBatcher::s_fragmentShader;
+	std::unique_ptr<ShaderProgram> SpriteBatcher::s_shaderProgram;
 
 	SpriteBatcher::SpriteBatcher()
 		: m_VPtr(m_VertexData), m_TexturesCount(0)
@@ -209,8 +210,8 @@ namespace alvere::graphics_api::opengl
 			)");
 
 		s_shaderProgram = std::make_unique<ShaderProgram>();
-		s_shaderProgram->SetShader(AssetRef<Shader>(s_vertexShader.get()));
-		s_shaderProgram->SetShader(AssetRef<Shader>(s_fragmentShader.get()));
+		s_shaderProgram->SetShader(s_vertexShader.get());
+		s_shaderProgram->SetShader(s_fragmentShader.get());
 		s_shaderProgram->build();
 
 		s_shaderProgram->bind();
@@ -224,7 +225,7 @@ namespace alvere::graphics_api::opengl
 	}
 }
 
-alvere::Asset<alvere::SpriteBatcher> alvere::SpriteBatcher::New()
+std::unique_ptr<alvere::SpriteBatcher> alvere::SpriteBatcher::New()
 {
-	return alvere::Asset<alvere::graphics_api::opengl::SpriteBatcher>(new alvere::graphics_api::opengl::SpriteBatcher());
+	return std::make_unique<alvere::graphics_api::opengl::SpriteBatcher>();
 }

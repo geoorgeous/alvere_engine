@@ -7,6 +7,6 @@
 namespace alvere
 {
 #ifdef ALV_GRAPHICS_API_OPENGL
-	Asset<RendererAPI> RendererAPI::s_Instance = Asset<graphics_api::opengl::RendererAPI>(new graphics_api::opengl::RendererAPI);
+	std::unique_ptr<RendererAPI> RendererAPI::s_Instance = std::make_unique<graphics_api::opengl::RendererAPI>();
 #endif
 }

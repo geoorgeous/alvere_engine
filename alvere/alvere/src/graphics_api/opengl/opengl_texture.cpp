@@ -113,19 +113,19 @@ namespace alvere::graphics_api::opengl
 	}
 }
 
-alvere::Asset<alvere::Texture> alvere::Texture::New(const char * filename, Channels channels)
+std::unique_ptr<alvere::Texture> alvere::Texture::New(const char * filename, Channels channels)
 {
-	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(filename, channels));
+	return std::make_unique<graphics_api::opengl::Texture>(filename, channels);
 }
 
-alvere::Asset<alvere::Texture> alvere::Texture::New(const unsigned char * data, int width, int height, Channels channels)
+std::unique_ptr<alvere::Texture> alvere::Texture::New(const unsigned char * data, int width, int height, Channels channels)
 {
-	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(data, width, height, channels));
+	return std::make_unique<graphics_api::opengl::Texture>(data, width, height, channels);
 }
 
-alvere::Asset<alvere::Texture> alvere::Texture::New(int width, int height, Channels channels)
+std::unique_ptr<alvere::Texture> alvere::Texture::New(int width, int height, Channels channels)
 {
-	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(width, height, channels));
+	return std::make_unique<graphics_api::opengl::Texture>(width, height, channels);
 }
 
 alvere::Texture * alvere::Texture::loadFromFile(const std::string & filepath)
@@ -133,7 +133,7 @@ alvere::Texture * alvere::Texture::loadFromFile(const std::string & filepath)
 	return new graphics_api::opengl::Texture(filepath.c_str());
 }
 
-alvere::Asset<alvere::Texture> alvere::Texture::New(const alvere::Texture & sourceTexture, alvere::RectI sourceRect)
+std::unique_ptr<alvere::Texture> alvere::Texture::New(const alvere::Texture & sourceTexture, alvere::RectI sourceRect)
 {
-	return alvere::Asset<alvere::Texture>(std::make_unique<graphics_api::opengl::Texture>(sourceTexture, sourceRect));
+	return std::make_unique<graphics_api::opengl::Texture>(sourceTexture, sourceRect);
 }

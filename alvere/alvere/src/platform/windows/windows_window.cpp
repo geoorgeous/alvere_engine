@@ -273,7 +273,7 @@ namespace alvere::platform::windows
 	}
 }
 
-alvere::Asset<alvere::Window> alvere::Window::New(const alvere::Window::Properties& properties)
+std::unique_ptr<alvere::Window> alvere::Window::New(const alvere::Window::Properties& properties)
 {
-	return alvere::Asset<alvere::platform::windows::Window>(new alvere::platform::windows::Window(properties));
+	return std::make_unique<alvere::platform::windows::Window>(properties);
 }

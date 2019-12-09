@@ -1,10 +1,10 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
-#include "alvere/assets.hpp"
 #include "alvere/utils/shapes.hpp"
 #include "alvere/math/vectors.hpp"
 
@@ -53,7 +53,7 @@ namespace alvere
 					return m_glyphHeightPixels;
 				}
 
-				inline AssetRef<Texture> getTexture() const
+				inline Texture * getTexture() const
 				{
 					return m_bitmapTexture.get();
 				}
@@ -76,7 +76,7 @@ namespace alvere
 
 				unsigned int m_glyphHeightPixels;
 
-				Asset<Texture> m_bitmapTexture;
+				std::unique_ptr<Texture> m_bitmapTexture;
 
 				std::map<unsigned long, Glyph> m_glyphs;
 

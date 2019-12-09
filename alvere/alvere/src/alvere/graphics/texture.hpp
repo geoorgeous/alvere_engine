@@ -1,8 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
-#include "alvere/assets.hpp"
 #include "alvere/math/vectors.hpp"
 #include "alvere/utils/shapes.hpp"
 
@@ -19,13 +19,13 @@ namespace alvere
 			RGBAlpha = 4
 		};
 
-		static Asset<Texture> New(const char * filename, Channels channels = Channels::RGBAlpha);
+		static std::unique_ptr<Texture> New(const char * filename, Channels channels = Channels::RGBAlpha);
 
-		static Asset<Texture> New(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
+		static std::unique_ptr<Texture> New(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
 
-		static Asset<Texture> New(int width, int height, Channels channels = Channels::RGBAlpha);
+		static std::unique_ptr<Texture> New(int width, int height, Channels channels = Channels::RGBAlpha);
 
-		static Asset<Texture> New(const Texture & sourceTexture, alvere::RectI sourceRect);
+		static std::unique_ptr<Texture> New(const Texture & sourceTexture, alvere::RectI sourceRect);
 
 		static Texture * loadFromFile(const std::string & filepath);
 

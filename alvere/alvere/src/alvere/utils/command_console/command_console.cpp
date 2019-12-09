@@ -35,12 +35,12 @@ namespace alvere::console
 		bool _initialised = false;
 		bool _shown = false;
 
-		Asset<ShaderProgram> _shaderProgram;
+		std::unique_ptr<ShaderProgram> _shaderProgram;
 		VertexBuffer * _vbo;
 		graphics_api::opengl::VertexArray * _vao;
 		Matrix4 _projection;
 
-		Asset<SpriteBatcher> _spriteBatcher;
+		std::unique_ptr<SpriteBatcher> _spriteBatcher;
 		Font _font;
 		unsigned int _fontSize = 14;
 		unsigned int _maxOutputLineCountShrunk = 14;
@@ -285,7 +285,7 @@ namespace alvere::console
 					return "Test command!";
 				}));*/
 
-			Asset<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core
+			std::unique_ptr<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core
 					uniform mat4 u_projectionMatrix;
 
 					layout(location = 0) in vec3 a_position;
@@ -296,7 +296,7 @@ namespace alvere::console
 					}
 				)");
 
-			Asset<Shader> fShader = Shader::New(Shader::Type::Fragment, R"(#version 330 core
+			std::unique_ptr<Shader> fShader = Shader::New(Shader::Type::Fragment, R"(#version 330 core
 					uniform vec3 u_colour;
 					uniform int u_lineHeight;
 					uniform int u_outputLineCount;
@@ -318,8 +318,8 @@ namespace alvere::console
 				)");
 
 			_shaderProgram = ShaderProgram::New();
-			_shaderProgram->SetShader(AssetRef<Shader>(vShader.get()));
-			_shaderProgram->SetShader(AssetRef<Shader>(fShader.get()));
+			_shaderProgram->SetShader(vShader.get());
+			_shaderProgram->SetShader(fShader.get());
 			_shaderProgram->build();
 
 			_window = window;

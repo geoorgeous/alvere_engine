@@ -41,31 +41,31 @@ namespace alvere
 		{
 		public:
 
-			inline const AssetRef<Mesh> getMesh() const
+			inline const Mesh * getMesh() const
 			{
 				return mesh;
 			}
 
-			inline const AssetRef<MaterialInstance> getMaterial() const
+			inline const MaterialInstance * getMaterial() const
 			{
 				return material;
 			}
 
-			inline void setMesh(AssetRef<Mesh> mesh)
+			inline void setMesh(Mesh * mesh)
 			{
 				mesh = mesh;
 			}
 
-			inline void setMaterial(AssetRef<MaterialInstance> material)
+			inline void setMaterial(MaterialInstance * material)
 			{
 				material = material;
 			}
 
 		private:
 
-			AssetRef<Mesh> mesh;
+			Mesh * mesh;
 
-			AssetRef<MaterialInstance> material;
+			MaterialInstance * material;
 
 			inline bool isEqual(const Node & other) const override
 			{

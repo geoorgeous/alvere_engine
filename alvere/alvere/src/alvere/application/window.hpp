@@ -1,11 +1,11 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
 
-#include "alvere/assets.hpp"
 #include "alvere/graphics/frame_buffer.hpp"
 #include "alvere/graphics/rendering_context.hpp"
 #include "alvere/events/application_events.hpp"
@@ -163,7 +163,7 @@ namespace alvere
 			Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight, unsigned int resWidth, unsigned int resHeight);
 		};
 
-		static Asset<Window> New(const Properties & properties = Window::Properties::s_default);
+		static std::unique_ptr<Window> New(const Properties & properties = Window::Properties::s_default);
 
 		virtual ~Window() = 0;
 

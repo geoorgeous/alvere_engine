@@ -557,9 +557,6 @@
     <ClInclude Include="src\alvere\utils\utilities.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\alvere\assets.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>

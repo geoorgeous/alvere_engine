@@ -41,7 +41,7 @@ void TilePropertiesWindow::Draw()
 		UserSetTileTexture(*editorTile);
 	}
 
-	alvere::Asset<alvere::Texture> & texture = editorTile->m_tile.m_spritesheet.m_texture;
+	std::unique_ptr<alvere::Texture> & texture = editorTile->m_tile.m_spritesheet.m_texture;
 	if (texture && ImGui::IsItemHovered())
 	{
 		ImGui::BeginTooltip();
@@ -68,6 +68,6 @@ void TilePropertiesWindow::UserSetTileTexture(EditorTile & tile)
 
 	tile.m_texturePath = output.second[0];
 
-	alvere::Asset<alvere::Texture> texture = alvere::Texture::New(output.second[0].c_str());
+	std::unique_ptr<alvere::Texture> texture = alvere::Texture::New(output.second[0].c_str());
 	tile.m_tile.m_spritesheet = { std::move(texture), { 24, 24 } };
 }

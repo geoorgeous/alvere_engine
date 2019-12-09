@@ -1,8 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
-#include "alvere/assets.hpp"
 #include "alvere/graphics/sprite.hpp"
 #include "alvere/graphics/text/font.hpp"
 #include "alvere/graphics/texture.hpp"
@@ -26,7 +26,7 @@ namespace alvere
 			Texture
 		};
 
-		static Asset<SpriteBatcher> New();
+		static std::unique_ptr<SpriteBatcher> New();
 		
 		virtual ~SpriteBatcher() = default;
 

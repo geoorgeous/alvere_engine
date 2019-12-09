@@ -1,8 +1,7 @@
 #pragma once
 
+#include <memory>
 #include <string>
-
-#include "alvere/assets.hpp"
 
 namespace alvere
 {
@@ -30,7 +29,7 @@ namespace alvere
 			Sampler2D
 		};
 
-		static Asset<Shader> New(Shader::Type type, const std::string& source);
+		static std::unique_ptr<Shader> New(Shader::Type type, const std::string& source);
 
 		static unsigned int GetDataTypeSize(Shader::DataType dataType);
 
@@ -46,7 +45,7 @@ namespace alvere
 
 		void SetSource(const std::string& source);
 
-		virtual bool Compile() = 0;
+		virtual bool Compile() const = 0;
 
 	protected:
 
@@ -56,7 +55,7 @@ namespace alvere
 
 		std::string m_Source;
 
-		bool m_IsCompiled;
+		mutable bool m_IsCompiled;
 
 		Shader(Shader::Type type, const std::string& source);
 	};

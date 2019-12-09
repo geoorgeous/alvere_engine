@@ -120,7 +120,7 @@ namespace alvere::graphics_api::opengl
 	}
 }
 
-alvere::Asset<alvere::ShaderProgram> alvere::ShaderProgram::New()
+std::unique_ptr<alvere::ShaderProgram> alvere::ShaderProgram::New()
 {
-	return alvere::Asset<ShaderProgram>(new alvere::graphics_api::opengl::ShaderProgram());
+	return std::make_unique<alvere::graphics_api::opengl::ShaderProgram>();
 }

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "alvere/assets.hpp"
+#include <memory>
+
 #include "alvere/graphics/sprite_batcher.hpp"
 #include "alvere/graphics/buffers.hpp"
 
@@ -18,9 +19,9 @@ namespace alvere::graphics_api::opengl
 	protected:
 		static BufferLayout s_vertexDataLayout;
 		static unsigned int s_Indices[];
-		static Asset<Shader> s_vertexShader;
-		static Asset<Shader> s_fragmentShader;
-		static Asset<ShaderProgram> s_shaderProgram;
+		static std::unique_ptr<Shader> s_vertexShader;
+		static std::unique_ptr<Shader> s_fragmentShader;
+		static std::unique_ptr<ShaderProgram> s_shaderProgram;
 
 		float m_VertexData[ALV_MAX_SPRITEBATCH_SPRITES * (3 + 2 + 4 + 1) * sizeof(float)], *m_VPtr;
 		const Texture * * m_Textures;
