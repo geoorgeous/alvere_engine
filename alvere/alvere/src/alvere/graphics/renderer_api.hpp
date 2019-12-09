@@ -10,8 +10,10 @@ namespace alvere
 	public:
 		static Asset<RendererAPI> s_Instance;
 
-		virtual void SetClearColour(const alvere::Vector4& colour) = 0;
+		virtual void setClearColour(const alvere::Vector4& colour) = 0;
 
-		virtual void Clear() = 0;
+		virtual void clear() = 0;
+
+		virtual void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) = 0;
 	};
 }

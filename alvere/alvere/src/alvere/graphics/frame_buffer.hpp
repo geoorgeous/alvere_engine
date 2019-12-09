@@ -15,9 +15,7 @@ namespace alvere
 
 		virtual ~FrameBuffer();
 
-		virtual void setWidth(unsigned int newWidth) = 0;
-
-		virtual void setHeight(unsigned int newHeight) = 0;
+		virtual void resize(unsigned int width, unsigned int height) = 0;
 
 		virtual void bind() const = 0;
 

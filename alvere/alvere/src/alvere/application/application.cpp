@@ -30,7 +30,6 @@ namespace alvere
 		m_windowCloseEventHandler.setFunction([&]() {
 			m_running = false;
 		});
-
 		*m_window->getEvent<WindowCloseEvent>() += m_windowCloseEventHandler;
 
 		console::gui::init(m_window.get());
@@ -44,7 +43,7 @@ namespace alvere
 
 	void Application::run()
 	{
-		render_commands::SetClearColour({0.1f, 0.1f, 0.1f, 1.0f});
+		render_commands::setClearColour({0.1f, 0.1f, 0.1f, 1.0f});
 
 		float timeStepNanoseconds = 1000000000.f / m_targetFrameRate;
 		float timeStepSeconds = 1.0f / m_targetFrameRate;
@@ -87,9 +86,11 @@ namespace alvere
 					update(timeStepSeconds);
 				}
 
-				m_window->getRenderingContext().bindFrameBuffer();
+				m_window->getRenderingContext().frameBuffer()->bind();
 
-				render_commands::Clear();
+				render_commands::setViewport(0, 0, m_window->getRenderingContext().frameBuffer()->getWidth(), m_window->getRenderingContext().frameBuffer()->getHeight());
+
+				render_commands::clear();
 
 				render();
 

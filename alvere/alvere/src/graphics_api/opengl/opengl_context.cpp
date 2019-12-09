@@ -23,7 +23,7 @@ namespace alvere::graphics_api::opengl
 		glDeleteBuffers(1, &m_screenQuadVBOHandle);
 	}
 
-	void RenderingContext::init()
+	void RenderingContext::init(unsigned int width, unsigned int height)
 	{
 		glfwMakeContextCurrent(m_windowHandle);
 
@@ -32,7 +32,7 @@ namespace alvere::graphics_api::opengl
 
 		s_GLADInitialised = true;
 
-		m_frameBuffer = FrameBuffer::create(1024, 768);
+		m_frameBuffer = FrameBuffer::create(width, height);
 
 		LogInfo("Successfully initialised OpenGL context:\n\tOpenGL %s\n\tGLSL %s\n\tDevice: %s\n",
 			(const char *)glGetString(GL_VERSION),
@@ -96,11 +96,6 @@ namespace alvere::graphics_api::opengl
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
 	}
 
-	void RenderingContext::bindFrameBuffer()
-	{
-		m_frameBuffer->bind();
-	}
-
 	void RenderingContext::swapBuffers()
 	{
 		m_frameBuffer->unbind(); // unbinding custom framebuffer/binding the default frame buffer
@@ -116,12 +111,11 @@ namespace alvere::graphics_api::opengl
 		m_screenQuadShaderProgram->bind();
 
 		// send framebuffer texture to shader
+		glActiveTexture(0);
 		m_frameBuffer->getTexture().bind();
 
 		// bind the vao with the screen quad
 		glBindVertexArray(m_screenQuadVAOHandle);
-		
-		// draw the screen quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 

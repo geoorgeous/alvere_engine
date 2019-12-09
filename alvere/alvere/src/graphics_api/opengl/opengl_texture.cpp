@@ -46,26 +46,51 @@ namespace alvere::graphics_api::opengl
 		return (void *)m_Handle;
 	}
 
-	void Texture::init()
+	void Texture::resize(unsigned int width, unsigned int height)
 	{
-		GLenum format = GL_RGBA;
+		unsigned char * newPixelData = (unsigned char *)std::calloc(width * height, m_channelCount);
 
-		switch (m_channelCount)
+		int copyWidth = width > m_resWidth ? m_resWidth : width;
+
+		for(int y = 0; y < height && y < m_resHeight; ++y)
 		{
-			case 1: format = GL_RED; break;
-			case 2: format = GL_RG; break;
-			case 3: format = GL_RGB; break;
-			case 4: format = GL_RGBA; break;
+			unsigned int start = y * m_resWidth;
+
+			std::copy(
+				m_pixelData + start * m_channelCount,
+				m_pixelData + (start + copyWidth) * m_channelCount,
+				newPixelData + (y * width) * m_channelCount);
 		}
 
-		GLenum internalFormat = GL_RGBA8;
+		std::free(m_pixelData);
+
+		m_resWidth = width;
+		m_resHeight = height;
+		m_pixelData = newPixelData;
+
+		glBindTexture(GL_TEXTURE_2D, m_Handle);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_resWidth, m_resHeight, 0, m_format, GL_UNSIGNED_BYTE, m_pixelData));
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void Texture::init()
+	{
+		switch (m_channelCount)
+		{
+			case 1: m_format = GL_RED; break;
+			case 2: m_format = GL_RG; break;
+			case 3: m_format = GL_RGB; break;
+			case 4: m_format = GL_RGBA; break;
+		}
 
 		switch (m_channelCount)
 		{
-			case 1: internalFormat = GL_R8; break;
-			case 2: internalFormat = GL_RG8; break;
-			case 3: internalFormat = GL_RGB8; break;
-			case 4: internalFormat = GL_RGBA8; break;
+			case 1: m_internalFormat = GL_R8; break;
+			case 2: m_internalFormat = GL_RG8; break;
+			case 3: m_internalFormat = GL_RGB8; break;
+			case 4: m_internalFormat = GL_RGBA8; break;
 		}
 
 		glGenTextures(1, &m_Handle);
@@ -74,7 +99,7 @@ namespace alvere::graphics_api::opengl
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_resWidth, m_resHeight, 0, format, GL_UNSIGNED_BYTE, m_pixelData));
+		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_resWidth, m_resHeight, 0, m_format, GL_UNSIGNED_BYTE, m_pixelData));
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

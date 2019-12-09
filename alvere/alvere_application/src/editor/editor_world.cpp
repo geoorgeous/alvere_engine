@@ -20,9 +20,8 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const al
 	World & world = editorWorld->m_world;
 
 	float worldUnitsOnX = 32;
-
 	float halfWorldUnitsOnX = 0.5f * worldUnitsOnX;
-	float screenRatio = (float) window.getHeight() / (float) window.getWidth();
+	float screenRatio = (float) window.getProperties().resHeight / (float) window.getProperties().resWidth;
 
 	EntityHandle cameraEntity = world.SpawnEntity<C_Transform, C_Camera>();
 	editorWorld->m_camera = &world.GetComponent<C_Camera>(cameraEntity);

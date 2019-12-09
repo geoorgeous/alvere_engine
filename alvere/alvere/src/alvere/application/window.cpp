@@ -1,6 +1,7 @@
 #include "alvere/application/window.hpp"
 
 #include "alvere/graphics/frame_buffer.hpp"
+#include "alvere/graphics/render_commands.hpp"
 
 #define ALV_WINDOW_DEFAULT_TITLE "Alvere Application"
 #define ALV_WINDOW_DEFAULT_SIZE_X 800
@@ -30,7 +31,7 @@ namespace alvere
 	{ }
 
 	Window::Properties::Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight)
-		: Properties(title, sizeWidth, sizeHeight, s_default.resWidth, s_default.resHeight)
+		: Properties(title, sizeWidth, sizeHeight, sizeWidth, sizeHeight)
 	{ }
 
 	Window::Properties::Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight, unsigned int resWidth, unsigned int resHeight)
@@ -41,6 +42,7 @@ namespace alvere
 
 	void Window::swapBuffers()
 	{
+		render_commands::setViewport(0, 0, getWidth(), getHeight());
 		m_renderingContext->swapBuffers();
 	}
 

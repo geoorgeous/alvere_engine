@@ -21,9 +21,15 @@ namespace alvere::graphics_api::opengl
 
 		void * getHandle() const override;
 
+		void resize(unsigned int width, unsigned int height) override;
+
 	private:
 
 		unsigned int m_Handle;
+
+		unsigned int m_internalFormat;
+			
+		unsigned int m_format;
 
 		void init();
 	};

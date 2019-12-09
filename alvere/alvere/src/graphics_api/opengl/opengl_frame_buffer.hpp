@@ -18,9 +18,7 @@ namespace alvere::graphics_api::opengl
 
 		FrameBuffer& operator=(const FrameBuffer& frameBuffer);
 
-		void setWidth(unsigned int newWidth) override;
-
-		void setHeight(unsigned int newHeight) override;
+		void resize(unsigned int width, unsigned int height) override;
 
 		void bind() const override;
 
@@ -29,7 +27,9 @@ namespace alvere::graphics_api::opengl
 	private:
 
 		unsigned int m_handle;
-		unsigned int m_textureHandle;
 		unsigned int m_depthStencilBufferHandle;
+		mutable bool m_sizeDirty;
+
+		void init(unsigned int width, unsigned int height);
 	};
 }

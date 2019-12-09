@@ -175,6 +175,11 @@ namespace alvere
 
 		void swapBuffers();
 
+		inline const Properties & getProperties() const
+		{
+			return m_properties;
+		}
+
 		inline unsigned int getWidth() const
 		{
 			return m_properties.sizeWidth;

@@ -15,17 +15,17 @@
 #include "tilemap/tilemap_renderer_system.h"
 
 GameplayState::GameplayState(alvere::Window & window)
-	: m_window(window)
-	, m_toggleEditor(window, alvere::Key::I)
+	: m_window(window), m_toggleEditor(window, alvere::Key::I), m_halfWorldUnitsOnX(32 * 0.5f)
+
 {
 	alvere::RunTests();
 
-
-	float screenRatio = (float) window.getWidth() / (float) window.getHeight();
+	//float screenRatio = (float)window.getHeight() / window.getWidth();
+	float screenRatio = (float)window.getProperties().resHeight / window.getProperties().resWidth;
 
 	alvere::EntityHandle cameraEntity = m_world.SpawnEntity<alvere::C_Transform, alvere::C_Camera>();
 	m_sceneCamera = &m_world.GetComponent<alvere::C_Camera>(cameraEntity);
-	m_sceneCamera->setOrthographic(-12 * screenRatio, 12 * screenRatio, 12, -12, -1.0f, 1.0f);
+	m_sceneCamera->setOrthographic(-m_halfWorldUnitsOnX, m_halfWorldUnitsOnX, m_halfWorldUnitsOnX * screenRatio, -m_halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
 	m_uiCamera.setOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
 
 	alvere::SceneSystem * sceneSystem = m_world.AddSystem<alvere::SceneSystem>(m_world);
@@ -35,6 +35,18 @@ GameplayState::GameplayState(alvere::Window & window)
 
 	PlatformerScene platformerScene(m_world);
 	alvere::Scene & platformer = sceneSystem->LoadScene(platformerScene);
+
+	m_windowResizeEventHandler.setFunction([&](unsigned int width, unsigned int height)
+	{
+		float screenRatio = (float)m_window.getProperties().resHeight / m_window.getProperties().resWidth;
+		m_sceneCamera->setOrthographic(-m_halfWorldUnitsOnX, m_halfWorldUnitsOnX, m_halfWorldUnitsOnX * screenRatio, -m_halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
+	});
+	*m_window.getEvent<alvere::WindowResizeEvent>() += m_windowResizeEventHandler;
+}
+
+GameplayState::~GameplayState()
+{
+	*m_window.getEvent<alvere::WindowResizeEvent>() -= m_windowResizeEventHandler;
 }
 
 GameState * GameplayState::Update(float deltaTime)

@@ -18,17 +18,13 @@ namespace alvere::graphics_api::opengl
 
 		~RenderingContext();
 
-		void init() override;
-
-		void bindFrameBuffer() override;
+		void init(unsigned int width, unsigned int height) override;
 
 		void swapBuffers() override;
 
 	private:
 
 		GLFWwindow * m_windowHandle;
-
-		std::unique_ptr<FrameBuffer> m_frameBuffer;
 
 		std::unique_ptr<ShaderProgram> m_screenQuadShaderProgram;
 
