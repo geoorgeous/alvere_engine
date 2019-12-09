@@ -2,7 +2,7 @@
 
 #include <alvere\input\mouse_button.hpp>
 
-#include "editor_tool.hpp"
+#include "editor/tool/editor_tool.hpp"
 
 namespace alvere
 {
@@ -10,6 +10,7 @@ namespace alvere
 }
 
 class ImGuiEditor;
+class EditorWorld;
 
 class PanTool : public EditorTool
 {
@@ -25,5 +26,8 @@ public:
 
 	void Update(float deltaTime) override;
 
-	void Render() override;
+private:
+
+	void UpdatePan(EditorWorld & focusedWorld);
+	void UpdateZoom(EditorWorld & focusedWorld);
 };

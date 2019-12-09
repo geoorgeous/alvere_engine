@@ -1,11 +1,14 @@
+#include <algorithm>
+
 #include <alvere\application\window.hpp>
 #include <alvere/math/matrix/transformations.hpp>
 #include <alvere\world\archetype\archetype_query.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
 #include <alvere\world\component\components\c_camera.hpp>
 
-#include "pan_tool.hpp"
+#include "editor/tool/pan_tool.hpp"
 #include "editor/imgui_editor.hpp"
+#include "editor/editor_world.hpp"
 
 PanTool::PanTool(ImGuiEditor & editor, alvere::Window & window)
 	: m_editor(editor)
@@ -19,17 +22,27 @@ void PanTool::Update(float deltaTime)
 	m_leftMouse.Update();
 
 	EditorWorld * focusedWorld = m_editor.GetFocusedWorld();
-	if (m_leftMouse.IsDown() == false || focusedWorld == nullptr)
+	if (focusedWorld == nullptr)
 	{
 		return;
 	}
 
+	UpdateZoom(*focusedWorld);
+
+	if (m_leftMouse.IsDown())
+	{
+		UpdatePan(*focusedWorld);
+	}
+}
+
+void PanTool::UpdatePan(EditorWorld & focusedWorld)
+{
 	alvere::Archetype::Query cameraQuery;
 	cameraQuery.Include<alvere::C_Transform>();
 	cameraQuery.Include<alvere::C_Camera>();
 
 	std::vector<std::reference_wrapper<alvere::Archetype>> cameras;
-	focusedWorld->m_world.QueryArchetypes(cameraQuery, cameras);
+	focusedWorld.m_world.QueryArchetypes(cameraQuery, cameras);
 	alvere::C_Transform & cameraTransform = *cameras[0].get().GetProvider<alvere::C_Transform>().begin();
 	alvere::C_Camera & camera = *cameras[0].get().GetProvider<alvere::C_Camera>().begin();
 
@@ -46,6 +59,18 @@ void PanTool::Update(float deltaTime)
 	m_mousePosition = newMousePos;
 }
 
-void PanTool::Render()
+void PanTool::UpdateZoom(EditorWorld & focusedWorld)
 {
+	if (m_window.getMouse().scrollDelta.y == 0.0f)
+	{
+		return;
+	}
+
+	float aspect = (float) m_window.getProperties().resHeight / m_window.getProperties().resWidth;
+	float currentScale = focusedWorld.m_camera->getOrthographicsScale() / 2.0f;
+	float newScale = currentScale - m_window.getMouse().scrollDelta.y;
+
+	newScale = std::max(0.1f, newScale);
+
+	focusedWorld.m_camera->setOrthographic(-newScale, newScale, newScale * aspect, -newScale * aspect, -1.0f, 1.0f);
 }

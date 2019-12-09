@@ -74,15 +74,6 @@ void ImGuiEditor::Update(float deltaTime)
 		return;
 	}
 
-	if (m_window.getMouse().scrollDelta.y != 0.0f)
-	{
-		float aspect = (float)m_window.getProperties().resHeight / m_window.getProperties().resWidth;
-		float currentScale = m_focusedMap->m_camera->getOrthographicsScale() / 2.0f;
-		float newScale = currentScale - m_window.getMouse().scrollDelta.y;
-
-		m_focusedMap->m_camera->setOrthographic(-newScale, newScale, newScale * aspect, -newScale * aspect, -1.0f, 1.0f);
-	}
-
 	m_focusedMap->m_world.Update(deltaTime);
 }
 
