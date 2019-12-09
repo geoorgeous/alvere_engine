@@ -1,6 +1,5 @@
 #include <glad/glad.h>
 
-#include "alvere/assets.hpp"
 #include "alvere/graphics/mesh.hpp"
 #include "alvere/utils/file_reader.hpp"
 #include "graphics_api/opengl/opengl_renderer.hpp"
