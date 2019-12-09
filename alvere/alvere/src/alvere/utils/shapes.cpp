@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "alvere/utils/shapes.hpp"
 
 namespace alvere
@@ -106,6 +108,15 @@ namespace alvere
 	Vector2i RectI::getBottomRight() const
 	{
 		return alvere::Vector2i{ getRight(), getBottom() };
+	}
+
+	RectI RectI::overlap(RectI a, RectI b)
+	{
+		Vector2i min = Vector2i::max(a.getBottomLeft(), b.getBottomLeft());
+		Vector2i max = Vector2i::min(a.getTopRight(), b.getTopRight());
+		Vector2i size = Vector2i::max({ 0, 0 }, max - min);
+
+		return { min[0], min[1], size[0], size[1] };
 	}
 
 	int RectI::getArea() const

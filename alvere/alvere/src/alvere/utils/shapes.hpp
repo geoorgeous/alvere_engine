@@ -71,6 +71,8 @@ namespace alvere
 
 		alvere::Vector2i getBottomRight() const;
 
+		static RectI overlap(RectI a, RectI b);
+
 		int getArea() const;
 
 		inline bool intersects(const RectI other) const
