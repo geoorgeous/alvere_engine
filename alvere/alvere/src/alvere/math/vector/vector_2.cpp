@@ -1,9 +1,7 @@
 #include <cmath>
 
 #include "alvere/math/vector/vector_2.hpp"
-
-#include "alvere/math/vector/vector_3.hpp"
-#include "alvere/math/vector/vector_4.hpp"
+#include "alvere/math/vectors.hpp"
 
 namespace alvere
 {
@@ -25,6 +23,11 @@ namespace alvere
 
 	Vector2::Vector2(const Vector4& vec4)
 		: x(vec4.x), y(vec4.y)
+	{ }
+
+	Vector2::Vector2(const Vector2i & vec2i)
+		: x(vec2i[0])
+		, y(vec2i[1])
 	{ }
 
 	float Vector2::magnitudeSq() const

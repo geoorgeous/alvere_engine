@@ -10,6 +10,19 @@ namespace alvere
 		m_Archetypes.emplace(Archetype::Handle::make_handle<>(), new Archetype());
 	}
 
+	World::~World()
+	{
+		for (auto iter : m_Archetypes)
+		{
+			delete iter.second;
+		}
+
+		for (auto iter : m_AllSystems)
+		{
+			delete iter.second;
+		}
+	}
+
 	void World::Update(float deltaTime)
 	{
 		for (auto & system : m_UpdatedSystems)

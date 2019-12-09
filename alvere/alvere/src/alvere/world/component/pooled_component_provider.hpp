@@ -41,7 +41,7 @@ namespace alvere
 	template <typename T>
 	void PooledComponent<T>::Provider::Deallocate(int entityIndex)
 	{
-		m_Pool[entityIndex] = m_Pool.back();
+		m_Pool[entityIndex] = std::move(m_Pool.back());
 		m_Pool.pop_back();
 	}
 

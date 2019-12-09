@@ -2,6 +2,7 @@
 
 #include "alvere/utils/exceptions.hpp"
 #include "alvere/events/application_events.hpp"
+#include "alvere/graphics/render_commands.hpp"
 #include "graphics_api/opengl/opengl_context.hpp"
 #include "platform/windows/windows_window.hpp"
 
@@ -30,13 +31,9 @@ namespace alvere::platform::windows
 		}
 
 		m_mouse.delta = Vector2::zero;
+		m_mouse.scrollDelta = Vector2::zero;
 
 		glfwPollEvents();
-	}
-
-	void Window::swapBuffers()
-	{
-		m_renderingContext->swapBuffers();
 	}
 
 	void Window::disableCursor()
@@ -69,7 +66,7 @@ namespace alvere::platform::windows
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+		//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 		m_windowHandle = glfwCreateWindow((int)properties.sizeWidth, (int)properties.sizeHeight, properties.title.c_str(), nullptr, nullptr);
 
 		if (m_windowHandle == NULL)
@@ -78,7 +75,7 @@ namespace alvere::platform::windows
 		}
 
 		m_renderingContext = new alvere::graphics_api::opengl::RenderingContext(m_windowHandle);
-		m_renderingContext->init();
+		m_renderingContext->init(m_properties.resWidth, m_properties.resHeight);
 
 		glfwSwapInterval(0);
 
@@ -244,6 +241,29 @@ namespace alvere::platform::windows
 			case GLFW_MOUSE_BUTTON_RIGHT: mouse.buttons[MouseButton::Right] = isDown; break;
 			case GLFW_MOUSE_BUTTON_MIDDLE: mouse.buttons[MouseButton::Middle] = isDown; break;
 			}
+		});
+		glfwSetScrollCallback(m_windowHandle, [](GLFWwindow* windowHandle, double xOffset, double yOffset)
+		{
+			MouseData& mouse = *((WindowUserPointerData*)glfwGetWindowUserPointer(windowHandle))->mouse;
+			mouse.scrollDelta.x = xOffset;
+			mouse.scrollDelta.y = yOffset;
+		});
+		glfwSetFramebufferSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
+		{
+			Window::Properties & properties = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->properties;
+			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
+			
+			float resolutionScale = (float)properties.resWidth / properties.sizeWidth;
+
+			properties.sizeWidth = width;
+			properties.sizeHeight = height;
+			properties.resWidth = width * resolutionScale;
+			properties.resHeight = height * resolutionScale;
+
+			window.m_renderingContext->frameBuffer()->resize(properties.resWidth, properties.resHeight);
+			alvere::render_commands::setViewport(0, 0, width, height);
+
+			window.getEvent<WindowResizeEvent>()->dispatch(width, height);
 		});
 	}
 

@@ -23,6 +23,10 @@ namespace alvere
 
 		static Asset<Texture> New(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
 
+		static Asset<Texture> New(int width, int height, Channels channels = Channels::RGBAlpha);
+
+		static Asset<Texture> New(const Texture & sourceTexture, alvere::RectI sourceRect);
+
 		static Texture * loadFromFile(const std::string & filepath);
 
 		virtual ~Texture();
@@ -43,6 +47,10 @@ namespace alvere
 
 		virtual void unbind() const = 0;
 
+		virtual void * getHandle() const = 0;
+
+		virtual void resize(unsigned int width, unsigned int height) = 0;
+
 	protected:
 
 		int m_resWidth;
@@ -56,5 +64,9 @@ namespace alvere
 		Texture(const char * filename, Channels channels = Channels::RGBAlpha);
 
 		Texture(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
+
+		Texture(int width, int height, Channels = Channels::RGBAlpha);
+
+		Texture(const Texture & sourceTexture, alvere::RectI sourceRect);
 	};
 }

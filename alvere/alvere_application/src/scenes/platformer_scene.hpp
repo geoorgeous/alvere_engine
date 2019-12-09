@@ -18,5 +18,6 @@ public:
 
 private:
 
-	void SpawnPlayer(std::unique_ptr<alvere::Scene>& scene);
+	void SpawnPlayer(std::unique_ptr<alvere::Scene> & scene);
+	void SpawnMap(std::unique_ptr<alvere::Scene> & scene);
 };

@@ -6,13 +6,13 @@
 #include <utility>
 
 #include "alvere/assets.hpp"
+#include "alvere/graphics/frame_buffer.hpp"
+#include "alvere/graphics/rendering_context.hpp"
 #include "alvere/events/application_events.hpp"
 #include "alvere/math/vectors.hpp"
 
 namespace alvere
 {
-	class FrameBuffer;
-
 	enum class Key
 	{
 		Escape,
@@ -138,6 +138,7 @@ namespace alvere
 	{
 		Vector2 position;
 		Vector2 delta;
+		Vector2 scrollDelta;
 		std::unordered_map<MouseButton, bool> buttons;
 
 		bool getButton(MouseButton button) const;
@@ -168,11 +169,16 @@ namespace alvere
 
 		virtual void pollEvents() = 0;
 
-		virtual void swapBuffers() = 0;
-
 		virtual void disableCursor() = 0;
 
 		virtual void enableCursor() = 0;
+
+		void swapBuffers();
+
+		inline const Properties & getProperties() const
+		{
+			return m_properties;
+		}
 
 		inline unsigned int getWidth() const
 		{
@@ -182,6 +188,11 @@ namespace alvere
 		inline unsigned int getHeight() const
 		{
 			return m_properties.sizeHeight;
+		}
+
+		inline RenderingContext & getRenderingContext()
+		{
+			return *m_renderingContext;
 		}
 
 		template <typename EventT>
@@ -196,16 +207,16 @@ namespace alvere
 
 	protected:
 
-		Window(const Properties & properties);
-
 		Properties m_properties;
 
-		FrameBuffer * m_frameBuffer;
+		alvere::RenderingContext * m_renderingContext;
 
 		std::unordered_map<Key, std::pair<KeyData, KeyData>> m_keys;
 
 		MouseData m_mouse;
 
 		std::unordered_map<std::type_index, EventBase *> m_events;
+
+		Window(const Properties & properties);
 	};
 }

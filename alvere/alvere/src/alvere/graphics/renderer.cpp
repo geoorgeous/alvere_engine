@@ -6,8 +6,8 @@ namespace alvere
 {
 	void Renderer::begin(const Camera & camera)
 	{
-		m_projectionMatrix = &camera.GetProjectionMatrix();
-		m_viewMatrix = &camera.GetViewMatrix();
+		m_projectionMatrix = &camera.getProjectionMatrix();
+		m_viewMatrix = &camera.getViewMatrix();
 	}
 
 	void Renderer::end()

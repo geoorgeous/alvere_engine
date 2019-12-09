@@ -4,7 +4,9 @@
 
 namespace alvere::render_commands
 {
-	void SetClearColour(const alvere::Vector4& colour);
+	void setClearColour(const alvere::Vector4& colour);
 
-	void Clear();
+	void clear();
+
+	void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 }

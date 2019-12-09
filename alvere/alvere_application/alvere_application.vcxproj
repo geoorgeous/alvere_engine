@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)alvere\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\;$(SolutionDir)alvere\dependencies\include\;$(SolutionDir)alvere\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)alvere\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\;$(SolutionDir)alvere\dependencies\include\;$(SolutionDir)alvere\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -123,7 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)alvere\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\;$(SolutionDir)alvere\dependencies\include\;$(SolutionDir)alvere\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)alvere\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\;$(SolutionDir)alvere\dependencies\include\;$(SolutionDir)alvere\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ALV_PLATFORM_WINDOWS;ALV_GRAPHICS_API_OPENGL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -154,16 +154,72 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\dialogs\message_dialog.cpp" />
+    <ClCompile Include="src\dialogs\open_file_dialog.cpp" />
+    <ClCompile Include="src\dialogs\save_file_dialog.cpp" />
+    <ClCompile Include="src\dialogs\select_folder_dialog.cpp" />
+    <ClCompile Include="src\dialogs\tiny_file_dialogs.c" />
+    <ClCompile Include="src\editor\editor_world.cpp" />
+    <ClCompile Include="src\editor\imgui_editor.cpp" />
+    <ClCompile Include="src\editor\utils\path_utils.cpp" />
+    <ClCompile Include="src\editor\windows\tile_properties_window.cpp" />
+    <ClCompile Include="src\editor\windows\tile_window.cpp" />
+    <ClCompile Include="src\editor\tool\pan_tool.cpp" />
+    <ClCompile Include="src\editor\windows\tool_window.cpp" />
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="src\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\scenes\platformer_scene.cpp" />
     <ClCompile Include="src\scenes\testing_scene.cpp" />
+    <ClCompile Include="src\states\editor_state.cpp" />
+    <ClCompile Include="src\states\gameplay_state.cpp" />
+    <ClCompile Include="src\states\game_state_machine.cpp" />
+    <ClCompile Include="src\tilemap\c_tilemap.cpp" />
+    <ClCompile Include="src\tilemap\tilemap_renderer_system.cpp" />
     <ClCompile Include="src\tile_drawer.cpp" />
     <ClCompile Include="src\world_cell_area.cpp" />
     <ClCompile Include="src\world_generation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\dialogs\message_dialog.hpp" />
+    <ClInclude Include="src\dialogs\open_file_dialog.hpp" />
+    <ClInclude Include="src\dialogs\save_file_dialog.hpp" />
+    <ClInclude Include="src\dialogs\select_folder_dialog.hpp" />
+    <ClInclude Include="src\dialogs\tiny_file_dialogs.h" />
+    <ClInclude Include="src\editor\editor_world.hpp" />
+    <ClInclude Include="src\editor\imgui_demo_window.hpp" />
+    <ClInclude Include="src\editor\imgui_editor.hpp" />
+    <ClInclude Include="src\editor\tilemap\editor_tile.hpp" />
+    <ClInclude Include="src\editor\tool\draw_tool.hpp" />
+    <ClInclude Include="src\editor\utils\path_utils.hpp" />
+    <ClInclude Include="src\editor\windows\imgui_window.hpp" />
+    <ClInclude Include="src\editor\windows\tile_properties_window.hpp" />
+    <ClInclude Include="src\editor\windows\tile_window.hpp" />
+    <ClInclude Include="src\editor\tool\editor_tool.hpp" />
+    <ClInclude Include="src\editor\tool\pan_tool.hpp" />
+    <ClInclude Include="src\editor\windows\tool_window.hpp" />
+    <ClInclude Include="src\imgui\imconfig.h" />
+    <ClInclude Include="src\imgui\imgui.h" />
+    <ClInclude Include="src\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="src\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\imgui\imgui_internal.h" />
+    <ClInclude Include="src\imgui\imstb_rectpack.h" />
+    <ClInclude Include="src\imgui\imstb_textedit.h" />
+    <ClInclude Include="src\imgui\imstb_truetype.h" />
     <ClInclude Include="src\scenes\platformer_scene.hpp" />
     <ClInclude Include="src\scenes\testing_scene.hpp" />
+    <ClInclude Include="src\states\editor_state.hpp" />
+    <ClInclude Include="src\states\gameplay_state.hpp" />
+    <ClInclude Include="src\states\game_state.hpp" />
+    <ClInclude Include="src\states\game_state_machine.hpp" />
+    <ClInclude Include="src\tilemap\spritesheet.hpp" />
+    <ClInclude Include="src\tilemap\tile.hpp" />
+    <ClInclude Include="src\tilemap\c_tilemap.hpp" />
+    <ClInclude Include="src\tilemap\tilemap_renderer_system.hpp" />
     <ClInclude Include="src\tile_drawer.hpp" />
     <ClInclude Include="src\world_cell.hpp" />
     <ClInclude Include="src\world_cell_area.hpp" />

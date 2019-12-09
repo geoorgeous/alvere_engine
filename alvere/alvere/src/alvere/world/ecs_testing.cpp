@@ -11,6 +11,8 @@
 #include "alvere/world/component/components/c_saveable.hpp"
 #include <alvere\world\component\components\c_destroy.hpp>
 #include <alvere\world\system\systems\destroy_system.hpp>
+#include <alvere\world\scene\scene_system.hpp>
+#include "../../../../alvere_application/src/scenes/testing_scene.hpp"
 
 namespace alvere
 {
@@ -172,10 +174,23 @@ namespace alvere
 		assert(entity2.isValid() == false);
 	}
 
+	void SceneTest()
+	{
+		World world;
+
+		SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
+		world.AddSystem<DestroySystem>();
+
+		TestingScene testScene(world);
+		Scene & test = sceneSystem->LoadScene(testScene);
+		sceneSystem->UnloadScene(test);
+	}
+
 	void RunTests()
 	{
 		UpdateTests();
 		ComponentTests();
 		DestroyTest();
+		SceneTest();
 	}
 }

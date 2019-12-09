@@ -3,13 +3,18 @@
 
 namespace alvere::render_commands
 {
-	void SetClearColour(const alvere::Vector4& colour)
+	void setClearColour(const alvere::Vector4& colour)
 	{
-		RendererAPI::s_Instance->SetClearColour(colour);
+		RendererAPI::s_Instance->setClearColour(colour);
 	}
 
-	void Clear()
+	void clear()
 	{
-		RendererAPI::s_Instance->Clear();
+		RendererAPI::s_Instance->clear();
+	}
+
+	void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+	{
+		RendererAPI::s_Instance->setViewport(x, y, width, height);
 	}
 }

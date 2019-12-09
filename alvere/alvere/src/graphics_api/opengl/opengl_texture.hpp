@@ -11,15 +11,27 @@ namespace alvere::graphics_api::opengl
 
 		Texture(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
 
+		Texture(int width, int height, Channels channels = Channels::RGBAlpha);
+
+		Texture(const alvere::Texture & sourceTexture, alvere::RectI sourceRect);
+
 		~Texture();
 
 		void bind() const override;
 
 		void unbind() const override;
 
+		void * getHandle() const override;
+
+		void resize(unsigned int width, unsigned int height) override;
+
 	private:
 
 		unsigned int m_Handle;
+
+		unsigned int m_internalFormat;
+			
+		unsigned int m_format;
 
 		void init();
 	};

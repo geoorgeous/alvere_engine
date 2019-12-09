@@ -11,8 +11,8 @@ namespace alvere
 {
 	class Archetype::Handle
 	{
-		std::vector<std::type_index> m_Types;
 		std::size_t m_Hash;
+		std::vector<std::type_index> m_Types;
 
 	public:
 		friend struct std::hash<Archetype::Handle>;

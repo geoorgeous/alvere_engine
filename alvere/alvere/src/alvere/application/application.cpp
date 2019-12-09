@@ -24,13 +24,12 @@ namespace alvere
 {
 	static std::unique_ptr<console::Command> s_quitCommand;
 
-	Application::Application()
-		: m_window(Window::New()), m_targetFrameRate(60.0f), m_running(true)
+	Application::Application(const Window::Properties & properties)
+		: m_window(Window::New(properties)), m_targetFrameRate(60.0f), m_running(true)
 	{
 		m_windowCloseEventHandler.setFunction([&]() {
 			m_running = false;
 		});
-
 		*m_window->getEvent<WindowCloseEvent>() += m_windowCloseEventHandler;
 
 		console::gui::init(m_window.get());
@@ -44,7 +43,7 @@ namespace alvere
 
 	void Application::run()
 	{
-		render_commands::SetClearColour({0.1f, 0.1f, 0.1f, 1.0f});
+		render_commands::setClearColour({0.1f, 0.1f, 0.1f, 1.0f});
 
 		float timeStepNanoseconds = 1000000000.f / m_targetFrameRate;
 		float timeStepSeconds = 1.0f / m_targetFrameRate;
@@ -87,7 +86,11 @@ namespace alvere
 					update(timeStepSeconds);
 				}
 
-				render_commands::Clear();
+				m_window->getRenderingContext().frameBuffer()->bind();
+
+				render_commands::setViewport(0, 0, m_window->getRenderingContext().frameBuffer()->getWidth(), m_window->getRenderingContext().frameBuffer()->getHeight());
+
+				render_commands::clear();
 
 				render();
 

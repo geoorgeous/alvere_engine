@@ -1,9 +1,12 @@
+
 /**
  * \file
  * \author \link https://georgemcdonagh.co.uk George McDonagh
  */
 
 #pragma once
+
+#include "alvere/math/vectors.hpp"
 
 namespace alvere
 {
@@ -55,6 +58,12 @@ namespace alvere
 		 * \param vec4 The Vector4 from which to take the x and y component values from.
 		 */
 		Vector2(const Vector4& vec4);
+		
+		/**
+		 * \brief Constructs a Vector2 by casting the components of a Vector2i to floats.
+		 * \param vec4 The Vector2i from which to cast from.
+		 */
+		explicit Vector2(const Vector2i& vec2i);
 
 		/**
 		 * \brief Calculates and returns the magnitude of the vector multiplied by itself.

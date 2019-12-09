@@ -4,13 +4,18 @@
 
 namespace alvere::graphics_api::opengl
 {
-	void RendererAPI::SetClearColour(const alvere::Vector4& colour)
+	void RendererAPI::setClearColour(const alvere::Vector4& colour)
 	{
 		glClearColor(colour.x, colour.y, colour.z, colour.w);
 	}
 
-	void RendererAPI::Clear()
+	void RendererAPI::clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void RendererAPI::setViewport(unsigned int x, unsigned int y, unsigned width, unsigned height)
+	{
+		glViewport((GLint)x, (GLint)y, (GLsizei)width, (GLsizei)height);
 	}
 }
