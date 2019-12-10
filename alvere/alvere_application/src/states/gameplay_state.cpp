@@ -21,7 +21,7 @@ GameplayState::GameplayState(alvere::Window & window)
 	alvere::RunTests();
 
 	//float screenRatio = (float)window.getHeight() / window.getWidth();
-	float screenRatio = (float)window.getProperties().resHeight / window.getProperties().resWidth;
+	float screenRatio = window.getRenderingContext().getAspectRatio();
 
 	alvere::EntityHandle cameraEntity = m_world.SpawnEntity<alvere::C_Transform, alvere::C_Camera>();
 	m_sceneCamera = &m_world.GetComponent<alvere::C_Camera>(cameraEntity);
@@ -38,7 +38,7 @@ GameplayState::GameplayState(alvere::Window & window)
 
 	m_windowResizeEventHandler.setFunction([&](unsigned int width, unsigned int height)
 	{
-		float screenRatio = (float)m_window.getProperties().resHeight / m_window.getProperties().resWidth;
+		float screenRatio = window.getRenderingContext().getAspectRatio();
 		m_sceneCamera->setOrthographic(-m_halfWorldUnitsOnX, m_halfWorldUnitsOnX, m_halfWorldUnitsOnX * screenRatio, -m_halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
 	});
 	*m_window.getEvent<alvere::WindowResizeEvent>() += m_windowResizeEventHandler;

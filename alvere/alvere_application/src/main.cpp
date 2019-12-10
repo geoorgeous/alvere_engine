@@ -11,7 +11,7 @@ struct AlvereApplication : public Application
 	GameStateMachine m_stateMachine;
 
 	AlvereApplication()
-		: Application(Window::Properties("Platformer", 1024, 768))
+		: Application(Window::Properties("Platformer", Vec2i{ 1024, 768 }))
 		, m_stateMachine(*new GameplayState(*m_window))
 		//, m_stateMachine(*new EditorState(*m_window))
 	{

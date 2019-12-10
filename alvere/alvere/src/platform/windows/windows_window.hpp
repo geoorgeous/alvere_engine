@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <unordered_map>
 #include <utility>
 
@@ -12,15 +13,29 @@ namespace alvere::platform::windows
 	{
 	public:
 
-		Window(const alvere::Window::Properties& properties);
+		Window(const alvere::Window::Properties & properties, Vec2i resolution);
 
 		~Window();
 
+		void setTitle(std::string title) override;
+
+		void setPosition(int x, int y) override;
+
+		void resize(int width, int height) override;
+
+		void setFlag(Flag flag, bool value) override;
+
+		void maximize() override;
+
+		void minimize() override;
+
+		void restore() override;
+
+		void focus() override;
+
+		void requestAttention() override;
+
 		void pollEvents() override;
-
-		void disableCursor() override;
-
-		void enableCursor() override;
 
 		GLFWwindow * m_windowHandle;
 
@@ -29,14 +44,15 @@ namespace alvere::platform::windows
 		struct WindowUserPointerData
 		{
 			Window * window;
-			Properties * properties;
 			std::unordered_map<Key, std::pair<KeyData, KeyData>> * keys;
 			MouseData * mouse;
 		};
 
 		WindowUserPointerData m_windowUserPointerData;
 
-		void init(const alvere::Window::Properties& properties);
+		GLFWmonitor * m_monitorHandle;
+
+		void init(const alvere::Window::Properties& properties, Vec2i resolution);
 
 		void shutdown();
 	};

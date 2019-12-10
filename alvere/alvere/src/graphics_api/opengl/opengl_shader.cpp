@@ -26,7 +26,7 @@ namespace alvere::graphics_api::opengl
 		glDeleteShader(m_Handle);
 	}
 
-	bool Shader::Compile()
+	bool Shader::Compile() const
 	{
 		if (m_IsCompiled)
 			return true;
@@ -58,7 +58,7 @@ namespace alvere::graphics_api::opengl
 	}
 }
 
-alvere::Asset<alvere::Shader> alvere::Shader::New(Shader::Type type, const std::string& source = "")
+std::unique_ptr<alvere::Shader> alvere::Shader::New(Shader::Type type, const std::string& source = "")
 {
-	return alvere::Asset<alvere::Shader>(new alvere::graphics_api::opengl::Shader(type, source));
+	return std::make_unique<alvere::graphics_api::opengl::Shader>(type, source);
 }

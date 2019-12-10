@@ -38,8 +38,8 @@ void PanTool::Update(float deltaTime)
 	//First frame do not try to move the camera as we have no previous mouse position
 	if (m_leftMouse.IsPressed() == false)
 	{
-		alvere::Vector3 mousePosWorld = camera.screenToWorld(m_mousePosition, m_window.getWidth(), m_window.getHeight());
-		alvere::Vector3 newMousePosWorld = camera.screenToWorld(newMousePos, m_window.getWidth(), m_window.getHeight());
+		alvere::Vector3 mousePosWorld = camera.screenToWorld(m_mousePosition, m_window.getSize().x, m_window.getSize().y);
+		alvere::Vector3 newMousePosWorld = camera.screenToWorld(newMousePos, m_window.getSize().x, m_window.getSize().y);
 		cameraTransform->move(mousePosWorld - newMousePosWorld);
 	}
 

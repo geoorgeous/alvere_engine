@@ -1737,8 +1737,8 @@ static void ShowDemoWindowWidgets()
         static char dummy_str[] = "This is a dummy field to be able to tab-out of the widgets above.";
         ImGui::InputText("dummy", dummy_str, IM_ARRAYSIZE(dummy_str), ImGuiInputTextFlags_ReadOnly);
 
-        // Calling IsItemHovered() after begin returns the hovered status of the title bar.
-        // This is useful in particular if you want to create a context menu (with BeginPopupContextItem) associated to the title bar of a window.
+        // Calling IsItemHovered() after begin returns the hovered status of the m_title bar.
+        // This is useful in particular if you want to create a context menu (with BeginPopupContextItem) associated to the m_title bar of a window.
         static bool test_window = false;
         ImGui::Checkbox("Hovered/Active tests after Begin() for title bar testing", &test_window);
         if (test_window)
@@ -3667,17 +3667,17 @@ struct ExampleAppConsole
         Items.push_back(Strdup(buf));
     }
 
-    void    Draw(const char* title, bool* p_open)
+    void    Draw(const char* m_title, bool* p_open)
     {
         ImGui::SetNextWindowSize(ImVec2(520,600), ImGuiCond_FirstUseEver);
-        if (!ImGui::Begin(title, p_open))
+        if (!ImGui::Begin(m_title, p_open))
         {
             ImGui::End();
             return;
         }
 
-        // As a specific feature guaranteed by the library, after calling Begin() the last Item represent the title bar. So e.g. IsItemHovered() will return true when hovering the title bar.
-        // Here we create a context menu only available from the title bar.
+        // As a specific feature guaranteed by the library, after calling Begin() the last Item represent the m_title bar. So e.g. IsItemHovered() will return true when hovering the m_title bar.
+        // Here we create a context menu only available from the m_title bar.
         if (ImGui::BeginPopupContextItem())
         {
             if (ImGui::MenuItem("Close Console"))
@@ -3940,7 +3940,7 @@ static void ShowExampleAppConsole(bool* p_open)
 // Usage:
 //  static ExampleAppLog my_log;
 //  my_log.AddLog("Hello %d world\n", 123);
-//  my_log.Draw("title");
+//  my_log.Draw("m_title");
 struct ExampleAppLog
 {
     ImGuiTextBuffer     Buf;
@@ -3973,9 +3973,9 @@ struct ExampleAppLog
                 LineOffsets.push_back(old_size + 1);
     }
 
-    void    Draw(const char* title, bool* p_open = NULL)
+    void    Draw(const char* m_title, bool* p_open = NULL)
     {
-        if (!ImGui::Begin(title, p_open))
+        if (!ImGui::Begin(m_title, p_open))
         {
             ImGui::End();
             return;
@@ -4395,10 +4395,10 @@ static void ShowExampleAppSimpleOverlay(bool* p_open)
 // This apply to all regular items as well. Read FAQ section "How can I have multiple widgets with the same label? Can I have widget without a label? (Yes). A primer on the purpose of labels/IDs." for details.
 static void ShowExampleAppWindowTitles(bool*)
 {
-    // By default, Windows are uniquely identified by their title.
+    // By default, Windows are uniquely identified by their m_title.
     // You can use the "##" and "###" markers to manipulate the display/ID.
 
-    // Using "##" to display same title but have unique identifier.
+    // Using "##" to display same m_title but have unique identifier.
     ImGui::SetNextWindowPos(ImVec2(100, 100), ImGuiCond_FirstUseEver);
     ImGui::Begin("Same title as another window##1");
     ImGui::Text("This is window 1.\nMy title is the same as window 2, but my identifier is unique.");
@@ -4409,7 +4409,7 @@ static void ShowExampleAppWindowTitles(bool*)
     ImGui::Text("This is window 2.\nMy title is the same as window 1, but my identifier is unique.");
     ImGui::End();
 
-    // Using "###" to display a changing title but keep a static identifier "AnimatedTitle"
+    // Using "###" to display a changing m_title but keep a static identifier "AnimatedTitle"
     char buf[128];
     sprintf(buf, "Animated title %c %d###AnimatedTitle", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], ImGui::GetFrameCount());
     ImGui::SetNextWindowPos(ImVec2(100, 300), ImGuiCond_FirstUseEver);
@@ -4570,7 +4570,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
 // Simplified structure to mimic a Document model
 struct MyDocument
 {
-    const char* Name;           // Document title
+    const char* Name;           // Document m_title
     bool        Open;           // Set when the document is open (in this demo, we keep an array of all available documents to simplify the demo)
     bool        OpenPrev;       // Copy of Open from last update.
     bool        Dirty;          // Set when the document has been modified

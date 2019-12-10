@@ -1,6 +1,6 @@
 #include "alvere/utils/assets.hpp"
 
-namespace alvere::assets
+namespace alvere
 {
 	AssetManager AssetManager::s_instance;
 

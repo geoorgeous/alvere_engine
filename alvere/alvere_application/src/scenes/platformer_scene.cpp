@@ -23,11 +23,10 @@ void PlatformerScene::SpawnPlayer(std::unique_ptr<alvere::Scene> & scene)
 	auto & transform = m_World.GetComponent<alvere::C_Transform>(player);
 
 	//Have to make this static for now as the asset going out of scope deletes my texture reference
-	static alvere::Asset<alvere::Texture> textureAsset = alvere::Texture::New("res/img/test.png");
+	static std::unique_ptr<alvere::Texture> textureAsset = alvere::Texture::New("res/img/test.png");
 
 	sprite.m_sprite = alvere::Sprite(*textureAsset.get());
 
-	transform->setPosition(alvere::Vector3{ -16, -16, 0 });
 	//transform->setScale(alvere::Vector3{ 4, 4, 1 });
 
 	scene->AddEntity(player);

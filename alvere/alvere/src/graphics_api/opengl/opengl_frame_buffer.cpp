@@ -8,11 +8,11 @@
 namespace alvere::graphics_api::opengl
 {
 	FrameBuffer::FrameBuffer()
-		: ::alvere::FrameBuffer(), m_handle(0), m_depthStencilBufferHandle(0), m_sizeDirty(false)
+		: m_handle(0), m_depthStencilBufferHandle(0)
 	{}
 
 	FrameBuffer::FrameBuffer(unsigned int width, unsigned int height)
-		: ::alvere::FrameBuffer(width, height), m_handle(0), m_depthStencilBufferHandle(0)
+		: m_handle(0), m_depthStencilBufferHandle(0)
 	{
 		init(width, height);
 	}
@@ -33,34 +33,18 @@ namespace alvere::graphics_api::opengl
 		return *this;
 	}
 
-	void FrameBuffer::resize(unsigned int width, unsigned int height)
+	void FrameBuffer::resize(int width, int height)
 	{
-		m_width = width;
-		m_height = height;
-
-		m_texture->resize(m_width, m_height);
+		m_texture->resize(width, height);
 
 		glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBufferHandle);
-		ALV_LOG_OPENGL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_width, m_height));
+		ALV_LOG_OPENGL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-		m_sizeDirty = true;
 	}
 
 	void FrameBuffer::bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
-
-		if(m_sizeDirty)
-		{
-			/*m_texture->resize(m_width, m_height);
-
-			glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBufferHandle);
-			ALV_LOG_OPENGL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_width, m_height));
-			glBindRenderbuffer(GL_RENDERBUFFER, 0);*/
-
-			m_sizeDirty = false;
-		}
 	}
 
 	void FrameBuffer::unbind() const
@@ -70,21 +54,18 @@ namespace alvere::graphics_api::opengl
 
 	void FrameBuffer::init(unsigned int width, unsigned int height)
 	{
-		m_width = width;
-		m_height = height;
-
 		glDeleteFramebuffers(1, &m_handle);
 		glDeleteRenderbuffers(1, &m_depthStencilBufferHandle);
 
 		glGenFramebuffers(1, &m_handle);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
 
-		m_texture = Texture::New(m_width, m_height, Texture::Channels::RGB);
+		m_texture = Texture::New(width, height, Texture::Channels::RGB);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, (unsigned int)m_texture->getHandle(), 0);
 
 		glGenRenderbuffers(1, &m_depthStencilBufferHandle);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBufferHandle);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_width, m_height);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBufferHandle);
 

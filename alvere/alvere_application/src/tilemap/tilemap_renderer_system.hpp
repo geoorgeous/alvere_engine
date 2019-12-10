@@ -10,9 +10,9 @@ class TilemapRendererSystem : public alvere::QueryRenderedSystem<C_Tilemap>
 {
 	alvere::Camera & m_camera;
 
-	alvere::Asset<alvere::SpriteBatcher> m_spriteBatcher;
+	std::unique_ptr<alvere::SpriteBatcher> m_spriteBatcher;
 
-	alvere::Asset<alvere::Texture> m_fallbackTexture;
+	std::unique_ptr<alvere::Texture> m_fallbackTexture;
 
 public:
 

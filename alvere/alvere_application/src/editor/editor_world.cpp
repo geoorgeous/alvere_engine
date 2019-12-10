@@ -21,11 +21,10 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const al
 
 	float worldUnitsOnX = 32;
 	float halfWorldUnitsOnX = 0.5f * worldUnitsOnX;
-	float screenRatio = (float) window.getProperties().resHeight / (float) window.getProperties().resWidth;
 
 	EntityHandle cameraEntity = world.SpawnEntity<C_Transform, C_Camera>();
 	editorWorld->m_camera = &world.GetComponent<C_Camera>(cameraEntity);
-	editorWorld->m_camera->setOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * screenRatio, -halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
+	editorWorld->m_camera->setOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * window.getRenderingContext().getAspectRatio(), -halfWorldUnitsOnX * window.getRenderingContext().getAspectRatio(), -1.0f, 1.0f);
 
 
 	alvere::EntityHandle map = world.SpawnEntity<C_Tilemap>();

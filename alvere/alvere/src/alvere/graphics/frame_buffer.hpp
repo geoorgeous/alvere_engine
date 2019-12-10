@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "alvere/graphics/texture.hpp"
+#include "alvere/math/vector/vec_2_i.hpp"
 
 namespace alvere
 {
@@ -13,27 +14,22 @@ namespace alvere
 
 		FrameBuffer(const FrameBuffer & frameBuffer);
 
-		virtual ~FrameBuffer();
+		virtual ~FrameBuffer() = 0;
 
-		virtual void resize(unsigned int width, unsigned int height) = 0;
+		virtual void resize(int width, int height) = 0;
 
 		virtual void bind() const = 0;
 
 		virtual void unbind() const = 0;
 
-		inline unsigned int getWidth() const
+		inline Vec2i getSize() const
 		{
-			return m_width;
-		}
-
-		inline unsigned int getHeight() const
-		{
-			return m_height;
+			return m_texture->getDimensions();
 		}
 
 		inline float getAspect() const
 		{
-			return m_aspect;
+			return (float)m_texture->getDimensions().y / m_texture->getDimensions().x;
 		}
 
 		inline const Texture & getTexture() const
@@ -46,14 +42,6 @@ namespace alvere
 	protected:
 
 		FrameBuffer();
-
-		FrameBuffer(unsigned int width, unsigned int height);
-
-		unsigned int m_width;
-
-		unsigned int m_height;
-
-		float m_aspect;
 
 		std::unique_ptr<Texture> m_texture;
 	};

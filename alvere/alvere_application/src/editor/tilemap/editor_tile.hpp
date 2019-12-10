@@ -6,7 +6,7 @@
 
 class EditorTile
 {
-	alvere::Asset<alvere::Texture> m_previewTexture;
+	std::unique_ptr<alvere::Texture> m_previewTexture;
 
 public:
 

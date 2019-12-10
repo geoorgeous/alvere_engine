@@ -1,15 +1,15 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
 
-#include "alvere/assets.hpp"
 #include "alvere/graphics/frame_buffer.hpp"
 #include "alvere/graphics/rendering_context.hpp"
 #include "alvere/events/application_events.hpp"
-#include "alvere/math/vectors.hpp"
+#include "alvere/math/vector/vec_2_i.hpp"
 
 namespace alvere
 {
@@ -152,42 +152,84 @@ namespace alvere
 		{
 			static const Properties s_default;
 
-			std::string title;
-			unsigned int sizeWidth;
-			unsigned int sizeHeight;
-			unsigned int resWidth;
-			unsigned int resHeight;
+			std::string m_title;
+			Vec2i m_position;
+			Vec2i m_size;
+			unsigned char m_flags;
 
 			Properties(const std::string & title);
-			Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight);
-			Properties(const std::string & title, unsigned int sizeWidth, unsigned int sizeHeight, unsigned int resWidth, unsigned int resHeight);
+			Properties(const std::string & title, Vec2i size);
+			Properties(const std::string & title, Vec2i size, unsigned char m_flags);
+			Properties(const std::string & title, Vec2i position, Vec2i size, unsigned char m_flags);
 		};
 
-		static Asset<Window> New(const Properties & properties = Window::Properties::s_default);
+		enum Flag : std::uint8_t
+		{
+			IsVisible				= 1u << 0,
+			Resizeable				= 1u << 1,
+			AlwaysOnTop				= 1u << 2,
+			Decorated				= 1u << 3,
+			FullScreen				= 1u << 4,
+			FullScreenAutoMinimize	= 1u << 5,
+			IsCursorEnabled			= 1u << 6
+		};
+
+		static std::unique_ptr<Window> create(const Properties & properties = Window::Properties::s_default);
+
+		static std::unique_ptr<Window> create(const Properties & properties, Vec2i resolution);
 
 		virtual ~Window() = 0;
 
+		virtual void setTitle(std::string title) = 0;
+
+		virtual void setPosition(int x, int y) = 0;
+
+		virtual void resize(int width, int height) = 0;
+
+		virtual void setFlag(Flag flag, bool value) = 0;
+
+		virtual void maximize() = 0;
+
+		virtual void minimize() = 0;
+
+		virtual void restore() = 0;
+
+		virtual void focus() = 0;
+
+		virtual void requestAttention() = 0;
+
 		virtual void pollEvents() = 0;
 
-		virtual void disableCursor() = 0;
-
-		virtual void enableCursor() = 0;
-
-		void swapBuffers();
-
-		inline const Properties & getProperties() const
+		inline std::string getTitle() const
 		{
-			return m_properties;
+			return m_title;
 		}
 
-		inline unsigned int getWidth() const
+		inline Vec2i getPosition() const
 		{
-			return m_properties.sizeWidth;
+			return m_position;
 		}
 
-		inline unsigned int getHeight() const
+		inline Vec2i getSize() const
 		{
-			return m_properties.sizeHeight;
+			return m_size;
+		}
+
+		inline bool getFlag(Flag flag) const
+		{
+			if(m_flags.find(flag) == m_flags.end())
+				return false;
+			return m_flags.at(flag);
+		}
+
+		inline float getAspectRatio() const
+		{
+			return (float)m_size.y / (float)m_size.x;
+		}
+
+		inline const RenderingContext & getRenderingContext() const
+		{
+			return *m_renderingContext;
 		}
 
 		inline RenderingContext & getRenderingContext()
@@ -195,19 +237,27 @@ namespace alvere
 			return *m_renderingContext;
 		}
 
+		void swapBuffers();
+
+		KeyData getKey(Key key) const;
+
+		const MouseData& getMouse() const;
+
 		template <typename EventT>
 		EventT * getEvent()
 		{
 			return (EventT *)m_events[typeid(EventT)];
 		}
 
-		KeyData getKey(Key key) const;
-
-		const MouseData& getMouse() const;
-
 	protected:
 
-		Properties m_properties;
+		std::string m_title;
+
+		Vec2i m_position;
+
+		Vec2i m_size;
+
+		std::unordered_map<Flag, bool> m_flags;
 
 		alvere::RenderingContext * m_renderingContext;
 
@@ -217,6 +267,6 @@ namespace alvere
 
 		std::unordered_map<std::type_index, EventBase *> m_events;
 
-		Window(const Properties & properties);
+		Window();
 	};
 }

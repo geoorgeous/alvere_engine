@@ -1,10 +1,10 @@
 #pragma once
 
-#include "alvere/assets.hpp"
+#include <memory>
+#include <unordered_map>
+
 #include "alvere/graphics/shader.hpp"
 #include "alvere/math/matrix/matrix_4.hpp"
-
-#include <unordered_map>
 
 namespace alvere
 {
@@ -12,13 +12,13 @@ namespace alvere
 	{
 	public:
 
-		static Asset<ShaderProgram> New();
+		static std::unique_ptr<ShaderProgram> New();
 
 		ShaderProgram(const ShaderProgram& shaderProgram) = delete;
 
-		const AssetRef<Shader> getShader(Shader::Type type) const;
+		const Shader * getShader(Shader::Type type) const;
 
-		void SetShader(const AssetRef<Shader> shader);
+		void SetShader(const Shader * shader);
 
 		virtual bool build() = 0;
 
@@ -48,7 +48,7 @@ namespace alvere
 
 		unsigned int m_handle;
 
-		std::unordered_map<Shader::Type, AssetRef<Shader>> m_shaders;
+		std::unordered_map<Shader::Type, const Shader *> m_shaders;
 
 		ShaderProgram();
 	};

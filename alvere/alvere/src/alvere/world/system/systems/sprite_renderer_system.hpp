@@ -20,7 +20,7 @@ namespace alvere
 
 	private:
 
-		Asset<SpriteBatcher> m_spriteBatcher;
+		std::unique_ptr<SpriteBatcher> m_spriteBatcher;
 
 		Camera & m_camera;
 	};

@@ -378,6 +378,9 @@
     <ClCompile Include="src\graphics_api\opengl\opengl_frame_buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\alvere\graphics\rendering_context.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\platform\windows\windows_window.hpp">
@@ -555,9 +558,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\utils\utilities.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\alvere\assets.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lapi.h">
@@ -894,6 +894,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics_api\opengl\opengl_frame_buffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\math\vector\vector_2_x.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\math\vector\vec_2_i.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

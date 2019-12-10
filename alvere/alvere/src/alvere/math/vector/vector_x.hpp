@@ -29,7 +29,7 @@ namespace alvere
 		float magnitudeSq() const
 		{
 			float magSq = 0.0f;
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				magSq += components[idx] * components[idx];
 			return magSq;
 		}
@@ -49,10 +49,10 @@ namespace alvere
 		 * \param v The other vector used in calculating the dot product.
 		 * \returns The dot product calculated from this vector and another.
 		 */
-		float dot(const Vector<T, Size>& v) const
+		float dot(const Vector<T, Size> & v) const
 		{
 			float dot = 0.0f;
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				dot += components[idx] * v.components[idx];
 			return dot;
 		}
@@ -70,7 +70,7 @@ namespace alvere
 		 * \brief Normalises the vector so it has a magnitude of 1.
 		 * \returns A reference to the now normalised vector.
 		 */
-		Vector<T, Size>& normalise()
+		Vector<T, Size> & normalise()
 		{
 			return *this = normal();
 		}
@@ -80,10 +80,10 @@ namespace alvere
 		 * \details This will make the vector keep its direction but extend/shrink its magnitude.
 		 * \param newMagnitude The vector's new magnitude
 		 */
-		Vector<T, Size>& limit(float newMagnitude)
+		Vector<T, Size> & limit(float newMagnitude)
 		{
 			float m = magnitude();
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				components[idx] += components[idx] * newMagnitude / m;
 			return *this;
 		}
@@ -94,7 +94,7 @@ namespace alvere
 		 * \returns A modifiable reference to the component found at the specified index.
 		 * \warning This function performs no array-bounds checking. the passed index must be [0 alvere/math Size - 1].
 		 */
-		T& operator[](unsigned int idx)
+		T & operator[](unsigned int idx)
 		{
 			return components[idx];
 		}
@@ -105,7 +105,7 @@ namespace alvere
 		 * \returns An immutable reference to the component found at the specified index.
 		 * \warning This function performs no array-bounds checking. the passed index must be [0 alvere/math Size - 1].
 		 */
-		const T& operator[](unsigned int idx) const
+		const T & operator[](unsigned int idx) const
 		{
 			return components[idx];
 		}
@@ -114,9 +114,9 @@ namespace alvere
 		 * \brief Vector4 assignment operator overload.
 		 * \param rhs The Vector4 from which to copy component values from.
 		 */
-		Vector<T, Size>& operator=(const Vector<T, Size>& rhs)
+		Vector<T, Size> & operator=(const Vector<T, Size> & rhs)
 		{
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				components[idx] = rhs.components[idx];
 			return *this;
 		}
@@ -127,9 +127,9 @@ namespace alvere
 		 * \param rhs Another vector which will be added to the vector.
 		 * \returns A reference to the vector.
 		 */
-		Vector<T, Size>& operator+=(const Vector<T, Size>& rhs)
+		Vector<T, Size> & operator+=(const Vector<T, Size> & rhs)
 		{
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				components[idx] += rhs.components[idx];
 			return *this;
 		}
@@ -140,9 +140,9 @@ namespace alvere
 		 * \param rhs Another vector which will be subtracted from the vector.
 		 * \returns A reference to the vector.
 		 */
-		Vector<T, Size>& operator-=(const Vector<T, Size>& rhs)
+		Vector<T, Size> & operator-=(const Vector<T, Size> & rhs)
 		{
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				components[idx] -= rhs.components[idx];
 			return *this;
 		}
@@ -153,9 +153,9 @@ namespace alvere
 		 * \param rhs Another vector which will be multiplied with the vector.
 		 * \returns A reference to the vector.
 		 */
-		Vector<T, Size>& operator*=(const Vector<T, Size>& rhs)
+		Vector<T, Size> & operator*=(const Vector<T, Size> & rhs)
 		{
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				components[idx] *= rhs.components[idx];
 			return *this;
 		}
@@ -166,9 +166,9 @@ namespace alvere
 		 * \param rhs Another vector which the vector will be divided by.
 		 * \returns A reference to the vector.
 		 */
-		Vector<T, Size>& operator/=(const Vector<T, Size>& rhs)
+		Vector<T, Size> & operator/=(const Vector<T, Size> & rhs)
 		{
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				components[idx] /= rhs.components[idx];
 			return *this;
 		}
@@ -178,9 +178,9 @@ namespace alvere
 		 * \param s The value of which to multiply/scale the vector by.
 		 * \returns A reference to the vector.
 		 */
-		Vector<T, Size>& operator*=(float s)
+		Vector<T, Size> & operator*=(float s)
 		{
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				components[idx] *= s;
 			return *this;
 		}
@@ -190,9 +190,9 @@ namespace alvere
 		 * \param s The value of which to divide/scale the vector by.
 		 * \returns A reference to the vector.
 		 */
-		Vector<T, Size>& operator/=(float s)
+		Vector<T, Size> & operator/=(float s)
 		{
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 				components[idx] /= s;
 			return *this;
 		}
@@ -213,7 +213,7 @@ namespace alvere
 		static Vector<T, Size> min(const Vector<T, Size> & a, const Vector<T, Size> & b)
 		{
 			Vector<T, Size> min;
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 			{
 				min[idx] = a.components[idx] < b.components[idx]
 					? a.components[idx]
@@ -229,7 +229,7 @@ namespace alvere
 		static Vector<T, Size> max(const Vector<T, Size> & a, const Vector<T, Size> & b)
 		{
 			Vector<T, Size> max;
-			for (unsigned int idx = 0; idx < Size; idx++)
+			for(unsigned int idx = 0; idx < Size; idx++)
 			{
 				max[idx] = a.components[idx] > b.components[idx]
 					? a.components[idx]
@@ -247,7 +247,7 @@ namespace alvere
 	 * \returns A new vector which is the sum of the two given vectors.
 	 */
 	template<typename T, int Size>
-	inline Vector<T, Size> operator+(Vector<T, Size> lhs, const Vector<T, Size>& rhs)
+	inline Vector<T, Size> operator+(Vector<T, Size> lhs, const Vector<T, Size> & rhs)
 	{
 		return lhs += rhs;
 	}
@@ -260,7 +260,7 @@ namespace alvere
 	 * \returns A new vector which is the product of the subtraction of the two given vectors.
 	 */
 	template<typename T, int Size>
-	inline Vector<T, Size> operator-(Vector<T, Size> lhs, const Vector<T, Size>& rhs)
+	inline Vector<T, Size> operator-(Vector<T, Size> lhs, const Vector<T, Size> & rhs)
 	{
 		return lhs -= rhs;
 	}
@@ -273,7 +273,7 @@ namespace alvere
 	 * \returns A new vector which is the product of the two given vectors.
 	 */
 	template<typename T, int Size>
-	inline Vector<T, Size> operator*(Vector<T, Size> lhs, const Vector<T, Size>& rhs)
+	inline Vector<T, Size> operator*(Vector<T, Size> lhs, const Vector<T, Size> & rhs)
 	{
 		return lhs *= rhs;
 	}
@@ -286,7 +286,7 @@ namespace alvere
 	 * \returns A new vector which is the quotient of the two given vectors.
 	 */
 	template<typename T, int Size>
-	inline Vector<T, Size> operator/(Vector<T, Size> lhs, const Vector<T, Size>& rhs)
+	inline Vector<T, Size> operator/(Vector<T, Size> lhs, const Vector<T, Size> & rhs)
 	{
 		return lhs /= rhs;
 	}
@@ -347,10 +347,10 @@ namespace alvere
 	 * \returns True if the vectors are found to be equal.
 	 */
 	template<typename T, int Size>
-	inline bool operator==(const Vector<T, Size>& lhs, const Vector<T, Size>& rhs)
+	inline bool operator==(const Vector<T, Size> & lhs, const Vector<T, Size> & rhs)
 	{
-		for (unsigned int idx = 0; idx < Size; idx++)
-			if (lhs.components[idx] != rhs.components[idx])
+		for(unsigned int idx = 0; idx < Size; idx++)
+			if(lhs.components[idx] != rhs.components[idx])
 				return false;
 		return true;
 	}
@@ -363,7 +363,7 @@ namespace alvere
 	 * \returns True if the vectors are not found to be equal.
 	 */
 	template<typename T, int Size>
-	inline bool operator!=(const Vector<T, Size>& lhs, const Vector<T, Size>& rhs)
+	inline bool operator!=(const Vector<T, Size> & lhs, const Vector<T, Size> & rhs)
 	{
 		return !(lhs == rhs);
 	}

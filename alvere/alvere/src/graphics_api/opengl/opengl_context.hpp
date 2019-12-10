@@ -18,7 +18,7 @@ namespace alvere::graphics_api::opengl
 
 		~RenderingContext();
 
-		void init(unsigned int width, unsigned int height) override;
+		void init(int width, int height) override;
 
 		void swapBuffers() override;
 

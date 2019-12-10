@@ -4,7 +4,7 @@
 
 struct Spritesheet
 {
-	alvere::Asset<alvere::Texture> m_texture;
+	std::unique_ptr<alvere::Texture> m_texture;
 	alvere::Vector2i m_uvTileSize;
 
 	alvere::RectI GetSourceRect(alvere::Vector2i spritesheetCoord) const

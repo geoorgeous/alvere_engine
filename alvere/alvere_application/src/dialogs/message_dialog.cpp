@@ -3,13 +3,13 @@
 
 namespace alvere
 {
-	MessageDialog::MessageDialog(const std::string & title, const std::string & body, ButtonType button, IconType icon)
-		: MessageDialog(title, body, button, icon, 0)
+	MessageDialog::MessageDialog(const std::string & m_title, const std::string & body, ButtonType button, IconType icon)
+		: MessageDialog(m_title, body, button, icon, 0)
 	{
 	}
 
-	MessageDialog::MessageDialog(const std::string & title, const std::string & body, ButtonType button, IconType icon, int defaultButtonSelection)
-		: m_title(title)
+	MessageDialog::MessageDialog(const std::string & m_title, const std::string & body, ButtonType button, IconType icon, int defaultButtonSelection)
+		: m_title(m_title)
 		, m_body(body)
 		, m_button(button)
 		, m_icon(icon)

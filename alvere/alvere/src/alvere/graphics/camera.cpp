@@ -1,5 +1,6 @@
+#include "alvere/graphics/camera.hpp"
+
 #include "alvere/math/matrix/transformations.hpp"
-#include "camera.hpp"
 
 namespace alvere
 {

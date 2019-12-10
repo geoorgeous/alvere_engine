@@ -58,11 +58,11 @@ namespace alvere::graphics_api::opengl
 	{
 		unsigned char * newPixelData = (unsigned char *)std::calloc(width * height, m_channelCount);
 
-		int copyWidth = width > m_resWidth ? m_resWidth : width;
+		int copyWidth = width > m_dimensions.x ? m_dimensions.x : width;
 
-		for(int y = 0; y < height && y < m_resHeight; ++y)
+		for(int y = 0; y < height && y < m_dimensions.y; ++y)
 		{
-			unsigned int start = y * m_resWidth;
+			unsigned int start = y * m_dimensions.x;
 
 			std::copy(
 				m_pixelData + start * m_channelCount,
@@ -72,13 +72,13 @@ namespace alvere::graphics_api::opengl
 
 		std::free(m_pixelData);
 
-		m_resWidth = width;
-		m_resHeight = height;
+		m_dimensions.x = width;
+		m_dimensions.y = height;
 		m_pixelData = newPixelData;
 
 		glBindTexture(GL_TEXTURE_2D, m_Handle);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_resWidth, m_resHeight, 0, m_format, GL_UNSIGNED_BYTE, m_pixelData));
+		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_dimensions.x, m_dimensions.y, 0, m_format, GL_UNSIGNED_BYTE, m_pixelData));
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -107,25 +107,25 @@ namespace alvere::graphics_api::opengl
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_resWidth, m_resHeight, 0, m_format, GL_UNSIGNED_BYTE, m_pixelData));
+		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_dimensions.x, m_dimensions.y, 0, m_format, GL_UNSIGNED_BYTE, m_pixelData));
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 
-alvere::Asset<alvere::Texture> alvere::Texture::New(const char * filename, Channels channels)
+std::unique_ptr<alvere::Texture> alvere::Texture::New(const char * filename, Channels channels)
 {
-	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(filename, channels));
+	return std::make_unique<graphics_api::opengl::Texture>(filename, channels);
 }
 
-alvere::Asset<alvere::Texture> alvere::Texture::New(const unsigned char * data, int width, int height, Channels channels)
+std::unique_ptr<alvere::Texture> alvere::Texture::New(const unsigned char * data, int width, int height, Channels channels)
 {
-	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(data, width, height, channels));
+	return std::make_unique<graphics_api::opengl::Texture>(data, width, height, channels);
 }
 
-alvere::Asset<alvere::Texture> alvere::Texture::New(int width, int height, Channels channels)
+std::unique_ptr<alvere::Texture> alvere::Texture::New(int width, int height, Channels channels)
 {
-	return alvere::Asset<alvere::Texture>(new graphics_api::opengl::Texture(width, height, channels));
+	return std::make_unique<graphics_api::opengl::Texture>(width, height, channels);
 }
 
 alvere::Texture * alvere::Texture::loadFromFile(const std::string & filepath)
@@ -133,7 +133,7 @@ alvere::Texture * alvere::Texture::loadFromFile(const std::string & filepath)
 	return new graphics_api::opengl::Texture(filepath.c_str());
 }
 
-alvere::Asset<alvere::Texture> alvere::Texture::New(const alvere::Texture & sourceTexture, alvere::RectI sourceRect)
+std::unique_ptr<alvere::Texture> alvere::Texture::New(const alvere::Texture & sourceTexture, alvere::RectI sourceRect)
 {
-	return alvere::Asset<alvere::Texture>(std::make_unique<graphics_api::opengl::Texture>(sourceTexture, sourceRect));
+	return std::make_unique<graphics_api::opengl::Texture>(sourceTexture, sourceRect);
 }

@@ -1,9 +1,9 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
-#include "alvere/assets.hpp"
-#include "alvere/math/vectors.hpp"
+#include "alvere/math/vector/vec_2_i.hpp"
 #include "alvere/utils/shapes.hpp"
 
 namespace alvere
@@ -19,21 +19,19 @@ namespace alvere
 			RGBAlpha = 4
 		};
 
-		static Asset<Texture> New(const char * filename, Channels channels = Channels::RGBAlpha);
+		static std::unique_ptr<Texture> New(const char * filename, Channels channels = Channels::RGBAlpha);
 
-		static Asset<Texture> New(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
+		static std::unique_ptr<Texture> New(const unsigned char * data, int width, int height, Channels channels = Channels::RGBAlpha);
 
-		static Asset<Texture> New(int width, int height, Channels channels = Channels::RGBAlpha);
+		static std::unique_ptr<Texture> New(int width, int height, Channels channels = Channels::RGBAlpha);
 
-		static Asset<Texture> New(const Texture & sourceTexture, alvere::RectI sourceRect);
+		static std::unique_ptr<Texture> New(const Texture & sourceTexture, alvere::RectI sourceRect);
 
 		static Texture * loadFromFile(const std::string & filepath);
 
 		virtual ~Texture();
 
-		int width() const;
-
-		int height() const;
+		Vec2i getDimensions() const;
 
 		int channelCount() const;
 
@@ -53,9 +51,7 @@ namespace alvere
 
 	protected:
 
-		int m_resWidth;
-
-		int m_resHeight;
+		Vec2i m_dimensions;
 
 		int m_channelCount;
 

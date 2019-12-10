@@ -25,7 +25,7 @@ namespace alvere
 	static std::unique_ptr<console::Command> s_quitCommand;
 
 	Application::Application(const Window::Properties & properties)
-		: m_window(Window::New(properties)), m_targetFrameRate(60.0f), m_running(true)
+		: m_window(Window::create(properties)), m_targetFrameRate(60.0f), m_running(true)
 	{
 		m_windowCloseEventHandler.setFunction([&]() {
 			m_running = false;
@@ -86,11 +86,7 @@ namespace alvere
 					update(timeStepSeconds);
 				}
 
-				m_window->getRenderingContext().frameBuffer()->bind();
-
-				render_commands::setViewport(0, 0, m_window->getRenderingContext().frameBuffer()->getWidth(), m_window->getRenderingContext().frameBuffer()->getHeight());
-
-				render_commands::clear();
+				m_window->getRenderingContext().bindFrameBuffer();
 
 				render();
 

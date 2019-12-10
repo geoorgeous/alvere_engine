@@ -23,7 +23,7 @@ namespace alvere::graphics_api::opengl
 		glDeleteBuffers(1, &m_screenQuadVBOHandle);
 	}
 
-	void RenderingContext::init(unsigned int width, unsigned int height)
+	void RenderingContext::init(int width, int height)
 	{
 		glfwMakeContextCurrent(m_windowHandle);
 

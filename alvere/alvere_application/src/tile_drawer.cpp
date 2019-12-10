@@ -4,7 +4,7 @@ TileDrawer::TileDrawer(const char * tileSheetFilepath)
 {
 	m_TileSheet = alvere::Texture::New(tileSheetFilepath);
 
-	int textureHeight = m_TileSheet->height();
+	int textureHeight = m_TileSheet->getDimensions().y;
 	m_TileSources = new alvere::RectI[10] {
 		alvere::RectI(0, textureHeight - 16, 16, 16),
 

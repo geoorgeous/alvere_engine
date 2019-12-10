@@ -5480,7 +5480,7 @@ bool ImGui::CollapsingHeader(const char* label, bool* p_open, ImGuiTreeNodeFlags
     if (p_open)
     {
         // Create a small overlapping close button
-        // FIXME: We can evolve this into user accessible helpers to add extra buttons on title bars, headers, etc.
+        // FIXME: We can evolve this into user accessible helpers to add extra buttons on m_title bars, headers, etc.
         // FIXME: CloseButton can overlap into text, need find a way to clip the text somehow.
         ImGuiContext& g = *GImGui;
         ImGuiItemHoveredDataBackup last_item_backup;

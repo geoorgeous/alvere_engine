@@ -35,12 +35,12 @@ namespace alvere::console
 		bool _initialised = false;
 		bool _shown = false;
 
-		Asset<ShaderProgram> _shaderProgram;
+		std::unique_ptr<ShaderProgram> _shaderProgram;
 		VertexBuffer * _vbo;
 		graphics_api::opengl::VertexArray * _vao;
 		Matrix4 _projection;
 
-		Asset<SpriteBatcher> _spriteBatcher;
+		std::unique_ptr<SpriteBatcher> _spriteBatcher;
 		Font _font;
 		unsigned int _fontSize = 14;
 		unsigned int _maxOutputLineCountShrunk = 14;
@@ -285,7 +285,7 @@ namespace alvere::console
 					return "Test command!";
 				}));*/
 
-			Asset<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core
+			std::unique_ptr<Shader> vShader = Shader::New(Shader::Type::Vertex, R"(#version 330 core
 					uniform mat4 u_projectionMatrix;
 
 					layout(location = 0) in vec3 a_position;
@@ -296,7 +296,7 @@ namespace alvere::console
 					}
 				)");
 
-			Asset<Shader> fShader = Shader::New(Shader::Type::Fragment, R"(#version 330 core
+			std::unique_ptr<Shader> fShader = Shader::New(Shader::Type::Fragment, R"(#version 330 core
 					uniform vec3 u_colour;
 					uniform int u_lineHeight;
 					uniform int u_outputLineCount;
@@ -318,16 +318,16 @@ namespace alvere::console
 				)");
 
 			_shaderProgram = ShaderProgram::New();
-			_shaderProgram->SetShader(AssetRef<Shader>(vShader.get()));
-			_shaderProgram->SetShader(AssetRef<Shader>(fShader.get()));
+			_shaderProgram->SetShader(vShader.get());
+			_shaderProgram->SetShader(fShader.get());
 			_shaderProgram->build();
 
 			_window = window;
 			_charInputEventHandler.setFunction(onCharInput);
 			_window->getEvent<CharInputEvent>()->subscribe(_charInputEventHandler);
 
-			unsigned int width = _window->getWidth();
-			unsigned int height = _window->getHeight();
+			unsigned int width = _window->getSize().x;
+			unsigned int height = _window->getSize().y;
 
 			_projection = orthographic(0, width, height, 0, -1, 1);
 
@@ -467,7 +467,7 @@ namespace alvere::console
 			{
 				int pageCount = _output.size() / _maxOutputLineCount + 1;
 				std::string pageCounter = std::to_string(_outputPageIndex + 1) + "/" + std::to_string(pageCount);
-				_spriteBatcher->submit(*bitmap, pageCounter, Vector2(_window->getWidth() - (3.0f + bitmap->getTextSize(pageCounter).x), 6.0f));
+				_spriteBatcher->submit(*bitmap, pageCounter, Vector2(_window->getSize().x - (3.0f + bitmap->getTextSize(pageCounter).x), 6.0f));
 			}
 
 			_shaderProgram->bind();

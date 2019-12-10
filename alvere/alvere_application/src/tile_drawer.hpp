@@ -1,8 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 
-#include <alvere/assets.hpp>
 #include <alvere/graphics/sprite_batcher.hpp>
 #include <alvere/graphics/texture.hpp>
 
@@ -17,6 +17,6 @@ public:
 	void DrawTile(alvere::SpriteBatcher& spriteBatcher, int x, int y, WorldCell::Type cellType);
 
 private:
-	alvere::Asset<alvere::Texture> m_TileSheet;
+	std::unique_ptr<alvere::Texture> m_TileSheet;
 	alvere::RectI * m_TileSources;
 };

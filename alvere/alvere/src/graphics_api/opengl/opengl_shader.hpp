@@ -11,6 +11,6 @@ namespace alvere::graphics_api::opengl
 
 		~Shader();
 
-		bool Compile() override;
+		bool Compile() const override;
 	};
 }

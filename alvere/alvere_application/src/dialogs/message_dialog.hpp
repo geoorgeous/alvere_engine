@@ -24,9 +24,9 @@ namespace alvere
 
 	public:
 
-		MessageDialog( const std::string& title, const std::string& body, ButtonType button, IconType icon );
+		MessageDialog( const std::string& m_title, const std::string& body, ButtonType button, IconType icon );
 
-		MessageDialog( const std::string& title, const std::string& body, ButtonType button, IconType icon, int defaultButtonSelection );
+		MessageDialog( const std::string& m_title, const std::string& body, ButtonType button, IconType icon, int defaultButtonSelection );
 
 		void Show() const;
 	};

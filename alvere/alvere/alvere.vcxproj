@@ -235,6 +235,7 @@
     <ClCompile Include="src\alvere\graphics\mesh.cpp" />
     <ClCompile Include="src\alvere\graphics\renderer.cpp" />
     <ClCompile Include="src\alvere\graphics\renderer_api.cpp" />
+    <ClCompile Include="src\alvere\graphics\rendering_context.cpp" />
     <ClCompile Include="src\alvere\graphics\render_commands.cpp" />
     <ClCompile Include="src\alvere\graphics\shader.cpp" />
     <ClCompile Include="src\alvere\graphics\shader_program.cpp" />
@@ -360,7 +361,6 @@
     <ClInclude Include="dependencies\include\luaplus\tilde\SendMessageBuffer.h" />
     <ClInclude Include="src\alvere\alvere.hpp" />
     <ClInclude Include="src\alvere\application\application.hpp" />
-    <ClInclude Include="src\alvere\assets.hpp" />
     <ClInclude Include="src\alvere\entry.hpp" />
     <ClInclude Include="src\alvere\events\event_handler.hpp" />
     <ClInclude Include="src\alvere\graphics\buffers.hpp" />
@@ -401,6 +401,8 @@
     <ClInclude Include="src\alvere\math\shapes\point_3d.hpp" />
     <ClInclude Include="src\alvere\math\shapes\rect.hpp" />
     <ClInclude Include="src\alvere\math\shapes\sphere.hpp" />
+    <ClInclude Include="src\alvere\math\vector\vector_2_x.hpp" />
+    <ClInclude Include="src\alvere\math\vector\vec_2_i.hpp" />
     <ClInclude Include="src\alvere\utils\assets.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\arg.hpp" />
     <ClInclude Include="src\alvere\utils\command_console\command.hpp" />

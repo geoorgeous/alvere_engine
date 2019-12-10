@@ -76,11 +76,10 @@ void ImGuiEditor::Update(float deltaTime)
 
 	if (m_window.getMouse().scrollDelta.y != 0.0f)
 	{
-		float aspect = (float)m_window.getProperties().resHeight / m_window.getProperties().resWidth;
 		float currentScale = m_focusedMap->m_camera->getOrthographicsScale() / 2.0f;
 		float newScale = currentScale - m_window.getMouse().scrollDelta.y;
 
-		m_focusedMap->m_camera->setOrthographic(-newScale, newScale, newScale * aspect, -newScale * aspect, -1.0f, 1.0f);
+		m_focusedMap->m_camera->setOrthographic(-newScale, newScale, newScale * m_window.getRenderingContext().getAspectRatio(), -newScale * m_window.getRenderingContext().getAspectRatio(), -1.0f, 1.0f);
 	}
 
 	m_focusedMap->m_world.Update(deltaTime);
@@ -102,7 +101,7 @@ void ImGuiEditor::Render()
 
 	//Always resize the main window to fill the whole background of the given window
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-	ImGui::SetNextWindowSize(ImVec2((float) m_window.getProperties().resWidth, (float) 47.0f), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2((float) m_window.getRenderingContext().getResolution().x, (float) 47.0f), ImGuiCond_Always);
 
 	if (!ImGui::Begin("Main Window", NULL, m_windowflags))
 	{

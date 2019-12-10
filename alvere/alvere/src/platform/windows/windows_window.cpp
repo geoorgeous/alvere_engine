@@ -1,8 +1,9 @@
 #include <glfw/glfw3.h>
 
-#include "alvere/utils/exceptions.hpp"
 #include "alvere/events/application_events.hpp"
 #include "alvere/graphics/render_commands.hpp"
+#include "alvere/math/vector/vec_2_i.hpp"
+#include "alvere/utils/exceptions.hpp"
 #include "graphics_api/opengl/opengl_context.hpp"
 #include "platform/windows/windows_window.hpp"
 
@@ -10,15 +11,119 @@ namespace alvere::platform::windows
 {
 	static bool s_GLFWInitialised = false;
 
-	Window::Window(const alvere::Window::Properties & properties)
-		: alvere::Window(properties)
+	Window::Window(const alvere::Window::Properties & properties, Vec2i resolution)
+		: alvere::Window()
 	{
-		init(properties);
+		init(properties, resolution);
 	}
 
 	Window::~Window()
 	{
 		shutdown();
+	}
+
+	void Window::setTitle(std::string title)
+	{
+		m_title = title;
+		glfwSetWindowTitle(m_windowHandle, title.c_str());
+	}
+
+	void Window::setPosition(int x, int y)
+	{
+		m_position.x = x;
+		m_position.y = y;
+		glfwSetWindowPos(m_windowHandle, x, y);
+	}
+
+	void Window::resize(int width, int height)
+	{
+		float resolutionScaleX = m_renderingContext->getResolution().x / m_size.x;
+		float resolutionScaleY = m_renderingContext->getResolution().y / m_size.y;
+
+		m_size.x = width;
+		m_size.y = height;
+
+		m_renderingContext->setResolution(resolutionScaleX * m_size.x, resolutionScaleY * m_size.y);
+		alvere::render_commands::setViewport(0, 0, m_size.x, m_size.y);
+
+		getEvent<WindowResizeEvent>()->dispatch(m_size.x, m_size.y);
+	}
+
+	void Window::setFlag(Flag flag, bool value)
+	{
+		if(m_flags.find(flag) != m_flags.end() && m_flags[flag] == value)
+			return;
+		m_flags[flag] = value;
+
+		switch (flag)
+		{
+			case Flag::IsVisible:
+				if (value)
+					glfwShowWindow(m_windowHandle);
+				else
+					glfwHideWindow(m_windowHandle);
+				break;
+
+			case Flag::Resizeable:
+				glfwSetWindowAttrib(m_windowHandle, GLFW_RESIZABLE, value ? GLFW_TRUE : GLFW_FALSE);
+				break;
+
+			case Flag::AlwaysOnTop:
+				glfwSetWindowAttrib(m_windowHandle, GLFW_FLOATING, value ? GLFW_TRUE : GLFW_FALSE);
+				break;
+
+			case Flag::Decorated:
+				glfwSetWindowAttrib(m_windowHandle, GLFW_DECORATED, value ? GLFW_TRUE : GLFW_FALSE);
+				break;
+
+			case Flag::FullScreen:
+				if (value)
+				{
+					const GLFWvidmode * mode = glfwGetVideoMode(m_monitorHandle);
+					glfwSetWindowMonitor(m_windowHandle, m_monitorHandle, 0, 0, mode->width, mode->height, mode->refreshRate);
+				}
+				else
+				{
+					glfwSetWindowMonitor(m_windowHandle, NULL, m_position.x, m_position.y, m_size.x, m_size.y, 0);
+				}
+				break;
+
+			case Flag::FullScreenAutoMinimize:
+				glfwSetWindowAttrib(m_windowHandle, GLFW_AUTO_ICONIFY, value ? GLFW_TRUE : GLFW_FALSE);
+				break;
+
+			case Flag::IsCursorEnabled:
+				if (value)
+					glfwSetInputMode(m_windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				else
+					glfwSetInputMode(m_windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				break;
+		}
+	}
+
+	void Window::maximize()
+	{
+		glfwMaximizeWindow(m_windowHandle);
+	}
+
+	void Window::minimize()
+	{
+		glfwIconifyWindow(m_windowHandle);
+	}
+
+	void Window::restore()
+	{
+		glfwRestoreWindow(m_windowHandle);
+	}
+
+	void Window::focus()
+	{
+		glfwFocusWindow(m_windowHandle);
+	}
+
+	void Window::requestAttention()
+	{
+		glfwRequestWindowAttention(m_windowHandle);
 	}
 
 	void Window::pollEvents()
@@ -36,17 +141,7 @@ namespace alvere::platform::windows
 		glfwPollEvents();
 	}
 
-	void Window::disableCursor()
-	{
-		glfwSetInputMode(m_windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
-
-	void Window::enableCursor()
-	{
-		glfwSetInputMode(m_windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
-
-	void Window::init(const alvere::Window::Properties& properties)
+	void Window::init(const alvere::Window::Properties& properties, Vec2i resolution)
 	{
 		if (!s_GLFWInitialised)
 		{
@@ -55,47 +150,63 @@ namespace alvere::platform::windows
 				AlvThrowFatal("Fatal error! Failed to initialise GLFW.");
 			}
 
-			glfwSetErrorCallback([](int error, const char* message)
-				{
-					AlvThrow("GLFW error (%i): Message: \"%s\".", error, message);
-				});
+			glfwSetErrorCallback([](int error, const char * message)
+			{
+				AlvThrow("GLFW error (%i): Message: \"%s\".", error, message);
+			});
 
 			s_GLFWInitialised = true;
 		}
 
+		m_monitorHandle = glfwGetPrimaryMonitor();
+
+		m_flags[Flag::IsVisible] = (properties.m_flags & Flag::IsVisible) != 0;
+		glfwWindowHint(GLFW_VISIBLE, m_flags[Flag::IsVisible]);
+
+		m_flags[Flag::Resizeable] = (properties.m_flags & Flag::Resizeable) != 0;
+		glfwWindowHint(GLFW_RESIZABLE, m_flags[Flag::Resizeable]);
+
+		m_flags[Flag::AlwaysOnTop] = (properties.m_flags & Flag::AlwaysOnTop) != 0;
+		glfwWindowHint(GLFW_FLOATING, m_flags[Flag::AlwaysOnTop]);
+
+		m_flags[Flag::Decorated] = (properties.m_flags & Flag::Decorated) != 0;
+		glfwWindowHint(GLFW_DECORATED, m_flags[Flag::Decorated]);
+
+		m_flags[Flag::FullScreen] = (properties.m_flags & Flag::FullScreenAutoMinimize) != 0;
+		GLFWmonitor * monitor = m_flags[Flag::FullScreen] ? m_monitorHandle : nullptr;
+
+		m_flags[Flag::FullScreenAutoMinimize] = (properties.m_flags & Flag::FullScreenAutoMinimize) != 0;
+		glfwWindowHint(GLFW_AUTO_ICONIFY, m_flags[Flag::FullScreenAutoMinimize]);
+
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-		m_windowHandle = glfwCreateWindow((int)properties.sizeWidth, (int)properties.sizeHeight, properties.title.c_str(), nullptr, nullptr);
+
+		m_windowHandle = glfwCreateWindow((int)properties.m_size.x, (int)properties.m_size.y, properties.m_title.c_str(), monitor, nullptr);
+
+		setFlag(Flag::IsCursorEnabled, properties.m_flags & Flag::IsCursorEnabled);
 
 		if (m_windowHandle == NULL)
 		{
 			AlvThrowFatal("Fatal error! Failed to create GLFW window.");
 		}
 
+		m_title = properties.m_title;
+		m_position = properties.m_position;
+		m_size = properties.m_size;
+
 		m_renderingContext = new alvere::graphics_api::opengl::RenderingContext(m_windowHandle);
-		m_renderingContext->init(m_properties.resWidth, m_properties.resHeight);
+		m_renderingContext->init(resolution.x, resolution.y);
 
 		glfwSwapInterval(0);
 
-		m_windowUserPointerData = { this, &m_properties, &m_keys, &m_mouse };
+		m_windowUserPointerData = { this, &m_keys, &m_mouse };
 		glfwSetWindowUserPointer(m_windowHandle, &m_windowUserPointerData);
 
 		glfwSetWindowCloseCallback(m_windowHandle, [](GLFWwindow * windowHandle)
 		{
 			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
 			window.getEvent<WindowCloseEvent>()->dispatch();
-		});
-		glfwSetWindowSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
-		{
-			WindowUserPointerData & data = *(WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle);
-			data.properties->sizeWidth = width;
-			data.properties->sizeHeight = height;
-
-			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
-			window.getEvent<WindowResizeEvent>()->dispatch(data.properties->sizeWidth, data.properties->sizeHeight);
-
 		});
 		glfwSetKeyCallback(m_windowHandle, [](GLFWwindow * windowHandle, int key, int scancode, int action, int mods)
 		{
@@ -248,22 +359,16 @@ namespace alvere::platform::windows
 			mouse.scrollDelta.x = xOffset;
 			mouse.scrollDelta.y = yOffset;
 		});
+		glfwSetWindowSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
+		{
+			//Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
+			//window.resize(width, height);
+
+		});
 		glfwSetFramebufferSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
 		{
-			Window::Properties & properties = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->properties;
 			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
-			
-			float resolutionScale = (float)properties.resWidth / properties.sizeWidth;
-
-			properties.sizeWidth = width;
-			properties.sizeHeight = height;
-			properties.resWidth = width * resolutionScale;
-			properties.resHeight = height * resolutionScale;
-
-			window.m_renderingContext->frameBuffer()->resize(properties.resWidth, properties.resHeight);
-			alvere::render_commands::setViewport(0, 0, width, height);
-
-			window.getEvent<WindowResizeEvent>()->dispatch(width, height);
+			window.resize(width, height);
 		});
 	}
 
@@ -273,7 +378,12 @@ namespace alvere::platform::windows
 	}
 }
 
-alvere::Asset<alvere::Window> alvere::Window::New(const alvere::Window::Properties& properties)
+std::unique_ptr<alvere::Window> alvere::Window::create(const alvere::Window::Properties & properties)
 {
-	return alvere::Asset<alvere::platform::windows::Window>(new alvere::platform::windows::Window(properties));
+	return std::make_unique<alvere::platform::windows::Window>(properties, properties.m_size);
+}
+
+std::unique_ptr<alvere::Window> alvere::Window::create(const alvere::Window::Properties & properties, alvere::Vec2i resolution)
+{
+	return std::make_unique<alvere::platform::windows::Window>(properties, resolution);
 }

@@ -37,12 +37,12 @@ namespace alvere
 
 	void SpriteBatcher::submit(const Texture * texture, alvere::Vector2 position, alvere::Vector4 tint)
 	{
-		submit(texture, Rect{ position.x, position.y, (float)texture->width(), (float)texture->height() }, tint);
+		submit(texture, Rect{ position.x, position.y, (float)texture->getDimensions().x, (float)texture->getDimensions().y }, tint);
 	}
 
 	void SpriteBatcher::submit(const Texture * texture, Rect destination, alvere::Vector4 tint)
 	{
-		submit(texture, destination, RectI{ 0, 0, texture->width(), texture->height() }, tint);
+		submit(texture, destination, RectI{ 0, 0, texture->getDimensions().x, texture->getDimensions().y }, tint);
 	}
 
 	void SpriteBatcher::submit(const Texture * texture, Rect destination, RectI source, alvere::Vector4 tint)

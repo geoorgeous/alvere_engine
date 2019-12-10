@@ -1,7 +1,6 @@
 #pragma once
 
 #include "alvere/application/window.hpp"
-#include "alvere/assets.hpp"
 
 #define ALV_NEW_APP_FUNC(app_class_name) alvere::Application * alvere::NewApplication() { return new app_class_name(); }
 
@@ -23,7 +22,7 @@ namespace alvere
 
 	protected:
 
-		Asset<Window> m_window;
+		std::unique_ptr<Window> m_window;
 
 		float m_targetFrameRate;
 

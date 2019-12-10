@@ -1,6 +1,7 @@
 #pragma once
 
 #include "alvere/graphics/frame_buffer.hpp"
+#include "alvere/math/vector/vec_2_i.hpp"
 
 namespace alvere
 {
@@ -10,12 +11,15 @@ namespace alvere
 
 		virtual void swapBuffers() = 0;
 
-		virtual void init(unsigned int width, unsigned int height) = 0;
+		virtual void init(int width, int height) = 0;
 
-		inline FrameBuffer * frameBuffer()
-		{
-			return m_frameBuffer.get();
-		}
+		void bindFrameBuffer() const;
+
+		Vec2i getResolution() const;
+
+		float getAspectRatio() const;
+
+		void setResolution(int width, int height);
 
 	protected:
 

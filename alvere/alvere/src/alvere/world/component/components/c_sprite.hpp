@@ -1,6 +1,5 @@
 #pragma once
 
-#include "alvere/assets.hpp"
 #include "alvere/graphics/texture.hpp"
 #include "alvere/graphics/sprite.hpp"
 #include "alvere/math/vector/vector_4.hpp"

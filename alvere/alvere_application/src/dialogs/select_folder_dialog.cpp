@@ -3,8 +3,8 @@
 
 namespace alvere
 {
-	SelectFolderDialog::SelectFolderDialog(const std::string & title, const std::string & defaultPath)
-		: m_title(title)
+	SelectFolderDialog::SelectFolderDialog(const std::string & m_title, const std::string & defaultPath)
+		: m_title(m_title)
 		, m_defaultPath(defaultPath)
 	{
 	}

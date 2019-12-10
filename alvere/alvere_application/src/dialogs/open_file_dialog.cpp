@@ -5,8 +5,8 @@
 
 namespace alvere
 {
-	OpenFileDialog::OpenFileDialog(const std::string & title, const std::string & defaultPathAndFile, const std::vector<std::string> & filterPatterns, bool allowMultiSelects)
-		: m_title(title)
+	OpenFileDialog::OpenFileDialog(const std::string & m_title, const std::string & defaultPathAndFile, const std::vector<std::string> & filterPatterns, bool allowMultiSelects)
+		: m_title(m_title)
 		, m_defaultPathAndFile(defaultPathAndFile)
 		, m_filterPatterns(filterPatterns)
 		, m_allowMultipleSelects(allowMultiSelects)

@@ -5,7 +5,6 @@
 #include <typeindex>
 #include <vector>
 
-#include "alvere/assets.hpp"
 #include "alvere/graphics/text/text.hpp"
 
 // Command auto-filling and parameter auto-filling

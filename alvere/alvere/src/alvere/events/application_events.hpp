@@ -6,7 +6,7 @@ namespace alvere
 {
 	class WindowCloseEvent : public Event<> { };
 
-	class WindowResizeEvent : public Event<int, int> { };
+	class WindowResizeEvent : public Event<unsigned short, unsigned short> { };
 
 	class CharInputEvent : public Event<unsigned int> { };
 }
