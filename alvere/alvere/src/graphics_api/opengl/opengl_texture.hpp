@@ -23,7 +23,7 @@ namespace alvere::graphics_api::opengl
 
 		void * getHandle() const override;
 
-		void resize(unsigned int width, unsigned int height) override;
+		bool resize(unsigned int width, unsigned int height) override;
 
 	private:
 

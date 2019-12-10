@@ -54,9 +54,15 @@ namespace alvere::graphics_api::opengl
 		return (void *)m_Handle;
 	}
 
-	void Texture::resize(unsigned int width, unsigned int height)
+	bool Texture::resize(unsigned int width, unsigned int height)
 	{
-		unsigned char * newPixelData = (unsigned char *)std::calloc(width * height, m_channelCount);
+		if (width <= 0 || height <= 0)
+			return false;
+
+		unsigned char * newPixelData = (unsigned char *)std::malloc(width * height * m_channelCount);
+
+		if (newPixelData == nullptr)
+			return false;
 
 		int copyWidth = width > m_dimensions.x ? m_dimensions.x : width;
 
@@ -81,6 +87,8 @@ namespace alvere::graphics_api::opengl
 		ALV_LOG_OPENGL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_dimensions.x, m_dimensions.y, 0, m_format, GL_UNSIGNED_BYTE, m_pixelData));
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return true;
 	}
 
 	void Texture::init()

@@ -35,11 +35,28 @@ namespace alvere::graphics_api::opengl
 
 	void FrameBuffer::resize(int width, int height)
 	{
-		m_texture->resize(width, height);
+		if (!m_texture->resize(width, height))
+			return;
 
 		glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBufferHandle);
 		ALV_LOG_OPENGL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
+		unsigned int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		switch (status)
+		{
+			case GL_FRAMEBUFFER_COMPLETE: break;
+			case GL_FRAMEBUFFER_UNDEFINED: LogError("Incomplete OpenGL FrameBuffer creation: The specified FrameBuffer is the default read or draw FrameBuffer, but the default FrameBuffer does not exist."); break;
+			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: LogError("Incomplete OpenGL FrameBuffer creation: One or more of the FrameBuffer attachment points are FrameBuffer incomplete."); break;
+			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: LogError("Incomplete OpenGL FrameBuffer creation: The FrameBuffer does not have at least one image attached to it."); break;
+			case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: LogError("Incomplete OpenGL FrameBuffer creation: The value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for one or more of the colour attachment point(s) named by GL_DRAW_BUFFERi."); break;
+			case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER: LogError("Incomplete OpenGL FrameBuffer creation: GL_READ_BUFFER is not GL_NONE and the value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for the colour attachment point named by GL_READ_BUFFER."); break;
+			case GL_FRAMEBUFFER_UNSUPPORTED: LogError("Incomplete OpenGL FrameBuffer creation: The combination of the internal formats of the attached images violates an implementation-dependent set of restrictions."); break;
+			case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: LogError("Incomplete OpenGL FrameBuffer creation: either the value of GL_RENDERBUFFER_SAMPLES is not the same for all attached renderbuffers; the value of GL_TEXTURE_SAMPLES is the not same for all attached textures; The attached images are a mix of renderbuffers and textures, and the value of GL_RENDERBUFFER_SAMPLES does not match the value of GL_TEXTURE_SAMPLES; the value of GL_TEXTURE_FIXED_SAMPLE_LOCATIONS is not the same for all attached textures; or, the attached images are a mix of renderbuffers and textures, and the value of GL_TEXTURE_FIXED_SAMPLE_LOCATIONS is not GL_TRUE for all attached textures."); break;
+			case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: LogError("Incomplete OpenGL FrameBuffer creation: One or more FrameBuffer attachment is layered, and one or more populated attachment is not layered, or all populated colour attachments are not from textures of the same target."); break;
+		}
 	}
 
 	void FrameBuffer::bind() const

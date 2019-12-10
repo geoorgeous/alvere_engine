@@ -36,16 +36,7 @@ namespace alvere::platform::windows
 
 	void Window::resize(int width, int height)
 	{
-		float resolutionScaleX = m_size.x == 0 ? 0 : m_renderingContext->getResolution().x / m_size.x;
-		float resolutionScaleY = m_size.y == 0 ? 0 : m_renderingContext->getResolution().y / m_size.y;
-
-		m_size.x = width;
-		m_size.y = height;
-
-		m_renderingContext->setResolution(resolutionScaleX * m_size.x, resolutionScaleY * m_size.y);
-		alvere::render_commands::setViewport(0, 0, m_size.x, m_size.y);
-
-		getEvent<WindowResizeEvent>()->dispatch(m_size.x, m_size.y);
+		glfwSetWindowSize(m_windowHandle, width, height);
 	}
 
 	void Window::setFlag(Flag flag, bool value)
@@ -228,7 +219,7 @@ namespace alvere::platform::windows
 		glfwGetWindowPos(m_windowHandle, &m_position.x, &m_position.y);
 		m_windowedModePosition = m_position;
 
-		m_windowUserPointerData = { this, &m_position, &m_keys, &m_mouse };
+		m_windowUserPointerData = { this, &m_position, &m_keys, &m_mouse, &Window::resizeCallback };
 		glfwSetWindowUserPointer(m_windowHandle, &m_windowUserPointerData);
 
 		m_monitorHandle = glfwGetPrimaryMonitor();
@@ -245,28 +236,32 @@ namespace alvere::platform::windows
 			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
 			window.getEvent<WindowCloseEvent>()->dispatch();
 		});
+
 		glfwSetWindowPosCallback(m_windowHandle, [](GLFWwindow * windowHandle, int x, int y)
 		{
 			Vec2i & position = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->position;
 			position.x = x;
 			position.y = y;
 		});
+
 		glfwSetWindowSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
 		{
-			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
-			window.resize(width, height);
-
+			WindowUserPointerData * windowUserPointerData = (WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle);
+			(windowUserPointerData->window->*(windowUserPointerData->windowResizeCallback))(width, height);
 		});
+
 		glfwSetFramebufferSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
 		{
-			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
-			window.resize(width, height);
+			WindowUserPointerData * windowUserPointerData = (WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle);
+			(windowUserPointerData->window->*(windowUserPointerData->windowResizeCallback))(width, height);
 		});
+
 		glfwSetWindowFocusCallback(m_windowHandle, [](GLFWwindow * windowHandle, int focus)
 		{
 			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
 			window.getEvent<WindowFocusEvent>()->dispatch(focus == GLFW_TRUE ? true : false);
 		});
+
 		glfwSetKeyCallback(m_windowHandle, [](GLFWwindow * windowHandle, int key, int scancode, int action, int mods)
 		{
 			std::unordered_map<Key, std::pair<KeyData, KeyData>> & keys = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->keys;
@@ -386,11 +381,13 @@ namespace alvere::platform::windows
 				case GLFW_KEY_KP_9: setKeyData(Key::NumPad_9, action); break;
 			}
 		});
+
 		glfwSetCharCallback(m_windowHandle, [](GLFWwindow * windowHandle, unsigned int charCode)
 		{
 			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
 			window.getEvent<CharInputEvent>()->dispatch(charCode);
 		});
+
 		glfwSetCursorPosCallback(m_windowHandle, [](GLFWwindow * windowHandle, double xPos, double yPos)
 		{
 			MouseData & mouse = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->mouse;
@@ -399,6 +396,7 @@ namespace alvere::platform::windows
 			mouse.position.x = xPos;
 			mouse.position.y = yPos;
 		});
+
 		glfwSetMouseButtonCallback(m_windowHandle, [](GLFWwindow * windowHandle, int button, int action, int mods)
 		{
 			MouseData & mouse = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->mouse;
@@ -417,6 +415,7 @@ namespace alvere::platform::windows
 				case GLFW_MOUSE_BUTTON_8: mouse.buttons[MouseButton::Button8] = isDown; break;
 			}
 		});
+
 		glfwSetScrollCallback(m_windowHandle, [](GLFWwindow * windowHandle, double xOffset, double yOffset)
 		{
 			MouseData & mouse = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->mouse;
@@ -428,6 +427,20 @@ namespace alvere::platform::windows
 	void Window::shutdown()
 	{
 		glfwDestroyWindow(m_windowHandle);
+	}
+
+	void Window::resizeCallback(int width, int height)
+	{
+		float resolutionScaleX = m_size.x == 0 ? 0 : m_renderingContext->getResolution().x / m_size.x;
+		float resolutionScaleY = m_size.y == 0 ? 0 : m_renderingContext->getResolution().y / m_size.y;
+
+		m_size.x = width;
+		m_size.y = height;
+
+		m_renderingContext->setResolution(resolutionScaleX * m_size.x, resolutionScaleY * m_size.y);
+		alvere::render_commands::setViewport(0, 0, m_size.x, m_size.y);
+
+		getEvent<WindowResizeEvent>()->dispatch(m_size.x, m_size.y);
 	}
 }
 

@@ -47,7 +47,7 @@ namespace alvere
 
 		virtual void * getHandle() const = 0;
 
-		virtual void resize(unsigned int width, unsigned int height) = 0;
+		virtual bool resize(unsigned int width, unsigned int height) = 0;
 
 	protected:
 

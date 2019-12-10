@@ -51,6 +51,7 @@ namespace alvere::platform::windows
 			Vec2i * position;
 			std::unordered_map<Key, std::pair<KeyData, KeyData>> * keys;
 			MouseData * mouse;
+			void (Window:: * windowResizeCallback)(int, int);
 		};
 
 		Vec2i m_windowedModePosition;
@@ -68,5 +69,7 @@ namespace alvere::platform::windows
 		void setCallbacks();
 
 		void shutdown();
+
+		void resizeCallback(int width, int height);
 	};
 }
