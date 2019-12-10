@@ -47,6 +47,8 @@ namespace alvere
 
 		RectI(int x, int y, int width, int height);
 
+		RectI(Vector2i position, Vector2i size);
+
 		int m_x;
 
 		int m_y;
@@ -75,12 +77,15 @@ namespace alvere
 
 		inline bool intersects(const RectI other) const
 		{
-			return !(other.getLeft() > getRight() ||
-				other.getRight() < getLeft() ||
-				other.getTop() < getBottom() ||
-				other.getBottom() > getTop());
+			return !(other.getLeft() >= getRight() ||
+				other.getRight() <= getLeft() ||
+				other.getTop() <= getBottom() ||
+				other.getBottom() >= getTop());
 		}
 
 		explicit operator Rect() const;
+
+		static RectI overlap(RectI a, RectI b);
+		static RectI pad(RectI rect, alvere::Vector2i amount);
 	};
 }

@@ -41,29 +41,34 @@ void C_Tilemap::Resize(int left, int right, int top, int bottom)
 
 	m_size = newSize;
 	m_map = std::move(newMap);
+	UpdateTiles(GetBounds());
 }
 
-void C_Tilemap::UpdateAllTiles()
+void C_Tilemap::UpdateTiles(alvere::RectI area)
 {
-	for (std::size_t y = 0; y < m_size[1]; ++y)
+	//Ensure the given area is within the tilemap bounds
+	area = alvere::RectI::overlap(area, {0, 0, m_size[0], m_size[1]});
+
+	for (int y = 0; y < area.m_height; ++y)
 	{
-		for (std::size_t x = 0; x < m_size[0]; ++x)
+		for (int x = 0; x < area.m_width; ++x)
 		{
-			UpdateTile(x, y);
+			UpdateTile({ area.m_x + x, area.m_y + y });
 		}
 	}
 }
 
-void C_Tilemap::UpdateTile(std::size_t x, std::size_t y)
+void C_Tilemap::UpdateTile(alvere::Vector2i position)
 {
-	Tile * tile = m_map[x + y * m_size[0]].m_tile;
-	if (tile == nullptr)
+	TileInstance & tileInstance = m_map[position[0] + position[1] * m_size[0]];
+
+	if (tileInstance.m_tile == nullptr)
 	{
 		return;
 	}
 
-	bool collides = tile->m_collides;
-	TileDirection surr = GetUnmatchingSurroundings(x, y, collides);
+	bool collides = tileInstance.m_tile->m_collides;
+	TileDirection surr = GetUnmatchingSurroundings(position, collides);
 
 	alvere::Vector2i coordinate;
 
@@ -81,35 +86,87 @@ void C_Tilemap::UpdateTile(std::size_t x, std::size_t y)
 	else if (surr.DOWN_RIGHT)	coordinate = { 3, 2 };
 	else						coordinate = { 1, 1 };
 
-	m_map[x + y * m_size[0]].m_spritesheetCoordinate = coordinate;
+	tileInstance.m_spritesheetCoordinate = coordinate;
 }
 
-TileDirection C_Tilemap::GetUnmatchingSurroundings(std::size_t x, std::size_t y, bool collides) const
+void C_Tilemap::SetTiles(alvere::RectI area, Tile * tile)
+{
+	//Ensure the given area is within the tilemap bounds
+	area = alvere::RectI::overlap(area, GetBounds());
+
+	for (int y = 0; y < area.m_height; ++y)
+	{
+		for (int x = 0; x < area.m_width; ++x)
+		{
+			SetTile_Unsafe({ area.m_x + x, area.m_y + y }, tile);
+		}
+	}
+
+	//Bulk update the all tiles effected and their neighbours
+	UpdateTiles(alvere::RectI::pad(area, { 1, 1 }));
+}
+
+void C_Tilemap::SetTile(alvere::Vector2i position, Tile * tile)
+{
+	if (position[0] < 0 || position[0] >= m_size[0] || position[1] < 0 || position[1] >= m_size[1])
+	{
+		return;
+	}
+
+	SetTile_Unsafe(position, tile);
+	UpdateTiles({ position[0] - 1, position[1] - 1, 3, 3 });
+}
+
+void C_Tilemap::SetTile_Unsafe(alvere::Vector2i position, Tile * tile)
+{
+	TileInstance & tileInstance = m_map[position[0] + position[1] * m_size[0]];
+	tileInstance.m_tile = tile;
+}
+
+alvere::Vector2i C_Tilemap::WorldToTilemap(alvere::Vector2 worldPosition) const
+{
+	alvere::Vector2 tileSpace = worldPosition / m_tileSize;
+	return { (int) std::floor(tileSpace.x), (int) std::floor(tileSpace.y) };
+}
+
+alvere::Vector2 C_Tilemap::TilemapToWorld(alvere::Vector2i tilemapPosition) const
+{
+	alvere::Vector2 centerPosition = alvere::Vector2(tilemapPosition) + alvere::Vector2{ 0.5f, 0.5f };
+	return centerPosition * m_tileSize;
+}
+
+TileDirection C_Tilemap::GetUnmatchingSurroundings(alvere::Vector2i position, bool collides) const
 {
 	return TileDirection(
-		TileCollides_s(x, y + 1) != collides,
-		TileCollides_s(x + 1, y + 1) != collides,
-		TileCollides_s(x + 1, y) != collides,
-		TileCollides_s(x + 1, y - 1) != collides,
-		TileCollides_s(x, y - 1) != collides,
-		TileCollides_s(x - 1, y - 1) != collides,
-		TileCollides_s(x - 1, y) != collides,
-		TileCollides_s(x - 1, y + 1) != collides
+		TileCollides_s(position + alvere::Vector2i{  0,  1 }) != collides,
+		TileCollides_s(position + alvere::Vector2i{  1,  1 }) != collides,
+		TileCollides_s(position + alvere::Vector2i{  1,  0 }) != collides,
+		TileCollides_s(position + alvere::Vector2i{  1, -1 }) != collides,
+		TileCollides_s(position + alvere::Vector2i{  0, -1 }) != collides,
+		TileCollides_s(position + alvere::Vector2i{ -1, -1 }) != collides,
+		TileCollides_s(position + alvere::Vector2i{ -1,  0 }) != collides,
+		TileCollides_s(position + alvere::Vector2i{ -1,  1 }) != collides
 	);
 }
 
-bool C_Tilemap::TileCollides_s(std::size_t x, std::size_t y) const
+bool C_Tilemap::TileCollides_s(alvere::Vector2i position) const
 {
-	if (x < 0 || y < 0 || x >= m_size[0] || y >= m_size[1])
+	if (position[0] < 0 || position[1] < 0 || position[0] >= m_size[0] || position[1] >= m_size[1])
 	{
 		return false;
 	}
 
-	Tile * tile = m_map[x + y * m_size[0]].m_tile;
+	Tile * tile = m_map[position[0] + position[1] * m_size[0]].m_tile;
 	if (tile == nullptr)
 	{
 		return true;
 	}
 
 	return tile == nullptr ? false : tile->m_collides;
+}
+
+void C_Tilemap::DemoFill()
+{
+	SetTiles(GetBounds(), &m_tiles[1]);
+	SetTiles({ 3, 3, m_size[0] - 3, m_size[1] - 3 }, &m_tiles[0]);
 }

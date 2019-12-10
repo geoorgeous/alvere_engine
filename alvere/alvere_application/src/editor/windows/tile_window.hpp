@@ -21,7 +21,7 @@ class TileWindow : public ImGui_Window
 	const ImVec2 m_tileSize = { 32, 32 };
 	const ImColor m_highlightedBorder = { 0.2f, 0.2f, 0.2f };
 
-	std::vector<EditorTile> m_tiles;
+	std::vector<std::unique_ptr<EditorTile>> m_tiles;
 
 	alvere::Vector2i m_selectedPosition;
 	std::unordered_map<alvere::Vector2i, int, PositionHash> m_tilePositionMapping;
@@ -43,7 +43,7 @@ public:
 	{
 		auto iter = m_tilePositionMapping.find(m_selectedPosition);
 		return iter != m_tilePositionMapping.end()
-			? &m_tiles[iter->second]
+			? m_tiles[iter->second].get()
 			: nullptr;
 	}
 

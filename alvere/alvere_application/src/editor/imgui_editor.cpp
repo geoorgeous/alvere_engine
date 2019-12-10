@@ -18,9 +18,8 @@
 #include "dialogs/open_file_dialog.hpp"
 #include "dialogs/save_file_dialog.hpp"
 #include "editor/imgui_demo_window.hpp"
-#include "editor/windows/tile_window.hpp"
-#include "editor/windows/tile_properties_window.hpp"
 #include "editor/windows/tool_window.hpp"
+#include "editor/windows/history_window.hpp"
 #include "editor\tool\pan_tool.hpp"
 #include "editor/utils/path_utils.hpp"
 
@@ -46,8 +45,11 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 
 	TileWindow & tileWindow = AddWindow<TileWindow>();
 	AddWindow<TilePropertiesWindow>(tileWindow);
-	m_toolWindow = &AddWindow<ToolWindow>(*this, window);
+	AddWindow<ToolWindow>(*this, window);
+	AddWindow<HistoryWindow>(window);
 	AddWindow<ImGui_DemoWindow>();
+
+	m_openMaps.push_back(EditorWorld::New("demo", m_window));
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -61,7 +63,7 @@ void ImGuiEditor::Update(float deltaTime)
 {
 	//Draw all the auxilliary windows first as using the ImGuiWindowFlags_NoBringToFrontOnFocus flag on the 
 	//main window will put it at the back of the draw order, behind any windows using that flag in this list.
-	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	for (std::unique_ptr<ImGui_Window> & window : m_editorWindows)
 	{
 		if (window->m_visible)
 		{
@@ -74,14 +76,6 @@ void ImGuiEditor::Update(float deltaTime)
 		return;
 	}
 
-	if (m_window.getMouse().scrollDelta.y != 0.0f)
-	{
-		float currentScale = m_focusedMap->m_camera->getOrthographicsScale() / 2.0f;
-		float newScale = currentScale - m_window.getMouse().scrollDelta.y;
-
-		m_focusedMap->m_camera->setOrthographic(-newScale, newScale, newScale * m_window.getRenderingContext().getAspectRatio(), -newScale * m_window.getRenderingContext().getAspectRatio(), -1.0f, 1.0f);
-	}
-
 	m_focusedMap->m_world.Update(deltaTime);
 }
 
@@ -91,7 +85,7 @@ void ImGuiEditor::Render()
 
 	//Draw all the auxilliary windows first as using the ImGuiWindowFlags_NoBringToFrontOnFocus flag on the 
 	//main window will put it at the back of the draw order, behind any windows using that flag in this list.
-	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	for (std::unique_ptr<ImGui_Window> & window : m_editorWindows)
 	{
 		if (window->m_visible)
 		{
@@ -254,7 +248,7 @@ void ImGuiEditor::DrawViewMenu()
 	}
 
 	//Draw all the registered windows so they can be hidden/shown by the user
-	for (std::unique_ptr<ImGui_Window> & window : m_windows)
+	for (std::unique_ptr<ImGui_Window> & window : m_editorWindows)
 	{
 		if (window->AddToViewMenu() == false)
 		{
@@ -319,7 +313,6 @@ void ImGuiEditor::DrawResizePopup()
 		if (world != nullptr)
 		{
 			world->m_tilemap->Resize(min[0], max[0], max[1], min[1]);
-			world->m_tilemap->UpdateAllTiles();
 		}
 
 		ImGui::CloseCurrentPopup();

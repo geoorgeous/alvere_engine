@@ -4,7 +4,7 @@
 
 #include <alvere/world/component/pooled_component.hpp>
 
-#include "tile.hpp"
+#include "tilemap/tile.hpp"
 
 struct C_Tilemap : public alvere::PooledComponent<C_Tilemap>
 {
@@ -14,33 +14,29 @@ struct C_Tilemap : public alvere::PooledComponent<C_Tilemap>
 	std::unique_ptr<TileInstance[]> m_map;
 	std::vector<Tile> m_tiles;
 
-	C_Tilemap();
 
+
+	C_Tilemap();
 	C_Tilemap(alvere::Vector2i size, alvere::Vector2 tileSize = { 1, 1 });
 
-	//These values can be negative
-	void Resize(int left, int right, int top, int bottom);
+	void SetTiles(alvere::RectI area, Tile * tile);
+	void SetTile(alvere::Vector2i position, Tile * tile);
+	void SetTile_Unsafe(alvere::Vector2i position, Tile * tile);
 
-	void UpdateAllTiles();
+	void UpdateTiles(alvere::RectI area);
+	void UpdateTile(alvere::Vector2i position);
 
-	void UpdateTile(std::size_t x, std::size_t y);
+	void Resize(int left, int right, int top, int bottom); //These values can be negative
 
-	TileDirection GetUnmatchingSurroundings(std::size_t x, std::size_t y, bool collides) const;
+	alvere::RectI GetBounds() const { return { 0, 0, m_size[0], m_size[1] }; }
 
-	bool TileCollides_s(std::size_t x, std::size_t y) const;
+	alvere::Vector2i WorldToTilemap(alvere::Vector2 worldPosition) const;
+	alvere::Vector2 TilemapToWorld(alvere::Vector2i tilemapPosition) const;
 
 
-	void DemoFill()
-	{
-		for (std::size_t y = 0; y < m_size[1]; ++y)
-		{
-			for (std::size_t x = 0; x < m_size[0]; ++x)
-			{
-				bool isEmpty = (x >= 3 && x < m_size[0] - 3 && y >= 3 && y < m_size[1] - 3);
-				m_map[x + y * m_size[0]] = TileInstance{ isEmpty ? &m_tiles[0] : &m_tiles[1] };
-			}
-		}
 
-		UpdateAllTiles();
-	}
+	//These methods are temporary
+	TileDirection GetUnmatchingSurroundings(alvere::Vector2i position, bool collides) const;
+	bool TileCollides_s(alvere::Vector2i position) const;
+	void DemoFill();
 };

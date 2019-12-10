@@ -1,17 +1,39 @@
 #pragma once
 
+#include <alvere/input/mouse_button.hpp>
+
 #include "editor_tool.hpp"
 
-//Stub implementation for now to test tool switching
+namespace alvere
+{
+	class Window;
+	class Camera;
+}
+
+class TileWindow;
+class C_Tilemap;
+class CommandStack;
+
 class DrawTool : public EditorTool
 {
+	CommandStack & m_commandStack;
+	TileWindow & m_tileWindow;
+	alvere::Window & m_window;
+	alvere::Camera & m_camera;
+	C_Tilemap & m_tilemap;
+
+	alvere::input::MouseButton m_leftMouse;
+
+	int m_drawSize;
+
 public:
 
-	void Update(float deltaTime) override
-	{
-	}
+	DrawTool(CommandStack & commandStack, TileWindow & tileWindow, alvere::Window & window, alvere::Camera & camera, C_Tilemap & tilemap);
 
-	void Render() override
-	{
-	}
+	void Update(float deltaTime) override;
+
+private:
+
+	void UpdateDraw();
+	void UpdateDrawSize();
 };
