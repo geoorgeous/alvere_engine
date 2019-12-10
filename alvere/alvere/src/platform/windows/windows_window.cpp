@@ -31,8 +31,6 @@ namespace alvere::platform::windows
 
 	void Window::setPosition(int x, int y)
 	{
-		m_position.x = x;
-		m_position.y = y;
 		glfwSetWindowPos(m_windowHandle, x, y);
 	}
 
