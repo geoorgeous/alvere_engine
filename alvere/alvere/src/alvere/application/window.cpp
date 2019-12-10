@@ -6,7 +6,7 @@
 #define ALV_WINDOW_DEFAULT_TITLE "Alvere Application"
 #define ALV_WINDOW_DEFAULT_SIZE_X 800
 #define ALV_WINDOW_DEFAULT_SIZE_Y 800
-#define ALV_WINDOW_DEFAULT_FLAGS ::alvere::Window::Flag::IsVisible | ::alvere::Window::Flag::Resizeable | ::alvere::Window::Flag::Decorated | ::alvere::Window::Flag::IsCursorEnabled
+#define ALV_WINDOW_DEFAULT_FLAGS ::alvere::Window::Flag::IsVisible | ::alvere::Window::Flag::Resizeable | ::alvere::Window::Flag::Decorated | ::alvere::Window::Flag::IsCursorEnabled | ::alvere::Window::Flag::FullScreenAutoMinimize
 
 namespace alvere
 {
@@ -21,7 +21,6 @@ namespace alvere
 	const Window::Properties Window::Properties::s_default = 
 	{
 		ALV_WINDOW_DEFAULT_TITLE,
-		Vec2i{ 0, 0 },
 		{ ALV_WINDOW_DEFAULT_SIZE_X, ALV_WINDOW_DEFAULT_SIZE_Y },
 		ALV_WINDOW_DEFAULT_FLAGS
 	};
@@ -35,11 +34,7 @@ namespace alvere
 	{ }
 
 	Window::Properties::Properties(const std::string & title, Vec2i size, unsigned char flags)
-		: Properties(title, s_default.m_position, size, flags)
-	{ }
-
-	Window::Properties::Properties(const std::string & title, Vec2i position, Vec2i size, unsigned char flags)
-		: m_title(title), m_position(position), m_size(size), m_flags(flags)
+		: m_title(title), m_size(size), m_flags(flags)
 	{ }
 
 	Window::~Window() { }
@@ -68,6 +63,7 @@ namespace alvere
 	{
 		m_events.emplace(typeid(WindowCloseEvent), new WindowCloseEvent);
 		m_events.emplace(typeid(WindowResizeEvent), new WindowResizeEvent);
+		m_events.emplace(typeid(WindowFocusEvent), new WindowFocusEvent);
 		m_events.emplace(typeid(CharInputEvent), new CharInputEvent);
 	}
 }

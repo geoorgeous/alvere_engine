@@ -8,6 +8,7 @@
 
 #include "alvere/graphics/frame_buffer.hpp"
 #include "alvere/graphics/rendering_context.hpp"
+#include "alvere/graphics/texture.hpp"
 #include "alvere/events/application_events.hpp"
 #include "alvere/math/vector/vec_2_i.hpp"
 
@@ -132,6 +133,14 @@ namespace alvere
 		Left,
 		Right,
 		Middle,
+		Button1 = Left,
+		Button2 = Right,
+		Button3 = Middle,
+		Button4,
+		Button5,
+		Button6,
+		Button7,
+		Button8,
 	};
 
 	struct MouseData
@@ -153,14 +162,12 @@ namespace alvere
 			static const Properties s_default;
 
 			std::string m_title;
-			Vec2i m_position;
 			Vec2i m_size;
 			unsigned char m_flags;
 
 			Properties(const std::string & title);
 			Properties(const std::string & title, Vec2i size);
 			Properties(const std::string & title, Vec2i size, unsigned char m_flags);
-			Properties(const std::string & title, Vec2i position, Vec2i size, unsigned char m_flags);
 		};
 
 		enum Flag : std::uint8_t
@@ -187,6 +194,10 @@ namespace alvere
 		virtual void resize(int width, int height) = 0;
 
 		virtual void setFlag(Flag flag, bool value) = 0;
+
+		virtual void setIcon(const std::vector<const Texture> & iconTextures) = 0;
+
+		virtual void setSizeLimits(int minWidth, int minHeight, int maxWidth, int maxHeight) = 0;
 
 		virtual void maximize() = 0;
 

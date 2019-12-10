@@ -25,6 +25,10 @@ namespace alvere::platform::windows
 
 		void setFlag(Flag flag, bool value) override;
 
+		void setIcon(const std::vector<const Texture> & iconTextures) override;
+
+		void setSizeLimits(int minWidth, int minHeight, int maxWidth, int maxHeight) override;
+
 		void maximize() override;
 
 		void minimize() override;
@@ -49,11 +53,19 @@ namespace alvere::platform::windows
 			MouseData * mouse;
 		};
 
+		Vec2i m_windowedModePosition;
+
+		Vec2i m_windowedModeSize;
+
 		WindowUserPointerData m_windowUserPointerData;
 
 		GLFWmonitor * m_monitorHandle;
 
+		bool m_minimised;
+
 		void init(const alvere::Window::Properties& properties, Vec2i resolution);
+
+		void setCallbacks();
 
 		void shutdown();
 	};
