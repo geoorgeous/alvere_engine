@@ -38,7 +38,7 @@ void DrawTool::UpdateDraw()
 	}
 	
 	alvere::Vector2 screenPosition = m_window.getMouse().position;
-	alvere::Vector3 worldPosition = m_camera.screenToWorld(screenPosition, m_window.getWidth(), m_window.getHeight());
+	alvere::Vector3 worldPosition = m_camera.screenToWorld(screenPosition, m_window.getSize().x, m_window.getSize().y);
 	alvere::Vector2i tilePosition = m_tilemap.WorldToTilemap(worldPosition);
 
 	alvere::Vector2i unit{ 1, 1 };

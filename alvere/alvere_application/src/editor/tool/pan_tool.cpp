@@ -67,11 +67,10 @@ void PanTool::UpdateZoom(EditorWorld & focusedWorld)
 		return;
 	}
 
-	float aspect = (float) m_window.getProperties().resHeight / m_window.getProperties().resWidth;
 	float currentScale = focusedWorld.m_camera->getOrthographicsScale() / 2.0f;
 	float newScale = currentScale - scroll;
 
 	newScale = std::max(0.1f, newScale);
 
-	focusedWorld.m_camera->setOrthographic(-newScale, newScale, newScale * aspect, -newScale * aspect, -1.0f, 1.0f);
+	focusedWorld.m_camera->setOrthographic(-newScale, newScale, newScale * m_window.getRenderingContext().getAspectRatio(), -newScale * m_window.getRenderingContext().getAspectRatio(), -1.0f, 1.0f);
 }
