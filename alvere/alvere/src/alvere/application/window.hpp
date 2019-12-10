@@ -232,11 +232,6 @@ namespace alvere
 			return *m_renderingContext;
 		}
 
-		inline RenderingContext & getRenderingContext()
-		{
-			return *m_renderingContext;
-		}
-
 		void swapBuffers();
 
 		KeyData getKey(Key key) const;

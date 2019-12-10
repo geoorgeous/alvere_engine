@@ -172,7 +172,7 @@ namespace alvere::platform::windows
 		m_flags[Flag::Decorated] = (properties.m_flags & Flag::Decorated) != 0;
 		glfwWindowHint(GLFW_DECORATED, m_flags[Flag::Decorated]);
 
-		m_flags[Flag::FullScreen] = (properties.m_flags & Flag::FullScreenAutoMinimize) != 0;
+		m_flags[Flag::FullScreen] = (properties.m_flags & Flag::FullScreen) != 0;
 		GLFWmonitor * monitor = m_flags[Flag::FullScreen] ? m_monitorHandle : nullptr;
 
 		m_flags[Flag::FullScreenAutoMinimize] = (properties.m_flags & Flag::FullScreenAutoMinimize) != 0;
@@ -200,7 +200,7 @@ namespace alvere::platform::windows
 
 		glfwSwapInterval(0);
 
-		m_windowUserPointerData = { this, &m_keys, &m_mouse };
+		m_windowUserPointerData = { this, &m_position, &m_keys, &m_mouse };
 		glfwSetWindowUserPointer(m_windowHandle, &m_windowUserPointerData);
 
 		glfwSetWindowCloseCallback(m_windowHandle, [](GLFWwindow * windowHandle)
@@ -348,9 +348,9 @@ namespace alvere::platform::windows
 
 			switch (button)
 			{
-			case GLFW_MOUSE_BUTTON_LEFT: mouse.buttons[MouseButton::Left] = isDown; break;
-			case GLFW_MOUSE_BUTTON_RIGHT: mouse.buttons[MouseButton::Right] = isDown; break;
-			case GLFW_MOUSE_BUTTON_MIDDLE: mouse.buttons[MouseButton::Middle] = isDown; break;
+				case GLFW_MOUSE_BUTTON_LEFT: mouse.buttons[MouseButton::Left] = isDown; break;
+				case GLFW_MOUSE_BUTTON_RIGHT: mouse.buttons[MouseButton::Right] = isDown; break;
+				case GLFW_MOUSE_BUTTON_MIDDLE: mouse.buttons[MouseButton::Middle] = isDown; break;
 			}
 		});
 		glfwSetScrollCallback(m_windowHandle, [](GLFWwindow* windowHandle, double xOffset, double yOffset)
@@ -361,14 +361,20 @@ namespace alvere::platform::windows
 		});
 		glfwSetWindowSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
 		{
-			//Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
-			//window.resize(width, height);
+			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
+			window.resize(width, height);
 
 		});
 		glfwSetFramebufferSizeCallback(m_windowHandle, [](GLFWwindow * windowHandle, int width, int height)
 		{
 			Window & window = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->window;
 			window.resize(width, height);
+		});
+		glfwSetWindowPosCallback(m_windowHandle, [](GLFWwindow * windowHandle, int x, int y)
+		{
+			Vec2i & position = *((WindowUserPointerData *)glfwGetWindowUserPointer(windowHandle))->position;
+			position.x = x;
+			position.y = y;
 		});
 	}
 

@@ -44,6 +44,7 @@ namespace alvere::platform::windows
 		struct WindowUserPointerData
 		{
 			Window * window;
+			Vec2i * position;
 			std::unordered_map<Key, std::pair<KeyData, KeyData>> * keys;
 			MouseData * mouse;
 		};
