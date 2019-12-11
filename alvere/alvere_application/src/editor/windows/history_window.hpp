@@ -12,7 +12,7 @@ namespace alvere
 
 class HistoryWindow : public ImGui_Window
 {
-	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_None;
+	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_AlwaysVerticalScrollbar;
 
 	alvere::input::KeyButton m_undoButton;
 	alvere::input::KeyButton m_redoButton;
