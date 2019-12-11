@@ -50,6 +50,8 @@ public:
 	void Update(float deltaTime);
 	void Render();
 
+	alvere::Window & GetApplicationWindow() const;
+
 	EditorWorld * GetFocusedWorld() const;
 
 	template <typename T>

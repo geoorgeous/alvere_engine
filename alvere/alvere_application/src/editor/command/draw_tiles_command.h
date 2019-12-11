@@ -11,7 +11,7 @@
 
 class DrawTilesCommand : public Command
 {
-	C_Tilemap & m_tilemap;
+	EditorWorld & m_world;
 	TileInstance m_tile;
 
 	alvere::RectI m_boundingArea;
@@ -19,15 +19,17 @@ class DrawTilesCommand : public Command
 
 public:
 
-	DrawTilesCommand(C_Tilemap & tilemap, TileInstance tile)
-		: m_tilemap(tilemap)
+	DrawTilesCommand(EditorWorld & world, TileInstance tile)
+		: m_world(world)
 		, m_tile(tile)
 	{
 	}
 
 	void AddDrawArea(alvere::RectI area)
 	{
-		area = alvere::RectI::overlap(area, m_tilemap.GetBounds());
+		C_Tilemap & tilemap = *m_world.m_tilemap;
+
+		area = alvere::RectI::overlap(area, tilemap.GetBounds());
 
 		alvere::RectI updateArea = alvere::RectI::pad(area, { 1, 1 });
 		m_boundingArea = alvere::RectI::encapsulate(m_boundingArea, updateArea);
@@ -36,7 +38,7 @@ public:
 		{
 			for (int x = 0; x < area.m_width; ++x)
 			{
-				int index = (area.m_x + x) + (area.m_y + y) * m_tilemap.m_size[0];
+				int index = (area.m_x + x) + (area.m_y + y) * tilemap.m_size[0];
 
 				auto iter = m_tiles.find(index);
 
@@ -45,32 +47,39 @@ public:
 					continue;
 				}
 
-				m_tiles.emplace(index, m_tilemap.m_map[index]);
-				m_tilemap.m_map[index] = m_tile;
+				m_tiles.emplace(index, tilemap.m_map[index]);
+				tilemap.m_map[index] = m_tile;
 			}
 		}
 
-		m_tilemap.UpdateTiles(updateArea);
+		tilemap.UpdateTiles(updateArea);
+		m_world.m_dirty = true;
 	}
 
 	void Undo() override
 	{
+		C_Tilemap & tilemap = *m_world.m_tilemap;
+
 		for (auto & pair : m_tiles)
 		{
-			m_tilemap.m_map[pair.first] = pair.second;
+			tilemap.m_map[pair.first] = pair.second;
 		}
 
-		m_tilemap.UpdateTiles(m_boundingArea);
+		tilemap.UpdateTiles(m_boundingArea);
+		m_world.m_dirty = true;
 	}
 
 	void Redo() override
 	{
+		C_Tilemap & tilemap = *m_world.m_tilemap;
+
 		for (auto & pair : m_tiles)
 		{
-			m_tilemap.m_map[pair.first] = m_tile;
+			tilemap.m_map[pair.first] = m_tile;
 		}
 
-		m_tilemap.UpdateTiles(m_boundingArea);
+		tilemap.UpdateTiles(m_boundingArea);
+		m_world.m_dirty = true;
 	}
 
 	std::string GetDescription() override

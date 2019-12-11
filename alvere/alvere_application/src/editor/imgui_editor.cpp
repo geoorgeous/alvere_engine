@@ -141,8 +141,14 @@ void ImGuiEditor::DrawMapTabs()
 			std::string filename;
 			GetFilenameFromPath(m_openMaps[i]->m_filepath, filename);
 			const char * name = filename.c_str();
+
 			ImGui::PushID(i);
-			if (ImGui::BeginTabItem(name, &active))
+
+			ImGuiTabItemFlags itemFlags = m_openMaps[i]->m_dirty
+				? ImGuiTabItemFlags_UnsavedDocument
+				: ImGuiTabItemFlags_None;
+
+			if (ImGui::BeginTabItem(name, &active, itemFlags))
 			{
 				m_focusedMap = m_openMaps[i].get();
 
@@ -155,6 +161,7 @@ void ImGuiEditor::DrawMapTabs()
 			{
 				toRemove.push_back(i);
 			}
+
 			ImGui::PopID();
 		}
 
@@ -200,6 +207,7 @@ void ImGuiEditor::DrawFileMenu()
 		if (newMapValue.first)
 		{
 			m_openMaps.push_back(EditorWorld::New(newMapValue.second, m_window));
+			m_openMaps.back()->m_dirty = true;
 		}
 	}
 
@@ -213,7 +221,6 @@ void ImGuiEditor::DrawFileMenu()
 		if (result.first && result.second.size() > 0)
 		{
 			std::string filepath = result.second[0];
-
 
 			m_openMaps.push_back(m_importer(filepath));
 		}
@@ -232,6 +239,7 @@ void ImGuiEditor::DrawFileMenu()
 	if (ImGui::MenuItem(saveLabel.c_str(), NULL, false, world != nullptr) && world != nullptr)
 	{
 		m_exporter(world->m_filepath, *world);
+		world->m_dirty = false;
 	}
 
 	std::string saveAsLabel = ( world == nullptr ? "Save As" : "Save " + mapName + " As" );
@@ -254,6 +262,8 @@ void ImGuiEditor::DrawFileMenu()
 			world->m_filepath = newFilepath;
 
 			m_exporter(newFilepath, *world);
+
+			world->m_dirty = false;
 		}
 	}
 
@@ -396,4 +406,9 @@ void ImGuiEditor::EndFrame()
 EditorWorld * ImGuiEditor::GetFocusedWorld() const
 {
 	return m_focusedMap;
+}
+
+alvere::Window & ImGuiEditor::GetApplicationWindow() const
+{
+	return m_window;
 }

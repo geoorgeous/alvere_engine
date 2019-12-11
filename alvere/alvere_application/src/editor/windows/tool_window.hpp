@@ -4,7 +4,7 @@
 
 #include "imgui/imgui.h"
 #include "editor/windows/imgui_window.hpp"
-#include "editor\tool\editor_tool.hpp"
+#include "editor/tool/editor_tool.hpp"
 
 namespace alvere
 {
@@ -30,15 +30,10 @@ public:
 
 	void Draw() override;
 
-	virtual std::string GetName() const
-	{
-		return "Tools";
-	}
+	virtual std::string GetName() const { return "Tools"; }
 
-	EditorTool & GetCurrentTool() const
-	{
-		return *m_currentTool;
-	}
+
+	EditorTool & GetCurrentTool() const { return *m_currentTool; }
 
 private:
 

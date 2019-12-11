@@ -14,6 +14,7 @@ namespace alvere
 
 struct EditorWorld
 {
+	bool m_dirty = false;
 	std::string m_filepath;
 	alvere::World m_world;
 	alvere::Camera * m_camera;

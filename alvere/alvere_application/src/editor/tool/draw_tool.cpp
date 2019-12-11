@@ -1,19 +1,21 @@
 #include <alvere/application/window.hpp>
 #include <alvere/graphics/camera.hpp>
 
-#include "draw_tool.hpp"
-#include "editor/windows/tile_window.hpp"
 #include "tilemap/c_tilemap.hpp"
+#include "editor/editor_world.hpp"
+#include "editor/imgui_editor.hpp"
 #include "editor/command/command_stack.hpp"
 #include "editor/command/draw_tiles_command.h"
+#include "editor/windows/tile_window.hpp"
+#include "editor/windows/history_window.hpp"
+#include "editor/tool/draw_tool.hpp"
 
-DrawTool::DrawTool(CommandStack & commandStack, TileWindow & tileWindow, alvere::Window & window, alvere::Camera & camera, C_Tilemap & tilemap)
-	: m_commandStack(commandStack)
-	, m_tileWindow(tileWindow)
-	, m_window(window)
-	, m_camera(camera)
-	, m_tilemap(tilemap)
-	, m_leftMouse(window, alvere::MouseButton::Left)
+DrawTool::DrawTool(ImGuiEditor & editor)
+	: m_editor(editor)
+	, m_commandStack(editor.GetEditorWindow<HistoryWindow>()->m_commandStack)
+	, m_tileWindow(*editor.GetEditorWindow<TileWindow>())
+	, m_window(editor.GetApplicationWindow())
+	, m_leftMouse(editor.GetApplicationWindow(), alvere::MouseButton::Left)
 	, m_drawSize(0)
 	, m_activeDrawCommand(nullptr)
 {
@@ -36,6 +38,15 @@ void DrawTool::Update(float deltaTime)
 
 void DrawTool::UpdateDraw()
 {
+	EditorWorld * world = m_editor.GetFocusedWorld();
+	if (world == nullptr)
+	{
+		return;
+	}
+
+	alvere::Camera & camera = *world->m_camera;
+	C_Tilemap & tilemap = *world->m_tilemap;
+
 	EditorTile * selectedTile = m_tileWindow.GetSelectedTile();
 	if (selectedTile == nullptr)
 	{
@@ -43,8 +54,8 @@ void DrawTool::UpdateDraw()
 	}
 	
 	alvere::Vector2 screenPosition = m_window.getMouse().position;
-	alvere::Vector3 worldPosition = m_camera.screenToWorld(screenPosition, m_window.getSize().x, m_window.getSize().y);
-	alvere::Vector2i tilePosition = m_tilemap.WorldToTilemap(worldPosition);
+	alvere::Vector3 worldPosition = camera.screenToWorld(screenPosition, m_window.getSize().x, m_window.getSize().y);
+	alvere::Vector2i tilePosition = tilemap.WorldToTilemap(worldPosition);
 
 	alvere::Vector2i unit{ 1, 1 };
 	alvere::Vector2i drawSize = { m_drawSize, m_drawSize };
@@ -54,7 +65,7 @@ void DrawTool::UpdateDraw()
 
 	alvere::RectI drawRect = { tilePosition, drawSize };
 
-	if (drawRect.intersects(m_tilemap.GetBounds()) == false)
+	if (drawRect.intersects(tilemap.GetBounds()) == false)
 	{
 		return;
 	}
@@ -63,7 +74,7 @@ void DrawTool::UpdateDraw()
 	{
 		TileInstance toDraw{ &selectedTile->m_tile, { 0, 0 } };
 
-		m_activeDrawCommand = new DrawTilesCommand(m_tilemap, toDraw);
+		m_activeDrawCommand = new DrawTilesCommand(*world, toDraw);
 		m_commandStack.Add(m_activeDrawCommand);
 	}
 
