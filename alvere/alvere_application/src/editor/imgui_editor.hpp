@@ -5,6 +5,8 @@
 #include "editor_world.hpp"
 #include "editor/windows/tile_window.hpp"
 #include "editor/windows/tile_properties_window.hpp"
+#include "editor/io/world_exporter.hpp"
+#include "editor/io/world_importer.hpp"
 
 namespace alvere
 {
@@ -36,6 +38,9 @@ class ImGuiEditor
 	EditorWorld * m_focusedMap;
 
 	ModalPopupState m_currentPopup;
+
+	WorldImporter m_importer;
+	WorldExporter m_exporter;
 
 public:
 

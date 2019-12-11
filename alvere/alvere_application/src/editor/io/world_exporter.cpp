@@ -3,7 +3,10 @@
 
 #include "editor/editor_world.hpp"
 #include "editor/io/world_exporter.hpp"
+#include "editor/io/serialization_utils.hpp"
 #include "tilemap/c_tilemap.hpp"
+
+using namespace serialization;
 
 void WorldExporter::operator()(const std::string & filepath, const EditorWorld & world)
 {
@@ -47,11 +50,13 @@ void WorldExporter::ExportTilemap(std::fstream & file, const C_Tilemap & tilemap
 	{
 		Tile & tile = *pair.first;
 
-		Write(file, tile.m_spritesheet.m_texture.getFilepath());
+		WriteString(file, tile.m_spritesheet.m_texture.getFilepath());
+		Write(file, tile.m_spritesheet.m_tileSize);
 		Write(file, tile.m_collides);
 	}
 
 	//Append the map itself
+	Write(file, tilemap.m_size);
 	for (int i = 0; i < mapSize; ++i)
 	{
 		TileInstance & tileInstance = map[i];

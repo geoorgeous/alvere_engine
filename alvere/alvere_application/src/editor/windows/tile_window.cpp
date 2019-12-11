@@ -150,3 +150,25 @@ void TileWindow::DrawValidTile(EditorTile & tile, alvere::Vector2i position, int
 		ImGui::EndDragDropSource();
 	}
 }
+
+EditorTile * TileWindow::GetSelectedTile()
+{
+	auto iter = m_tilePositionMapping.find(m_selectedPosition);
+	return iter != m_tilePositionMapping.end()
+		? m_tiles[iter->second].get()
+		: nullptr;
+}
+
+Tile & TileWindow::GetOrAddTile(const Tile & tile)
+{
+	for (auto & storedTile : m_tiles)
+	{
+		if (storedTile->m_tile == tile)
+		{
+			return storedTile->m_tile;
+		}
+	}
+
+	m_tiles.emplace_back(std::make_unique<EditorTile>(tile));
+	return m_tiles.back()->m_tile;
+}

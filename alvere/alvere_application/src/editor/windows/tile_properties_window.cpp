@@ -28,7 +28,9 @@ void TilePropertiesWindow::Draw()
 
 	const int textWidth = 80.0f;
 
-	std::string textureString = tile->m_spritesheet.m_texture ? editorTile->m_texturePath : "None";
+	std::string textureString = tile->m_spritesheet.m_texture
+		? editorTile->m_tile.m_spritesheet.m_texture.getFilepath()
+		: "None";
 
 	style.ButtonTextAlign = { 0.0f, 0.5f };
 
@@ -69,8 +71,7 @@ void TilePropertiesWindow::UserSetTileTexture(EditorTile & tile)
 	}
 
 	std::wstring path = std::filesystem::relative(output.second[0]);
-	tile.m_texturePath = std::string(path.begin(), path.end());
 
-	alvere::Asset<alvere::Texture> texture = alvere::AssetManager::getStatic<alvere::Texture>(tile.m_texturePath);
+	alvere::Asset<alvere::Texture> texture = alvere::AssetManager::getStatic<alvere::Texture>(std::string(path.begin(), path.end()));
 	tile.m_tile.m_spritesheet = { texture, { 24, 24 } };
 }
