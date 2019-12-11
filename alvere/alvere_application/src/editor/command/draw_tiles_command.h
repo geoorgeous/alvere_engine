@@ -28,7 +28,9 @@ public:
 	void AddDrawArea(alvere::RectI area)
 	{
 		area = alvere::RectI::overlap(area, m_tilemap.GetBounds());
-		m_boundingArea = alvere::RectI::encapsulate(m_boundingArea, area);
+
+		alvere::RectI updateArea = alvere::RectI::pad(area, { 1, 1 });
+		m_boundingArea = alvere::RectI::encapsulate(m_boundingArea, updateArea);
 
 		for (int y = 0; y < area.m_height; ++y)
 		{
@@ -48,7 +50,7 @@ public:
 			}
 		}
 
-		m_tilemap.UpdateTiles(alvere::RectI::pad(area, { 1, 1 }));
+		m_tilemap.UpdateTiles(updateArea);
 	}
 
 	void Undo() override
