@@ -86,6 +86,8 @@ namespace alvere
 		explicit operator Rect() const;
 
 		static RectI overlap(RectI a, RectI b);
+		static RectI encapsulate(RectI a, RectI b);
+		static RectI encapsulate(RectI rect, alvere::Vector2i point);
 		static RectI pad(RectI rect, alvere::Vector2i amount);
 	};
 }
