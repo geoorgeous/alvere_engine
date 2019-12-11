@@ -15,6 +15,7 @@ DrawTool::DrawTool(CommandStack & commandStack, TileWindow & tileWindow, alvere:
 	, m_tilemap(tilemap)
 	, m_leftMouse(window, alvere::MouseButton::Left)
 	, m_drawSize(0)
+	, m_activeDrawCommand(nullptr)
 {
 }
 
@@ -26,6 +27,10 @@ void DrawTool::Update(float deltaTime)
 	if (m_leftMouse.isPressed())
 	{
 		UpdateDraw();
+	}
+	else
+	{
+		m_activeDrawCommand = nullptr;
 	}
 }
 
@@ -54,7 +59,15 @@ void DrawTool::UpdateDraw()
 		return;
 	}
 
-	m_commandStack.Add(new DrawTilesCommand(m_tilemap, drawRect, &selectedTile->m_tile));
+	if (m_activeDrawCommand == nullptr)
+	{
+		TileInstance toDraw{ &selectedTile->m_tile, { 0, 0 } };
+
+		m_activeDrawCommand = new DrawTilesCommand(m_tilemap, toDraw);
+		m_commandStack.Add(m_activeDrawCommand);
+	}
+
+	m_activeDrawCommand->AddDrawArea(drawRect);
 }
 
 void DrawTool::UpdateDrawSize()
