@@ -206,7 +206,13 @@ void ImGuiEditor::DrawFileMenu()
 
 		if (newMapValue.first)
 		{
-			m_openMaps.push_back(EditorWorld::New(newMapValue.second, m_window));
+			std::string newFilepath = newMapValue.second;
+			if (HasExtension(newFilepath) == false)
+			{
+				newFilepath += ".map";
+			}
+
+			m_openMaps.push_back(EditorWorld::New(newFilepath, m_window));
 			m_openMaps.back()->m_dirty = true;
 		}
 	}
