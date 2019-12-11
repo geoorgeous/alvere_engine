@@ -35,5 +35,5 @@ public:
 
 private:
 
-	void DrawHistoryElement(Command & command);
+	bool DrawHistoryElement(Command & command);
 };

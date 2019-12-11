@@ -37,6 +37,8 @@ void HistoryWindow::Draw()
 
 	int numCommands = m_commandStack.m_commandHistory.size();
 
+	int clickedIndex = -1;
+
 	//Draw inactive history elements first
 	for (int i = 0; i < m_commandStack.m_currentOffset; ++i)
 	{
@@ -46,7 +48,10 @@ void HistoryWindow::Draw()
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4) ImColor(0.10f, 0.20f, 0.32f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4) ImColor(0.20f, 0.39f, 0.62f));
 		
-		DrawHistoryElement(*commandHistory[numCommands - i - 1]);
+		if (DrawHistoryElement(*commandHistory[numCommands - i - 1]))
+		{
+			clickedIndex = i;
+		}
 
 		ImGui::PopStyleColor(3);
 
@@ -58,18 +63,42 @@ void HistoryWindow::Draw()
 	{
 		ImGui::PushID(i);
 
-		DrawHistoryElement(*commandHistory[numCommands - i - 1]);
+		if (DrawHistoryElement(*commandHistory[numCommands - i - 1]))
+		{
+			clickedIndex = i;
+		}
 
 		ImGui::PopID();
 	}
 
 	ImGui::PopItemWidth();
-	
 
 	ImGui::End();
+
+	//Check if the user has clicked one of the undo commands to navigate to
+	if (clickedIndex == -1)
+	{
+		return;
+	}
+
+	int offset = m_commandStack.m_currentOffset;
+	if (clickedIndex < offset)
+	{
+		for (int i = clickedIndex; i < offset; ++i)
+		{
+			m_commandStack.Redo();
+		}
+	}
+	else if (clickedIndex > offset)
+	{
+		for (int i = offset; i < clickedIndex; ++i)
+		{
+			m_commandStack.Undo();
+		}
+	}
 }
 
-void HistoryWindow::DrawHistoryElement(Command & command)
+bool HistoryWindow::DrawHistoryElement(Command & command)
 {
-	ImGui::Button(command.GetDescription().c_str(), { ImGui::CalcItemWidth(), 0 });
+	return ImGui::Button(command.GetDescription().c_str(), { ImGui::CalcItemWidth(), 0 });
 }
