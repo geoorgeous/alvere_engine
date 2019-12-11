@@ -1,4 +1,4 @@
-#include "alvere/utils/command_console/param.hpp"
+#include "alvere/debug/command_console/param.hpp"
 
 
 namespace alvere::console

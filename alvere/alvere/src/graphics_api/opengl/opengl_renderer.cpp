@@ -1,8 +1,10 @@
+#include "graphics_api/opengl/opengl_renderer.hpp"
+
 #include <glad/glad.h>
 
 #include "alvere/graphics/mesh.hpp"
 #include "alvere/utils/file_reader.hpp"
-#include "graphics_api/opengl/opengl_renderer.hpp"
+
 #include "graphics_api/opengl/opengl_errors.hpp"
 
 namespace alvere::graphics_api::opengl

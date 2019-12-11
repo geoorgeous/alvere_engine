@@ -14,7 +14,7 @@ namespace alvere::graphics_api::opengl
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void RendererAPI::setViewport(unsigned int x, unsigned int y, unsigned width, unsigned height)
+	void RendererAPI::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 	{
 		glViewport((GLint)x, (GLint)y, (GLsizei)width, (GLsizei)height);
 	}

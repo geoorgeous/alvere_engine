@@ -6,10 +6,9 @@
 #include <unordered_map>
 #include <utility>
 
-#include "alvere/graphics/frame_buffer.hpp"
+#include "alvere/events/application_events.hpp"
 #include "alvere/graphics/rendering_context.hpp"
 #include "alvere/graphics/texture.hpp"
-#include "alvere/events/application_events.hpp"
 #include "alvere/math/vector/vec_2_i.hpp"
 
 namespace alvere
@@ -153,6 +152,17 @@ namespace alvere
 		bool getButton(MouseButton button) const;
 	};
 
+	enum class CursorType
+	{
+		Default,
+		Arrow,
+		IBeam,
+		Crosshair,
+		Hand,
+		ResizeHorizontal,
+		ResizeVertical
+	};
+
 	class Window
 	{
 	public:
@@ -163,7 +173,7 @@ namespace alvere
 
 			std::string m_title;
 			Vec2i m_size;
-			unsigned char m_flags;
+			std::int8_t m_flags;
 
 			Properties(const std::string & title);
 			Properties(const std::string & title, Vec2i size);
@@ -193,11 +203,11 @@ namespace alvere
 
 		virtual void resize(int width, int height) = 0;
 
-		virtual void setFlag(Flag flag, bool value) = 0;
-
 		virtual void setIcon(const std::vector<const Texture> & iconTextures) = 0;
 
 		virtual void setSizeLimits(int minWidth, int minHeight, int maxWidth, int maxHeight) = 0;
+
+		virtual void setCursor(CursorType cursorType) = 0;
 
 		virtual void maximize() = 0;
 
@@ -210,6 +220,8 @@ namespace alvere
 		virtual void requestAttention() = 0;
 
 		virtual void pollEvents() = 0;
+
+		virtual void swapBuffers() = 0;
 
 		inline std::string getTitle() const
 		{
@@ -228,9 +240,18 @@ namespace alvere
 
 		inline bool getFlag(Flag flag) const
 		{
-			if(m_flags.find(flag) == m_flags.end())
-				return false;
-			return m_flags.at(flag);
+			return (m_flags & flag) == flag;
+		}
+
+		inline void setFlags(std::uint8_t flags)
+		{
+			m_flags = flags;
+		}
+
+		inline virtual void setFlag(Flag flag, bool value)
+		{
+			if(value) m_flags |= flag;
+			else m_flags &= ~flag;
 		}
 
 		inline float getAspectRatio() const
@@ -242,8 +263,6 @@ namespace alvere
 		{
 			return *m_renderingContext;
 		}
-
-		void swapBuffers();
 
 		KeyData getKey(Key key) const;
 
@@ -263,7 +282,7 @@ namespace alvere
 
 		Vec2i m_size;
 
-		std::unordered_map<Flag, bool> m_flags;
+		std::uint8_t m_flags;
 
 		alvere::RenderingContext * m_renderingContext;
 

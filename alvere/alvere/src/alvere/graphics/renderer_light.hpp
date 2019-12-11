@@ -1,8 +1,8 @@
 #pragma once
 
-#include <alvere/math/vector/vector_3.hpp>
-
 #include <typeinfo>
+
+#include <alvere/math/vector/vector_3.hpp>
 
 namespace alvere
 {
@@ -24,6 +24,8 @@ namespace alvere
 	{
 		Vector3 direction;
 
+	private:
+
 		inline bool isEqual(const RendererLight & other) const override
 		{
 			return direction == reinterpret_cast<const DirectionalLight &>(other).direction;
@@ -34,6 +36,8 @@ namespace alvere
 	{
 		Vector3 position;
 		float range;
+
+	private:
 
 		inline bool isEqual(const RendererLight & other) const override
 		{
@@ -50,6 +54,8 @@ namespace alvere
 		Vector3 position;
 		float range;
 		float angle;
+
+	private:
 
 		inline bool isEqual(const RendererLight & other) const override
 		{

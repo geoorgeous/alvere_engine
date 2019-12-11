@@ -3,7 +3,9 @@
 #include <sstream>
 #include <string>
 
-#include "alvere/utils/logging.hpp"
+#include <glad/glad.h>
+
+#include "alvere/debug/logging.hpp"
 
 #ifdef NDEBUG
 #define ALV_LOG_OPENGL_CALL(call) call

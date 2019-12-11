@@ -2,7 +2,7 @@
 
 #include <limits>
 
-#include "alvere/utils/exceptions.hpp"
+#include "alvere/debug/exceptions.hpp"
 #include "alvere/utils/pool.hpp"
 
 namespace alvere

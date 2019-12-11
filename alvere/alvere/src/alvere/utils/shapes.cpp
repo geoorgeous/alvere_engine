@@ -1,6 +1,6 @@
-#include <algorithm>
-
 #include "alvere/utils/shapes.hpp"
+
+#include <algorithm>
 
 namespace alvere
 {

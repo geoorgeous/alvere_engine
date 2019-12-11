@@ -29,6 +29,8 @@ namespace alvere::platform::windows
 
 		void setSizeLimits(int minWidth, int minHeight, int maxWidth, int maxHeight) override;
 
+		void setCursor(CursorType cursorType) override;
+
 		void maximize() override;
 
 		void minimize() override;
@@ -41,7 +43,12 @@ namespace alvere::platform::windows
 
 		void pollEvents() override;
 
-		GLFWwindow * m_windowHandle;
+		void swapBuffers() override;
+
+		inline GLFWwindow * getHandle() const
+		{
+			return m_windowHandle;
+		}
 
 	private:
 
@@ -54,6 +61,8 @@ namespace alvere::platform::windows
 			void (Window:: * windowResizeCallback)(int, int);
 		};
 
+		GLFWwindow * m_windowHandle;
+
 		Vec2i m_windowedModePosition;
 
 		Vec2i m_windowedModeSize;
@@ -61,6 +70,8 @@ namespace alvere::platform::windows
 		WindowUserPointerData m_windowUserPointerData;
 
 		GLFWmonitor * m_monitorHandle;
+
+		GLFWcursor * m_cursor;
 
 		bool m_minimised;
 

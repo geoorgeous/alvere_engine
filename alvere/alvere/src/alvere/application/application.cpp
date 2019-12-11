@@ -1,24 +1,17 @@
+#include "alvere/application/application.hpp"
+
 #include <chrono>
 #include <memory>
 
 #include <glfw/glfw3.h>
 
-#include "alvere/application/application.hpp"
-#include "alvere/utils/command_console/arg.hpp"
-#include "alvere/utils/command_console/command_console.hpp"
-#include "alvere/utils/command_console/command.hpp"
-#include "alvere/utils/command_console/param.hpp"
-#include "alvere/utils/exceptions.hpp"
-#include "alvere/utils/logging.hpp"
-
-
-#include "alvere/graphics/buffers.hpp"
-#include "alvere/graphics/camera.hpp"
+#include "alvere/debug/command_console/arg.hpp"
+#include "alvere/debug/command_console/command_console.hpp"
+#include "alvere/debug/command_console/command.hpp"
+#include "alvere/debug/command_console/param.hpp"
+#include "alvere/debug/exceptions.hpp"
+#include "alvere/debug/logging.hpp"
 #include "alvere/graphics/render_commands.hpp"
-#include "alvere/graphics/shader_program.hpp"
-#include "alvere/graphics/sprite_batcher.hpp"
-#include "alvere/graphics/texture.hpp"
-#include "graphics_api/opengl/opengl_vertex_array.hpp"
 
 namespace alvere
 {

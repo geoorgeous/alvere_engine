@@ -1,4 +1,4 @@
-#include "alvere/utils/command_console/command_console.hpp"
+#include "alvere/debug/command_console/command_console.hpp"
 
 #include <algorithm>
 #include <memory>
@@ -11,6 +11,10 @@
 #include "graphics_api/opengl/opengl_vertex_array.hpp"
 
 #include "alvere/application/window.hpp"
+#include "alvere/debug/command_console/arg.hpp"
+#include "alvere/debug/command_console/command.hpp"
+#include "alvere/debug/command_console/command_alias.hpp"
+#include "alvere/debug/command_console/param.hpp"
 #include "alvere/graphics/buffers.hpp"
 #include "alvere/graphics/shader.hpp"
 #include "alvere/graphics/shader_program.hpp"
@@ -19,10 +23,6 @@
 #include "alvere/graphics/texture.hpp"
 #include "alvere/math/matrix/matrix_4.hpp"
 #include "alvere/math/matrix/transformations.hpp"
-#include "alvere/utils/command_console/arg.hpp"
-#include "alvere/utils/command_console/command.hpp"
-#include "alvere/utils/command_console/command_alias.hpp"
-#include "alvere/utils/command_console/param.hpp"
 #include "alvere/utils/utilities.hpp"
 
 namespace alvere::console
@@ -487,7 +487,7 @@ namespace alvere::console
 
 			if (!output.getIsEmpty())
 			{
-				std::vector<std::string> lines = utils::splitString(output.getSimpleText(), '\n', true);
+				std::vector<std::string> lines = utils::splitString(output.getContentString(), '\n', true);
 				_output.insert(_output.end(), lines.begin(), lines.end());
 			}
 

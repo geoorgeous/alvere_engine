@@ -51,8 +51,8 @@ GameplayState::~GameplayState()
 
 GameState * GameplayState::Update(float deltaTime)
 {
-	m_toggleEditor.Update();
-	if (m_toggleEditor.IsReleased())
+	m_toggleEditor.update();
+	if (m_toggleEditor.isReleased())
 	{
 		return new EditorState(m_window);
 	}
@@ -78,6 +78,11 @@ GameState * GameplayState::Update(float deltaTime)
 		if(m_window.getKey(alvere::Key::F11).justReleased)
 		{
 			m_window.setFlag(alvere::Window::Flag::FullScreen, !m_window.getFlag(alvere::Window::Flag::FullScreen));
+		}
+
+		if(m_window.getKey(alvere::Key::D1).justReleased)
+		{
+			m_window.setCursor(alvere::CursorType::Arrow);
 		}
 
 		m_sceneCamera->rotate(alvere::Quaternion::fromEulerAngles(rotation * deltaTime));

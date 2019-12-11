@@ -4,7 +4,6 @@
 #include <functional>
 #include <typeindex>
 
-#include "Assert.h"
 #include "alvere/world/archetype/archetype.hpp"
 
 namespace alvere

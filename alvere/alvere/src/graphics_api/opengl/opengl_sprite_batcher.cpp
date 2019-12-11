@@ -1,10 +1,11 @@
+#include "graphics_api/opengl/opengl_sprite_batcher.hpp"
+
 #include <memory>
 
 #include <glad/glad.h>
 
 #include "alvere/utils/file_reader.hpp"
 #include "graphics_api/opengl/opengl_errors.hpp"
-#include "graphics_api/opengl/opengl_sprite_batcher.hpp"
 #include "graphics_api/opengl/opengl_vertex_array.hpp"
 
 #define ALV_STRINGIFY(x) #x

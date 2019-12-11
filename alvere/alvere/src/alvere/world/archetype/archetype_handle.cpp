@@ -1,5 +1,5 @@
 #include "alvere/world/archetype/archetype_handle.hpp"
-#include "alvere/utils/exceptions.hpp"
+#include "alvere/debug/exceptions.hpp"
 
 namespace alvere
 {

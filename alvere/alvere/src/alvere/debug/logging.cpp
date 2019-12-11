@@ -1,4 +1,4 @@
-#include "alvere/utils/logging.hpp"
+#include "alvere/debug/logging.hpp"
 
 #include <chrono>
 #include <ctime>
@@ -12,9 +12,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "alvere/utils/command_console/arg.hpp"
-#include "alvere/utils/command_console/command.hpp"
-#include "alvere/utils/command_console/param.hpp"
+#include "alvere/debug/command_console/arg.hpp"
+#include "alvere/debug/command_console/command.hpp"
+#include "alvere/debug/command_console/param.hpp"
 
 #define ALV_LOG_TIMESTAMP_FMT "[%X]"
 #define ALV_LOG_PREFIXSTRING_DBUG "[## Debug ##] "

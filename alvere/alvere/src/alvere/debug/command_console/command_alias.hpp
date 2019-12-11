@@ -1,6 +1,6 @@
 #pragma once
 
-#include "alvere/utils/command_console/command.hpp"
+#include "alvere/debug/command_console/command.hpp"
 
 namespace alvere::console
 {

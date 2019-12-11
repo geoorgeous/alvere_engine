@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "alvere/utils/logging.hpp"
+#include "alvere/debug/logging.hpp"
 
 #ifdef NDEBUG
 #define AlvUnreachable(message)

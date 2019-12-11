@@ -4,10 +4,10 @@
 #include <algorithm>
 #include <memory>
 
+#include "alvere/debug/exceptions.hpp"
 #include "alvere/world/scene/scene_loader.hpp"
 #include "alvere/world/scene/scene.hpp"
 #include "alvere/world/system/updated_system.hpp"
-#include "alvere/utils/exceptions.hpp"
 
 namespace alvere
 {

@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "alvere/utils/logging.hpp"
+#include "alvere/debug/logging.hpp"
 
 namespace alvere
 {

@@ -1,10 +1,9 @@
-#include "alvere/utils/command_console/command.hpp"
+#include "alvere/debug/command_console/command.hpp"
 
 #include <string>
 
-#include "alvere/utils/command_console/arg.hpp"
-//#include "alvere/utils/command_console/command_console.hpp"
-#include "alvere/utils/command_console/param.hpp"
+#include "alvere/debug/command_console/arg.hpp"
+#include "alvere/debug/command_console/param.hpp"
 
 namespace alvere::console
 {

@@ -1,12 +1,14 @@
 #pragma once
 
-#include "alvere/graphics/buffers.hpp"
-
 namespace alvere
 {
 	struct Vector3;
 
 	struct Vector4;
+
+	class VertexBuffer;
+
+	class IndexBuffer;
 
 	class Mesh
 	{

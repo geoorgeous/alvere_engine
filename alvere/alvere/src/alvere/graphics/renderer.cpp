@@ -1,6 +1,6 @@
-#include <algorithm>
-
 #include "alvere/graphics/renderer.hpp"
+
+#include <algorithm>
 
 namespace alvere
 {
@@ -34,8 +34,8 @@ namespace alvere
 	void Renderer::sortDrawCommands()
 	{
 		std::sort(m_drawCommands.begin(), m_drawCommands.end(), [](const DrawCommand & lhs, const DrawCommand & rhs)
-			{
-				return (intptr_t)lhs.mesh < (intptr_t)rhs.mesh;
-			});
+		{
+			return (intptr_t)lhs.mesh < (intptr_t)rhs.mesh;
+		});
 	}
 }
