@@ -13,6 +13,7 @@ namespace alvere
 class TileWindow;
 class C_Tilemap;
 class CommandStack;
+class DrawTilesCommand;
 
 class DrawTool : public EditorTool
 {
@@ -25,6 +26,8 @@ class DrawTool : public EditorTool
 	alvere::input::MouseButton m_leftMouse;
 
 	int m_drawSize;
+
+	DrawTilesCommand * m_activeDrawCommand;
 
 public:
 

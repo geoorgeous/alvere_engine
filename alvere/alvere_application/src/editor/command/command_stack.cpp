@@ -20,7 +20,6 @@ void CommandStack::Add(Command * command)
 	}
 
 	m_commandHistory.emplace_back(command);
-	m_commandHistory.back()->Execute();
 }
 
 void CommandStack::Undo()
@@ -43,6 +42,6 @@ void CommandStack::Redo()
 		return;
 	}
 
-	m_commandHistory[m_commandHistory.size() - m_currentOffset]->Execute();
+	m_commandHistory[m_commandHistory.size() - m_currentOffset]->Redo();
 	m_currentOffset -= 1;
 }
