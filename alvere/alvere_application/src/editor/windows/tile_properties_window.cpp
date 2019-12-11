@@ -1,4 +1,5 @@
 #include <memory>
+#include <filesystem>
 
 #include "tile_properties_window.hpp"
 #include "imgui/imgui_internal.h"
@@ -58,7 +59,8 @@ void TilePropertiesWindow::Draw()
 
 void TilePropertiesWindow::UserSetTileTexture(EditorTile & tile)
 {
-	alvere::OpenFileDialog openFile("Select a valid spritesheet", "", { "*.PNG" }, false);
+	std::wstring defaultPath = std::filesystem::absolute("res/img/tiles/");
+	alvere::OpenFileDialog openFile("Select a valid spritesheet", std::string(defaultPath.begin(), defaultPath.end()), { "*.PNG" }, false);
 
 	std::pair<bool, std::vector<std::string>> output = openFile.Show();
 	if (output.first == false || output.second.size() == 0)
@@ -66,8 +68,9 @@ void TilePropertiesWindow::UserSetTileTexture(EditorTile & tile)
 		return;
 	}
 
-	tile.m_texturePath = output.second[0];
+	std::wstring path = std::filesystem::relative(output.second[0]);
+	tile.m_texturePath = std::string(path.begin(), path.end());
 
-	alvere::Asset<alvere::Texture> texture = alvere::AssetManager::getStatic<alvere::Texture>(output.second[0]);
+	alvere::Asset<alvere::Texture> texture = alvere::AssetManager::getStatic<alvere::Texture>(tile.m_texturePath);
 	tile.m_tile.m_spritesheet = { texture, { 24, 24 } };
 }

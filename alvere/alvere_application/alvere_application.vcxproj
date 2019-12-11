@@ -162,6 +162,7 @@
     <ClCompile Include="src\editor\command\command_stack.cpp" />
     <ClCompile Include="src\editor\editor_world.cpp" />
     <ClCompile Include="src\editor\imgui_editor.cpp" />
+    <ClCompile Include="src\editor\io\world_exporter.cpp" />
     <ClCompile Include="src\editor\tool\draw_tool.cpp" />
     <ClCompile Include="src\editor\utils\path_utils.cpp" />
     <ClCompile Include="src\editor\windows\history_window.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="src\editor\editor_world.hpp" />
     <ClInclude Include="src\editor\imgui_demo_window.hpp" />
     <ClInclude Include="src\editor\imgui_editor.hpp" />
+    <ClInclude Include="src\editor\io\world_exporter.hpp" />
     <ClInclude Include="src\editor\tilemap\editor_tile.hpp" />
     <ClInclude Include="src\editor\tool\draw_tool.hpp" />
     <ClInclude Include="src\editor\utils\path_utils.hpp" />

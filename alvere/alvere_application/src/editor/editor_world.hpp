@@ -14,10 +14,10 @@ namespace alvere
 
 struct EditorWorld
 {
-	std::string m_name;
+	std::string m_filepath;
 	alvere::World m_world;
 	alvere::Camera * m_camera;
 	C_Tilemap * m_tilemap;
 
-	static std::unique_ptr<EditorWorld> New(const std::string & name, const alvere::Window & window);
+	static std::unique_ptr<EditorWorld> New(const std::string & filepath, const alvere::Window & window);
 };

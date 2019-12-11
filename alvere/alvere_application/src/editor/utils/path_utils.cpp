@@ -26,3 +26,35 @@ void GetFilenameFromPath(const std::string & path, std::string & filename, std::
 	filename = filename.substr(0, extensionStart);
 	extension = path.substr(extensionStart);
 }
+
+bool HasExtension(const std::string & path)
+{
+	size_t extensionStart = path.find_last_of('.');
+
+	if (extensionStart == std::string::npos)
+	{
+		return false;
+	}
+
+	size_t pathStop = path.find_last_of("\\/");
+
+	if (pathStop == std::string::npos)
+	{
+		pathStop = 0;
+	}
+
+	return extensionStart > pathStop;
+}
+
+bool SharesPath(const std::string & rootPath, const std::string & path, std::string & remaining)
+{
+	size_t location = path.find(rootPath);
+
+	if (location == std::string::npos)
+	{
+		return false;
+	}
+
+	remaining = path.substr(location + rootPath.length() + 1);
+	return true;
+}

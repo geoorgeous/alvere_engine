@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <filesystem>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -22,6 +23,7 @@
 #include "editor/windows/history_window.hpp"
 #include "editor\tool\pan_tool.hpp"
 #include "editor/utils/path_utils.hpp"
+#include "editor/io/world_exporter.hpp"
 
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	: m_window(window)
@@ -49,7 +51,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	AddWindow<HistoryWindow>(window);
 	AddWindow<ImGui_DemoWindow>();
 
-	m_openMaps.push_back(EditorWorld::New("demo", m_window));
+	m_openMaps.push_back(EditorWorld::New("res/maps/demo.map", m_window));
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -137,7 +139,7 @@ void ImGuiEditor::DrawMapTabs()
 			bool active = true;
 
 			std::string filename;
-			GetFilenameFromPath(m_openMaps[i]->m_name, filename);
+			GetFilenameFromPath(m_openMaps[i]->m_filepath, filename);
 			const char * name = filename.c_str();
 
 			if (ImGui::BeginTabItem(name, &active))
@@ -200,6 +202,8 @@ void ImGuiEditor::DrawFileMenu()
 		}
 	}
 
+	ImGui::Separator();
+
 	if (ImGui::MenuItem("Open", NULL, false, true))
 	{
 		alvere::OpenFileDialog openFileDialog("Select a map to open", "", { "*.map" }, false);
@@ -208,6 +212,46 @@ void ImGuiEditor::DrawFileMenu()
 		std::cout << result.first << std::endl;
 		if (result.first)
 			std::cout << result.second[0] << std::endl;
+	}
+
+	ImGui::Separator();
+
+	std::string mapName = "";
+	EditorWorld * world = GetFocusedWorld();
+	if (world != nullptr)
+	{
+		GetFilenameFromPath(world->m_filepath, mapName);
+	}
+
+	std::string saveLabel = (world == nullptr ? "Save" : "Save " + mapName);
+	if (ImGui::MenuItem(saveLabel.c_str(), NULL, false, world != nullptr))
+	{
+		WorldExporter exporter;
+		exporter(world->m_filepath, *world);
+	}
+
+	std::string saveAsLabel = ( world == nullptr ? "Save As" : "Save " + mapName + " As" );
+	if (ImGui::MenuItem(saveAsLabel.c_str(), NULL, false, world != nullptr))
+	{
+		std::wstring path = std::filesystem::absolute(world->m_filepath);
+		alvere::SaveFileDialog newMapDialog("Save Map As", std::string(path.begin(), path.end()), { "*.map" });
+
+		std::pair<bool, std::string> newMapValue = newMapDialog.Show();
+
+		if (newMapValue.first)
+		{
+			std::string newFilepath = newMapValue.second;
+			if (HasExtension(newFilepath) == false)
+			{
+				newFilepath += ".map";
+			}
+
+			//Store this new path back into the world
+			world->m_filepath = newFilepath;
+
+			WorldExporter exporter;
+			exporter(newFilepath, *world);
+		}
 	}
 
 	ImGui::EndMenu();

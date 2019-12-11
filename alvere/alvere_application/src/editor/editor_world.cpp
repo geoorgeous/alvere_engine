@@ -15,10 +15,10 @@
 
 using namespace alvere;
 
-std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const alvere::Window & window)
+std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & filepath, const alvere::Window & window)
 {
 	std::unique_ptr<EditorWorld> editorWorld = std::make_unique<EditorWorld>();
-	editorWorld->m_name = name;
+	editorWorld->m_filepath = filepath;
 	World & world = editorWorld->m_world;
 
 	float worldUnitsOnX = 32;
