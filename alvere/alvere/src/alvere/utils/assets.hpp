@@ -74,7 +74,7 @@ namespace alvere
 			return *m_asset;
 		}
 
-		operator bool()
+		explicit operator bool()
 		{
 			return isValid();
 		}
@@ -82,6 +82,24 @@ namespace alvere
 		void freeAsset()
 		{
 			delete m_asset;
+		}
+
+		bool operator==(const Asset<AssetType> & rhs)
+		{
+			bool valid = isValid();
+			bool rhsValid = rhs.isValid();
+
+			if (valid == false && rhsValid == false)
+			{
+				return true;
+			}
+
+			if (valid != rhsValid)
+			{
+				return false;
+			}
+
+			return m_filepath == rhs.m_filepath;
 		}
 
 	private:
