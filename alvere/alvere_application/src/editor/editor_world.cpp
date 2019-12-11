@@ -11,7 +11,8 @@
 #include <tilemap\tilemap_renderer_system.hpp>
 #include <scenes\platformer_scene.hpp>
 
-#include "editor_world.hpp"
+#include "editor/editor_world.hpp"
+#include "editor/utils/path_utils.hpp"
 
 using namespace alvere;
 
@@ -44,4 +45,11 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & filepath, cons
 	world.AddSystem<SpriteRendererSystem>(*editorWorld->m_camera);
 
 	return std::move(editorWorld);
+}
+
+std::string EditorWorld::GetName() const
+{
+	std::string filename;
+	GetFilenameFromPath(m_filepath, filename);
+	return filename;
 }

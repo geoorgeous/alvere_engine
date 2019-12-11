@@ -19,6 +19,7 @@ class ImGuiEditor
 	{
 		None,
 		ResizeTilemap,
+		UnsavedChanges,
 	};
 
 	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_NoTitleBar
@@ -72,6 +73,7 @@ private:
 	void OpenPopup(ModalPopupState popup);
 	void DrawPopups();
 	void DrawResizePopup();
+	void DrawUnsavedChangesPopup();
 
 	template <typename T, typename... Args>
 	T & AddWindow(Args &&... args);

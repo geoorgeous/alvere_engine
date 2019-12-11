@@ -52,6 +52,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	AddWindow<ImGui_DemoWindow>();
 
 	m_openMaps.push_back(EditorWorld::New("res/maps/demo.map", m_window));
+	m_openMaps.back()->m_dirty = true;
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -116,7 +117,7 @@ void ImGuiEditor::Render()
 		OpenPopup(m_currentPopup);
 	}
 
-	DrawResizePopup();
+	DrawPopups();
 
 	ImGui::End();
 
@@ -136,19 +137,14 @@ void ImGuiEditor::DrawMapTabs()
 		std::vector<int> toRemove;
 		for (int i = 0; i < m_openMaps.size(); ++i)
 		{
-			bool active = true;
-
-			std::string filename;
-			GetFilenameFromPath(m_openMaps[i]->m_filepath, filename);
-			const char * name = filename.c_str();
-
 			ImGui::PushID(i);
 
 			ImGuiTabItemFlags itemFlags = m_openMaps[i]->m_dirty
 				? ImGuiTabItemFlags_UnsavedDocument
 				: ImGuiTabItemFlags_None;
 
-			if (ImGui::BeginTabItem(name, &active, itemFlags))
+			bool active = true;
+			if (ImGui::BeginTabItem(m_openMaps[i]->GetName().c_str(), &active, itemFlags))
 			{
 				m_focusedMap = m_openMaps[i].get();
 
@@ -157,7 +153,20 @@ void ImGuiEditor::DrawMapTabs()
 				ImGui::EndTabItem();
 			}
 
-			if (active == false)
+			m_openMaps[i]->m_requestClose |= !active;
+			if (m_openMaps[i]->m_requestClose)
+			{
+				if (m_openMaps[i]->m_dirty)
+				{
+					m_currentPopup = ModalPopupState::UnsavedChanges;
+				}
+				else
+				{
+					m_openMaps[i]->m_forceClose = true;
+				}
+			}
+
+			if (m_openMaps[i]->m_forceClose)
 			{
 				toRemove.push_back(i);
 			}
@@ -168,6 +177,11 @@ void ImGuiEditor::DrawMapTabs()
 		//Remove any tabs that were closed
 		for (int i = (int) toRemove.size() - 1; i >= 0; --i)
 		{
+			if (m_focusedMap == m_openMaps[toRemove[i]].get())
+			{
+				m_focusedMap = nullptr;
+			}
+
 			m_openMaps.erase(m_openMaps.begin() + toRemove[i]);
 		}
 
@@ -334,12 +348,16 @@ void ImGuiEditor::OpenPopup(ModalPopupState state)
 		case ModalPopupState::ResizeTilemap:
 			ImGui::OpenPopup("Resize Tilemap");
 			return;
+		case ModalPopupState::UnsavedChanges:
+			ImGui::OpenPopup("Unsaved Changes");
+			return;
 	}
 }
 
 void ImGuiEditor::DrawPopups()
 {
 	DrawResizePopup();
+	DrawUnsavedChangesPopup();
 }
 
 void ImGuiEditor::DrawResizePopup()
@@ -390,6 +408,56 @@ void ImGuiEditor::DrawResizePopup()
 
 	ImGui::EndPopup();
 }
+
+void ImGuiEditor::DrawUnsavedChangesPopup()
+{
+	EditorWorld * world = GetFocusedWorld();
+	if (world == nullptr)
+	{
+		return;
+	}
+
+	if (ImGui::BeginPopupModal("Unsaved Changes", NULL, ImGuiWindowFlags_AlwaysAutoResize) == false)
+	{
+		return;
+	}
+
+	ImGui::Text(("You have unsaved changes to " + world->GetName()).c_str());
+
+	ImGui::Separator();
+
+	if (ImGui::Button("Save", ImVec2(120, 0)))
+	{
+		m_exporter(world->m_filepath, *world);
+
+		world->m_requestClose = false;
+		world->m_forceClose = true;
+
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Don't Save", ImVec2(120, 0)))
+	{
+		world->m_requestClose = false;
+		world->m_forceClose = true;
+
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Cancel", ImVec2(120, 0)))
+	{
+		world->m_requestClose = false;
+
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
+}
+
 
 
 
