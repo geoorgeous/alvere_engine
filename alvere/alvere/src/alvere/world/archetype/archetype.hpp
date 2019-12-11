@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "alvere/utils/exceptions.hpp"
+#include "alvere/debug/exceptions.hpp"
 #include "alvere/world/component/component_provider.hpp"
 #include "alvere/world/entity/entity.hpp"
 #include "alvere/world/entity/entity_handle.hpp"

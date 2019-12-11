@@ -2,10 +2,10 @@
 
 #include "platform/windows/windows_window.hpp"
 
+#include "alvere/debug/exceptions.hpp"
 #include "alvere/events/application_events.hpp"
 #include "alvere/graphics/render_commands.hpp"
 #include "alvere/math/vector/vec_2_i.hpp"
-#include "alvere/utils/exceptions.hpp"
 #include "graphics_api/opengl/opengl_context.hpp"
 
 namespace alvere::platform::windows
@@ -41,9 +41,9 @@ namespace alvere::platform::windows
 
 	void Window::setFlag(Flag flag, bool value)
 	{
-		if(m_flags.find(flag) != m_flags.end() && m_flags[flag] == value)
+		if(getFlag(flag) == value)
 			return;
-		m_flags[flag] = value;
+		alvere::Window::setFlag(flag, value);
 
 		switch (flag)
 		{
@@ -105,6 +105,23 @@ namespace alvere::platform::windows
 		glfwSetWindowSizeLimits(m_windowHandle, minWidth, minHeight, maxWidth, maxHeight);
 	}
 
+	void Window::setCursor(CursorType cursorType)
+	{
+		glfwDestroyCursor(m_cursor);
+
+		switch(cursorType)
+		{
+			case CursorType::Arrow: m_cursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR); break;
+			case CursorType::IBeam: m_cursor = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR); break;
+			case CursorType::Crosshair: m_cursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR); break;
+			case CursorType::Hand: m_cursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR); break;
+			case CursorType::ResizeHorizontal: m_cursor = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR); break;
+			case CursorType::ResizeVertical: m_cursor = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR); break;
+		}
+
+		glfwSetCursor(m_windowHandle, m_cursor);
+	}
+
 	void Window::maximize()
 	{
 		glfwMaximizeWindow(m_windowHandle);
@@ -145,41 +162,45 @@ namespace alvere::platform::windows
 		glfwPollEvents();
 	}
 
+	void Window::swapBuffers()
+	{
+		render_commands::setViewport(0, 0, m_size.x, m_size.y);
+
+		m_renderingContext->renderFrameBuffer();
+
+		glfwSwapBuffers(m_windowHandle);
+	}
+
 	void Window::init(const alvere::Window::Properties& properties, Vec2i resolution)
 	{
 		if (!s_GLFWInitialised)
 		{
 			if (!glfwInit())
 			{
-				AlvThrowFatal("Fatal error! Failed to initialise GLFW.");
+				AlvThrowFatal("Failed to initialise GLFW.\n");
 			}
 
 			glfwSetErrorCallback([](int error, const char * message)
 			{
-				AlvThrow("GLFW error (%i): Message: \"%s\".", error, message);
+				AlvThrow("GLFW error (%i): Message: \"%s\".\n", error, message);
 			});
 
 			s_GLFWInitialised = true;
 		}
 
-		m_flags[Flag::IsVisible] = (properties.m_flags & Flag::IsVisible) != 0;
-		m_flags[Flag::Resizeable] = (properties.m_flags & Flag::Resizeable) != 0;
-		m_flags[Flag::AlwaysOnTop] = (properties.m_flags & Flag::AlwaysOnTop) != 0;
-		m_flags[Flag::Decorated] = (properties.m_flags & Flag::Decorated) != 0;
-		m_flags[Flag::FullScreen] = (properties.m_flags & Flag::FullScreen) != 0;
-		m_flags[Flag::FullScreenAutoMinimize] = (properties.m_flags & Flag::FullScreenAutoMinimize) != 0;
+		setFlags(properties.m_flags);
 
-		glfwWindowHint(GLFW_VISIBLE, m_flags[Flag::IsVisible]);
-		glfwWindowHint(GLFW_RESIZABLE, m_flags[Flag::Resizeable]);
-		glfwWindowHint(GLFW_FLOATING, m_flags[Flag::AlwaysOnTop]);
-		glfwWindowHint(GLFW_DECORATED, m_flags[Flag::Decorated]);
-		glfwWindowHint(GLFW_AUTO_ICONIFY, m_flags[Flag::FullScreenAutoMinimize]);
+		glfwWindowHint(GLFW_VISIBLE,  getFlag(Flag::IsVisible));
+		glfwWindowHint(GLFW_RESIZABLE, getFlag(Flag::Resizeable));
+		glfwWindowHint(GLFW_FLOATING, getFlag(Flag::AlwaysOnTop));
+		glfwWindowHint(GLFW_DECORATED, getFlag(Flag::Decorated));
+		glfwWindowHint(GLFW_AUTO_ICONIFY, getFlag(Flag::FullScreenAutoMinimize));
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		if (m_flags[Flag::FullScreen])
+		if (getFlag(Flag::FullScreen))
 		{
 			GLFWmonitor * monitor = glfwGetPrimaryMonitor();
 
@@ -203,16 +224,14 @@ namespace alvere::platform::windows
 
 		if (m_windowHandle == NULL)
 		{
-			AlvThrowFatal("Fatal error! Failed to create GLFW window.");
-
-			m_size = Vec2i{};
-
-			return;
+			AlvThrowFatal("Failed to create GLFW window.\n");
 		}
 
-		setFlag(Flag::IsCursorEnabled, properties.m_flags & Flag::IsCursorEnabled);
+		setFlag(Flag::IsCursorEnabled, (properties.m_flags & Flag::IsCursorEnabled) == Flag::IsCursorEnabled);
 
-		m_renderingContext = new alvere::graphics_api::opengl::RenderingContext(m_windowHandle);
+		glfwMakeContextCurrent(m_windowHandle);
+
+		m_renderingContext = new alvere::graphics_api::opengl::RenderingContext;
 		m_renderingContext->init(resolution.x, resolution.y);
 
 		m_title = properties.m_title;

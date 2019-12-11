@@ -29,21 +29,21 @@ namespace alvere
 			Sampler2D
 		};
 
-		static std::unique_ptr<Shader> New(Shader::Type type, const std::string& source);
+		static std::unique_ptr<Shader> New(Shader::Type type, const std::string & source);
 
 		static unsigned int GetDataTypeSize(Shader::DataType dataType);
 
 		static unsigned int GetDataTypeComponentCount(Shader::DataType dataType);
 
-		Shader(const Shader& shader) = delete;
+		Shader(const Shader & shader) = delete;
 
 		unsigned int GetHandle() const;
 
 		const Shader::Type getType() const;
 
-		const std::string& getSource() const;
+		const std::string & getSource() const;
 
-		void SetSource(const std::string& source);
+		void SetSource(const std::string & source);
 
 		virtual bool Compile() const = 0;
 
@@ -57,6 +57,6 @@ namespace alvere
 
 		mutable bool m_IsCompiled;
 
-		Shader(Shader::Type type, const std::string& source);
+		Shader(Shader::Type type, const std::string & source);
 	};
 }

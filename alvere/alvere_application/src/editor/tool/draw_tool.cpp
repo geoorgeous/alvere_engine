@@ -23,8 +23,8 @@ void DrawTool::Update(float deltaTime)
 {
 	UpdateDrawSize();
 
-	m_leftMouse.Update();
-	if (m_leftMouse.IsDown())
+	m_leftMouse.update();
+	if (m_leftMouse.isPressed())
 	{
 		UpdateDraw();
 	}

@@ -12,14 +12,14 @@ HistoryWindow::HistoryWindow(alvere::Window & window)
 
 void HistoryWindow::Update(float deltaTime)
 {
-	m_undoButton.Update();
-	if (m_undoButton.IsPressed())
+	m_undoButton.update();
+	if (m_undoButton.isPressed())
 	{
 		m_commandStack.Undo();
 	}
 
-	m_redoButton.Update();
-	if (m_redoButton.IsPressed())
+	m_redoButton.update();
+	if (m_redoButton.isPressed())
 	{
 		m_commandStack.Redo();
 	}

@@ -1,9 +1,10 @@
+#include "graphics_api/opengl/opengl_vertex_array.hpp"
+
 #include <glad/glad.h>
 
 #include "alvere/graphics/shader.hpp"
 
 #include "graphics_api/opengl/opengl_errors.hpp"
-#include "graphics_api/opengl/opengl_vertex_array.hpp"
 
 namespace alvere::graphics_api::opengl
 {

@@ -5,8 +5,8 @@
 #include <string>
 
 #include "alvere/application/application.hpp"
-#include "alvere/utils/exceptions.hpp"
-#include "alvere/utils/logging.hpp"
+#include "alvere/debug/exceptions.hpp"
+#include "alvere/debug/logging.hpp"
 
 int main(int argc, char *argv[])
 {

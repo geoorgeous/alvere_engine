@@ -14,7 +14,7 @@ namespace alvere
 
 		static std::unique_ptr<ShaderProgram> New();
 
-		ShaderProgram(const ShaderProgram& shaderProgram) = delete;
+		ShaderProgram(const ShaderProgram & shaderProgram) = delete;
 
 		const Shader * getShader(Shader::Type type) const;
 

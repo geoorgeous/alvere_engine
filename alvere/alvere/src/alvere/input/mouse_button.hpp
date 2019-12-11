@@ -2,28 +2,27 @@
 
 #include "input_button.hpp"
 
-namespace alvere
+namespace alvere::input
 {
-	namespace input
+	class MouseButton : public InputButton
 	{
-		class MouseButton : public InputButton
-		{
-			Window & m_window;
+	public:
 
-			::alvere::MouseButton m_button;
-			bool m_oldState;
-			bool m_newState;
+		MouseButton(Window & window, ::alvere::MouseButton button);
 
-		public:
+		void update() override;
 
-			MouseButton(Window & window, ::alvere::MouseButton button);
+		bool isDown() const override;
 
-			void Update() override;
+		bool isPressed() const override;
+		bool isReleased() const override;
 
-			bool IsDown() const override;
+	private:
 
-			bool IsPressed() const override;
-			bool IsReleased() const override;
-		};
-	}
+		Window & m_window;
+
+		::alvere::MouseButton m_button;
+		bool m_oldState;
+		bool m_newState;
+	};
 }

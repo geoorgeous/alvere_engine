@@ -19,7 +19,7 @@ PanTool::PanTool(ImGuiEditor & editor, alvere::Window & window)
 
 void PanTool::Update(float deltaTime)
 {
-	m_leftMouse.Update();
+	m_leftMouse.update();
 
 	EditorWorld * focusedWorld = m_editor.GetFocusedWorld();
 	if (focusedWorld == nullptr)
@@ -29,7 +29,7 @@ void PanTool::Update(float deltaTime)
 
 	UpdateZoom(*focusedWorld);
 
-	if (m_leftMouse.IsDown())
+	if (m_leftMouse.isDown())
 	{
 		UpdatePan(*focusedWorld);
 	}
@@ -49,7 +49,7 @@ void PanTool::UpdatePan(EditorWorld & focusedWorld)
 	alvere::Vector2 newMousePos = m_window.getMouse().position;
 
 	//First frame do not try to move the camera as we have no previous mouse position
-	if (m_leftMouse.IsPressed() == false)
+	if (m_leftMouse.isPressed() == false)
 	{
 		alvere::Vector3 mousePosWorld = camera.screenToWorld(m_mousePosition, m_window.getSize().x, m_window.getSize().y);
 		alvere::Vector3 newMousePosWorld = camera.screenToWorld(newMousePos, m_window.getSize().x, m_window.getSize().y);

@@ -1,9 +1,10 @@
+#include "alvere/graphics/texture.hpp"
+
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_FAILURE_USERIMG
 #include <stb/image.hpp>
 
-#include "alvere/graphics/texture.hpp"
-#include "alvere/utils/logging.hpp"
+#include "alvere/debug/logging.hpp"
 
 namespace alvere
 {

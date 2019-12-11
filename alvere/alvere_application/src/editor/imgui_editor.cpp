@@ -9,7 +9,7 @@
 #include <platform/windows/windows_window.hpp>
 #include <alvere\world\component\components\c_camera.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
-#include <alvere/utils/logging.hpp>
+#include <alvere/debug/logging.hpp>
 
 #include "imgui_editor.hpp"
 #include "imgui/imgui_impl_glfw.h"
@@ -40,7 +40,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-	ImGui_ImplGlfw_InitForOpenGL(castedWindow.m_windowHandle, false);
+	ImGui_ImplGlfw_InitForOpenGL(castedWindow.getHandle(), false);
 	ImGui_ImplOpenGL3_Init("#version 130");
 
 	TileWindow & tileWindow = AddWindow<TileWindow>();

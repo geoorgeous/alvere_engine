@@ -2,8 +2,8 @@
 
 #include "alvere/graphics/renderer.hpp"
 
-#include "opengl_shader_program.hpp"
-#include "opengl_vertex_array.hpp"
+#include "graphics_api/opengl/opengl_shader_program.hpp"
+#include "graphics_api/opengl/opengl_vertex_array.hpp"
 
 namespace alvere::graphics_api::opengl
 {

@@ -14,24 +14,20 @@ namespace alvere::graphics_api::opengl
 	{
 	public:
 
-		RenderingContext(GLFWwindow* windowHandle);
+		RenderingContext();
 
 		~RenderingContext();
 
 		void init(int width, int height) override;
 
-		void swapBuffers() override;
+		void renderFrameBuffer() override;
 
 	private:
-
-		GLFWwindow * m_windowHandle;
-
+		
 		std::unique_ptr<ShaderProgram> m_screenQuadShaderProgram;
 
 		unsigned int m_screenQuadVAOHandle;
 		unsigned int m_screenQuadVBOHandle;
-
-		void drawFrameBuffer();
 	};
 
 	int static LogOpenGLErrors();

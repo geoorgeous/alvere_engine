@@ -2,8 +2,8 @@
 
 #include "alvere/math/matrix/matrix_4.hpp"
 #include "alvere/math/quaternion.hpp"
-#include "alvere/math/vector/vector_3.hpp"
 #include "alvere/math/vector/vector_2.hpp"
+#include "alvere/math/vector/vector_3.hpp"
 
 namespace alvere
 {

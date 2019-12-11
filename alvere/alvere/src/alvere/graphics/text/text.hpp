@@ -26,51 +26,37 @@ namespace alvere
 	{
 	public:
 
-		CompositeText(const Text::Formatting & format);
+		CompositeText(Text::Formatting defaultFormatting);
 
-		CompositeText(const std::string & content, const Text::Formatting & format);
+		CompositeText(Text::Formatting defaultFormatting, const std::vector<Text> & content);
 
-		inline const Text::Formatting & format() const
+		inline const std::vector<Text> & getContent() const
 		{
-			return m_currentFormat;
+			return m_content;
 		}
 
-		inline Text::Formatting & format()
+		inline const std::string & getContentString() const
 		{
-			return m_currentFormat;
-		}
-
-		inline const std::vector<Text> & getText() const
-		{
-			return m_text;
-		}
-
-		inline const std::string & getSimpleText() const
-		{
-			return m_simpleText;
+			return m_contentString;
 		}
 
 		inline unsigned int getLength() const
 		{
-			return m_simpleText.length();
+			return m_contentString.length();
 		}
 
 		inline bool getIsEmpty() const
 		{
-			return m_simpleText.empty();
+			return m_contentString.empty();
 		}
 
-		CompositeText & append(const std::string & content);
-
-		CompositeText & append(const std::string & content, const Text::Formatting & formatOverride);
+		CompositeText & append(const std::string & text);
 
 		CompositeText & append(const Text & text);
 
 		CompositeText & append(const CompositeText & other);
 
-		CompositeText & prepend(const std::string & content);
-
-		CompositeText & prepend(const std::string & content, const Text::Formatting & formatOverride);
+		CompositeText & prepend(const std::string & text);
 
 		CompositeText & prepend(const Text & text);
 
@@ -88,20 +74,21 @@ namespace alvere
 
 	private:
 
-		Text::Formatting m_currentFormat;
+		Text::Formatting m_defaultFormatting;
 
-		std::vector<Text> m_text;
+		std::vector<Text> m_content;
 
-		std::string m_simpleText;
+		std::string m_contentString;
 	};
 
 	CompositeText operator+(const CompositeText & lhs, const std::string & rhs);
 
 	CompositeText operator+(const CompositeText & lhs, const Text & rhs);
 
-	CompositeText operator+(const std::string & lhs, const CompositeText & rhs);
+	CompositeText operator+(const CompositeText & lhs, const CompositeText & rhs);
 
 	CompositeText operator+(const Text & lhs, const CompositeText & rhs);
 
-	CompositeText operator+(const CompositeText & lhs, const CompositeText & rhs);
+	CompositeText operator+(const const std::string & lhs, const CompositeText & rhs);
+
 }
