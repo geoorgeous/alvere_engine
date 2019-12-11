@@ -1,5 +1,7 @@
 #include <memory>
+#include <string>
 
+#include <alvere/utils/assets.hpp>
 #include <alvere\world\system\systems\camera_system.hpp>
 #include <alvere\world\system\systems\sprite_renderer_system.hpp>
 #include <alvere\world\scene\scene_system.hpp>
@@ -29,8 +31,8 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & name, const al
 
 	alvere::EntityHandle map = world.SpawnEntity<C_Tilemap>();
 
-	Spritesheet airSpritesheet = { alvere::Texture::New("res/img/tiles/air.png"), { 1, 1 } };
-	Spritesheet wallSpritesheet = { alvere::Texture::New("res/img/tiles/ground.png"), { 24, 24 } };
+	Spritesheet airSpritesheet = { alvere::AssetManager::getStatic<alvere::Texture>("res/img/tiles/air.png"), { 1, 1 } };
+	Spritesheet wallSpritesheet = { alvere::AssetManager::getStatic<alvere::Texture>("res/img/tiles/ground.png"), { 24, 24 } };
 
 	editorWorld->m_tilemap = &world.GetComponent<C_Tilemap>(map);
 	*editorWorld->m_tilemap = C_Tilemap({ 7, 7 });

@@ -1,10 +1,11 @@
 #pragma once
 
-#include <alvere\graphics\texture.hpp>
+#include <alvere/utils/assets.hpp>
+#include <alvere/graphics/texture.hpp>
 
 struct Spritesheet
 {
-	std::unique_ptr<alvere::Texture> m_texture;
+	alvere::Asset<alvere::Texture> m_texture;
 	alvere::Vector2i m_uvTileSize;
 
 	alvere::RectI GetSourceRect(alvere::Vector2i spritesheetCoord) const

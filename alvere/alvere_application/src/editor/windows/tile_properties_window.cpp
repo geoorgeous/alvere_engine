@@ -27,7 +27,7 @@ void TilePropertiesWindow::Draw()
 
 	const int textWidth = 80.0f;
 
-	std::string textureString = tile->m_spritesheet.m_texture != nullptr ? editorTile->m_texturePath : "None";
+	std::string textureString = tile->m_spritesheet.m_texture ? editorTile->m_texturePath : "None";
 
 	style.ButtonTextAlign = { 0.0f, 0.5f };
 
@@ -41,7 +41,7 @@ void TilePropertiesWindow::Draw()
 		UserSetTileTexture(*editorTile);
 	}
 
-	std::unique_ptr<alvere::Texture> & texture = editorTile->m_tile.m_spritesheet.m_texture;
+	alvere::Asset<alvere::Texture> & texture = editorTile->m_tile.m_spritesheet.m_texture;
 	if (texture && ImGui::IsItemHovered())
 	{
 		ImGui::BeginTooltip();
@@ -68,6 +68,6 @@ void TilePropertiesWindow::UserSetTileTexture(EditorTile & tile)
 
 	tile.m_texturePath = output.second[0];
 
-	std::unique_ptr<alvere::Texture> texture = alvere::Texture::New(output.second[0].c_str());
-	tile.m_tile.m_spritesheet = { std::move(texture), { 24, 24 } };
+	alvere::Asset<alvere::Texture> texture = alvere::AssetManager::getStatic<alvere::Texture>(output.second[0]);
+	tile.m_tile.m_spritesheet = { texture, { 24, 24 } };
 }

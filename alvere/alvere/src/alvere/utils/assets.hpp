@@ -13,7 +13,7 @@ namespace alvere
 	public:
 
 		virtual ~IAsset() = 0
-		{ };
+		{ }
 
 		virtual void freeAsset() = 0;
 	};
@@ -24,6 +24,11 @@ namespace alvere
 	public:
 
 		static Asset<AssetType> s_invalidAsset;
+
+		Asset()
+			: m_asset(nullptr)
+			, m_filepath("UNINITIALIZED_ASSET")
+		{ }
 
 		Asset(AssetType * asset, const std::string & filepath = "BUILT_IN_ASSET")
 			: m_asset(asset), m_filepath(filepath)
@@ -49,14 +54,29 @@ namespace alvere
 			return m_asset != nullptr;
 		}
 
-		AssetType & operator->()
+		AssetType * operator->()
 		{
-			return m_asset.get();
+			return m_asset;
 		}
 
-		const AssetType & operator->() const
+		const AssetType * operator->() const
 		{
-			return m_asset.get();
+			return m_asset;
+		}
+
+		AssetType & operator*()
+		{
+			return *m_asset;
+		}
+
+		const AssetType & operator*() const
+		{
+			return *m_asset;
+		}
+
+		operator bool()
+		{
+			return isValid();
 		}
 
 		void freeAsset()
@@ -83,7 +103,7 @@ namespace alvere
 		template <typename AssetType>
 		static Asset<AssetType> addStatic(AssetType * asset, const std::string & id)
 		{
-			s_instance.add<AssetType>(asset, id);
+			return s_instance.add<AssetType>(asset, id);
 		}
 
 		template <typename AssetType>
@@ -95,7 +115,7 @@ namespace alvere
 		template <typename AssetType>
 		static Asset<AssetType> getStatic(const std::string & id)
 		{
-			s_instance.get<AssetType>(id);
+			return s_instance.get<AssetType>(id);
 		}
 
 		template <typename AssetType>
