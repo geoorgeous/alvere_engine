@@ -24,7 +24,7 @@ void DrawTool::Update(float deltaTime)
 	UpdateDrawSize();
 
 	m_leftMouse.update();
-	if (m_leftMouse.isPressed())
+	if (m_leftMouse.isDown())
 	{
 		UpdateDraw();
 	}
