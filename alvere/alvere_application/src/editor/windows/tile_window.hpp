@@ -21,10 +21,10 @@ class TileWindow : public ImGui_Window
 	const ImVec2 m_tileSize = { 32, 32 };
 	const ImColor m_highlightedBorder = { 0.2f, 0.2f, 0.2f };
 
-	std::vector<std::unique_ptr<EditorTile>> m_tiles;
+	alvere::Vector2i m_gridSize;
 
 	alvere::Vector2i m_selectedPosition;
-	std::unordered_map<alvere::Vector2i, int, PositionHash> m_tilePositionMapping;
+	std::unordered_map<alvere::Vector2i, std::unique_ptr<EditorTile>, PositionHash> m_tilePositionMapping;
 
 	std::unique_ptr<alvere::Texture> m_noTilePreview;
 
@@ -46,7 +46,9 @@ private:
 	void DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize);
 
 	void DrawInvalidTile(alvere::Vector2i position);
-	void DrawValidTile(EditorTile & tile, alvere::Vector2i position, int tileIndex);
+	void DrawValidTile(EditorTile & tile, alvere::Vector2i position);
+
+	alvere::Vector2i GetFirstFreePosition();
 
 	inline ImColor GetBorderColor(alvere::Vector2i position)
 	{

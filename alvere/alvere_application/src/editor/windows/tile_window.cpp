@@ -4,6 +4,7 @@
 
 TileWindow::TileWindow()
 	: m_selectedPosition({ 0, 0 })
+	, m_gridSize({ 0, 0 })
 	, m_noTilePreview(alvere::Texture::New("res/img/editor/no_tile_preview.png"))
 {
 }
@@ -22,14 +23,14 @@ void TileWindow::Draw()
 	contentSize.x -= style.WindowPadding.x;
 	contentSize.y -= style.WindowPadding.y;
 
-	int xCount = contentSize.x / (m_tileSize.x + style.FrameBorderSize * 2.0f);
-	int yCount = contentSize.y / (m_tileSize.y + style.FrameBorderSize * 2.0f);
+	m_gridSize = { (int) (contentSize.x / (m_tileSize.x + style.FrameBorderSize * 2.0f))
+				 , (int) (contentSize.y / (m_tileSize.y + style.FrameBorderSize * 2.0f)) };
 
-	for (int y = 0; y < yCount; ++y)
+	for (int y = 0; y < m_gridSize[1]; ++y)
 	{
-		for (int x = 0; x < xCount; ++x)
+		for (int x = 0; x < m_gridSize[0]; ++x)
 		{
-			DrawTile({ x, y }, { xCount, yCount });
+			DrawTile({ x, y }, m_gridSize);
 		}
 
 		ImGui::NewLine();
@@ -45,7 +46,7 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 	auto tileMappingIter = m_tilePositionMapping.find(position);
 
 	EditorTile * tile = tileMappingIter != m_tilePositionMapping.end()
-		? m_tiles[tileMappingIter->second].get()
+		? tileMappingIter->second.get()
 		: nullptr;
 
 	ImGui::SameLine();
@@ -58,7 +59,7 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 	}
 	else
 	{
-		DrawValidTile(*tile, position, tileMappingIter->second);
+		DrawValidTile(*tile, position);
 	}
 
 	//All tiles can be a drop target
@@ -69,7 +70,7 @@ void TileWindow::DrawTile(alvere::Vector2i position, alvere::Vector2i gridSize)
 			IM_ASSERT(payload->DataSize == sizeof(alvere::Vector2i));
 			alvere::Vector2i payload_n = *(const alvere::Vector2i *) payload->Data;
 
-			m_tilePositionMapping[position] = m_tilePositionMapping[payload_n];
+			m_tilePositionMapping[position] = std::move(m_tilePositionMapping[payload_n]);
 			m_tilePositionMapping.erase(payload_n);
 		}
 		ImGui::EndDragDropTarget();
@@ -100,15 +101,14 @@ void TileWindow::DrawInvalidTile(alvere::Vector2i position)
 		//Only thing we can do with an invalid tile is give the user the option to make it valid
 		if (ImGui::Selectable("New Tile"))
 		{
-			m_tilePositionMapping[position] = m_tiles.size();
-			m_tiles.emplace_back(std::make_unique<EditorTile>());
+			m_tilePositionMapping[position] = std::make_unique<EditorTile>();
 		}
 
 		ImGui::EndPopup();
 	}
 }
 
-void TileWindow::DrawValidTile(EditorTile & tile, alvere::Vector2i position, int tileIndex)
+void TileWindow::DrawValidTile(EditorTile & tile, alvere::Vector2i position)
 {
 	int padding = ImGui::GetStyle().FrameBorderSize;
 
@@ -135,7 +135,6 @@ void TileWindow::DrawValidTile(EditorTile & tile, alvere::Vector2i position, int
 	{
 		if (ImGui::Selectable("Delete Tile"))
 		{
-			m_tiles.erase(m_tiles.begin() + tileIndex);
 			m_tilePositionMapping.erase(position);
 		}
 
@@ -155,20 +154,38 @@ EditorTile * TileWindow::GetSelectedTile()
 {
 	auto iter = m_tilePositionMapping.find(m_selectedPosition);
 	return iter != m_tilePositionMapping.end()
-		? m_tiles[iter->second].get()
+		? iter->second.get()
 		: nullptr;
 }
 
 Tile & TileWindow::GetOrAddTile(const Tile & tile)
 {
-	for (auto & storedTile : m_tiles)
+	for (auto & mapping : m_tilePositionMapping)
 	{
-		if (storedTile->m_tile == tile)
+		if (mapping.second->m_tile == tile)
 		{
-			return storedTile->m_tile;
+			return mapping.second->m_tile;
 		}
 	}
 
-	m_tiles.emplace_back(std::make_unique<EditorTile>(tile));
-	return m_tiles.back()->m_tile;
+	alvere::Vector2i freePosition = GetFirstFreePosition();
+
+	m_tilePositionMapping[freePosition] = std::make_unique<EditorTile>(tile);
+	return m_tilePositionMapping[freePosition]->m_tile;
+}
+
+alvere::Vector2i TileWindow::GetFirstFreePosition()
+{
+	for (int y = 0; y < m_gridSize[1]; ++y)
+	{
+		for (int x = 0; x < m_gridSize[0]; ++x)
+		{
+			if (m_tilePositionMapping[{ x, y }] == false)
+			{
+				return { x, y };
+			}
+		}
+	}
+
+	return { 0, 0 };
 }
