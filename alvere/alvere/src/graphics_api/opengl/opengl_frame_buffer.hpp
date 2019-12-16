@@ -30,5 +30,7 @@ namespace alvere::graphics_api::opengl
 		unsigned int m_depthStencilBufferHandle;
 
 		void init(unsigned int width, unsigned int height);
+
+		void checkCompleteness();
 	};
 }
