@@ -1,8 +1,7 @@
+#include "alvere/graphics/shader_program.hpp"
+
 #include <glad/glad.h>
 #include <vector>
-
-#include "alvere/graphics/shader_program.hpp"
-#include "alvere/utils/logging.hpp"
 
 namespace alvere
 {

@@ -1,10 +1,11 @@
 #pragma once
 
+#include "graphics_api/opengl/opengl_shader_program.hpp"
+
 #include <glad/glad.h>
 
-#include "alvere/utils/logging.hpp"
+#include "alvere/debug/logging.hpp"
 
-#include "graphics_api/opengl/opengl_shader_program.hpp"
 
 namespace alvere::graphics_api::opengl
 {

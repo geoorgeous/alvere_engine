@@ -10,8 +10,8 @@ EditorState::EditorState(alvere::Window & window)
 
 GameState * EditorState::Update(float deltaTime)
 {
-	m_toggleEditor.Update();
-	if (m_toggleEditor.IsReleased())
+	m_toggleEditor.update();
+	if (m_toggleEditor.isReleased())
 	{
 		return new GameplayState(m_window);
 	}

@@ -9,9 +9,9 @@ namespace alvere
 	{
 	public:
 
-		virtual void swapBuffers() = 0;
-
 		virtual void init(int width, int height) = 0;
+
+		virtual void renderFrameBuffer() = 0;
 
 		void bindFrameBuffer() const;
 

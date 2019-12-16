@@ -1,4 +1,4 @@
-#include "alvere/utils/command_console/arg.hpp"
+#include "alvere/debug/command_console/arg.hpp"
 
 namespace alvere::console
 {

@@ -7,11 +7,6 @@
 
 #include "alvere/graphics/text/text.hpp"
 
-// Command auto-filling and parameter auto-filling
-// Command parameter suggestions based on context
-// Sub commands 
-// comand aliases and ways to modify/print all/edit etc etc
-
 namespace alvere
 {
 	class Window;

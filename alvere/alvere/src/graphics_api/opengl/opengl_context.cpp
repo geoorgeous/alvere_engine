@@ -1,20 +1,20 @@
 #pragma once
 
+#include "graphics_api/opengl/opengl_context.hpp"
+
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
-#include "graphics_api/opengl/opengl_context.hpp"
 
+#include "alvere/debug/exceptions.hpp"
+#include "alvere/debug/logging.hpp"
 #include "alvere/graphics/shader.hpp"
-#include "alvere/utils/exceptions.hpp"
-#include "alvere/utils/logging.hpp"
 
 namespace alvere::graphics_api::opengl
 {
 	static bool s_GLADInitialised = false;
 
-	RenderingContext::RenderingContext(GLFWwindow * windowHandle)
-		: m_windowHandle(windowHandle)
+	RenderingContext::RenderingContext()
 	{ }
 
 	RenderingContext::~RenderingContext()
@@ -25,10 +25,8 @@ namespace alvere::graphics_api::opengl
 
 	void RenderingContext::init(int width, int height)
 	{
-		glfwMakeContextCurrent(m_windowHandle);
-
 		if (!s_GLADInitialised && !gladLoaderLoadGL())
-			AlvThrowFatal("Failed to initialise OpenGL context!");
+			AlvThrowFatal("Failed to initialise OpenGL context!\n");
 
 		s_GLADInitialised = true;
 
@@ -96,17 +94,10 @@ namespace alvere::graphics_api::opengl
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
 	}
 
-	void RenderingContext::swapBuffers()
+	void RenderingContext::renderFrameBuffer()
 	{
 		m_frameBuffer->unbind(); // unbinding custom framebuffer/binding the default frame buffer
 
-		drawFrameBuffer(); // rendering the custom frame buffer to the default framebufer and screen quad
-
-		glfwSwapBuffers(m_windowHandle);
-	}
-
-	void RenderingContext::drawFrameBuffer()
-	{
 		// bind the shader that draws the screen quad
 		m_screenQuadShaderProgram->bind();
 

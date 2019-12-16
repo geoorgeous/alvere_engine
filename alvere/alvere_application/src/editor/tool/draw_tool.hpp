@@ -10,25 +10,28 @@ namespace alvere
 	class Camera;
 }
 
+class ImGuiEditor;
 class TileWindow;
 class C_Tilemap;
 class CommandStack;
+class DrawTilesCommand;
 
 class DrawTool : public EditorTool
 {
+	ImGuiEditor & m_editor;
 	CommandStack & m_commandStack;
 	TileWindow & m_tileWindow;
 	alvere::Window & m_window;
-	alvere::Camera & m_camera;
-	C_Tilemap & m_tilemap;
 
 	alvere::input::MouseButton m_leftMouse;
 
 	int m_drawSize;
 
+	DrawTilesCommand * m_activeDrawCommand;
+
 public:
 
-	DrawTool(CommandStack & commandStack, TileWindow & tileWindow, alvere::Window & window, alvere::Camera & camera, C_Tilemap & tilemap);
+	DrawTool(ImGuiEditor & editor);
 
 	void Update(float deltaTime) override;
 

@@ -4,7 +4,7 @@
 #include "alvere/world/archetype/archetype_query.hpp"
 #include "alvere/world/component/components/c_transform.hpp"
 #include "alvere/world/application/c_mover.hpp"
-#include "alvere/utils/logging.hpp"
+#include "alvere/debug/logging.hpp"
 
 namespace alvere
 {

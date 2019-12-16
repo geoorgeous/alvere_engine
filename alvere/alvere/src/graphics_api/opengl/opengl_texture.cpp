@@ -1,5 +1,3 @@
-#pragma once
-
 #include "graphics_api/opengl/opengl_texture.hpp"
 
 #include <glad/glad.h>

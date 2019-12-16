@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "alvere/utils/exceptions.hpp"
+#include "alvere/debug/exceptions.hpp"
 
 namespace alvere
 {

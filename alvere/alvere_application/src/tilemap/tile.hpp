@@ -8,6 +8,8 @@ struct Tile
 {
 	bool m_collides;
 	Spritesheet m_spritesheet;
+
+	bool operator==(const Tile & rhs);
 };
 
 struct TileInstance

@@ -1,8 +1,9 @@
+#include "alvere/graphics/sprite_batcher.hpp"
+
 #include <algorithm>
 #include <stdint.h>
 
-#include "alvere/graphics/sprite_batcher.hpp"
-#include "alvere/utils/exceptions.hpp"
+#include "alvere/debug/exceptions.hpp"
 
 namespace alvere
 {

@@ -31,7 +31,7 @@ void ToolWindow::Draw()
 	{
 		EditorWorld & currentWorld = *m_editor.GetFocusedWorld();
 		HistoryWindow * historyWindow = m_editor.GetEditorWindow<HistoryWindow>();
-		m_currentTool = std::make_unique<DrawTool>(historyWindow->m_commandStack, *m_editor.GetEditorWindow<TileWindow>(), m_window, *currentWorld.m_camera, *currentWorld.m_tilemap);
+		m_currentTool = std::make_unique<DrawTool>(m_editor);
 	}
 
 	ImGui::End();

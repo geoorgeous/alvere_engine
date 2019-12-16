@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include <alvere/utils/shapes.hpp>
 
@@ -10,52 +11,75 @@
 
 class DrawTilesCommand : public Command
 {
-	C_Tilemap & m_tilemap;
-	alvere::RectI m_area;
-	Tile * m_tile;
+	EditorWorld & m_world;
+	TileInstance m_tile;
 
-	std::unique_ptr<TileInstance[]> m_oldTiles;
+	alvere::RectI m_boundingArea;
+	std::unordered_map<int, TileInstance> m_tiles;
 
 public:
 
-	DrawTilesCommand(C_Tilemap & tilemap, alvere::RectI area, Tile * tile)
-		: m_tilemap(tilemap)
-		, m_area(alvere::RectI::overlap(area, tilemap.GetBounds()))
+	DrawTilesCommand(EditorWorld & world, TileInstance tile)
+		: m_world(world)
 		, m_tile(tile)
-		, m_oldTiles(std::make_unique<TileInstance[]>(area.m_width * area.m_height))
 	{
 	}
 
-	void Execute() override
+	void AddDrawArea(alvere::RectI area)
 	{
-		for (int y = 0; y < m_area.m_height; ++y)
-		{
-			for (int x = 0; x < m_area.m_width; ++x)
-			{
-				int localIndex = x + y * m_area.m_width;
-				int tilemapIndex = (m_area.m_x + x) + (m_area.m_y + y) * m_tilemap.m_size[0];
+		C_Tilemap & tilemap = *m_world.m_tilemap;
 
-				m_oldTiles[localIndex] = m_tilemap.m_map[tilemapIndex];
+		area = alvere::RectI::overlap(area, tilemap.GetBounds());
+
+		alvere::RectI updateArea = alvere::RectI::pad(area, { 1, 1 });
+		m_boundingArea = alvere::RectI::encapsulate(m_boundingArea, updateArea);
+
+		for (int y = 0; y < area.m_height; ++y)
+		{
+			for (int x = 0; x < area.m_width; ++x)
+			{
+				int index = (area.m_x + x) + (area.m_y + y) * tilemap.m_size[0];
+
+				auto iter = m_tiles.find(index);
+
+				if (iter != m_tiles.end())
+				{
+					continue;
+				}
+
+				m_tiles.emplace(index, tilemap.m_map[index]);
+				tilemap.m_map[index] = m_tile;
 			}
 		}
 
-		m_tilemap.SetTiles(m_area, m_tile);
+		tilemap.UpdateTiles(updateArea);
+		m_world.m_dirty = true;
 	}
 
 	void Undo() override
 	{
-		for (int y = 0; y < m_area.m_height; ++y)
-		{
-			for (int x = 0; x < m_area.m_width; ++x)
-			{
-				int localIndex = x + y * m_area.m_width;
-				int tilemapIndex = (m_area.m_x + x) + (m_area.m_y + y) * m_tilemap.m_size[0];
+		C_Tilemap & tilemap = *m_world.m_tilemap;
 
-				m_tilemap.m_map[tilemapIndex] = m_oldTiles[localIndex];
-			}
+		for (auto & pair : m_tiles)
+		{
+			tilemap.m_map[pair.first] = pair.second;
 		}
 
-		m_tilemap.UpdateTiles(alvere::RectI::pad(m_area, { 1, 1 }));
+		tilemap.UpdateTiles(m_boundingArea);
+		m_world.m_dirty = true;
+	}
+
+	void Redo() override
+	{
+		C_Tilemap & tilemap = *m_world.m_tilemap;
+
+		for (auto & pair : m_tiles)
+		{
+			tilemap.m_map[pair.first] = m_tile;
+		}
+
+		tilemap.UpdateTiles(m_boundingArea);
+		m_world.m_dirty = true;
 	}
 
 	std::string GetDescription() override

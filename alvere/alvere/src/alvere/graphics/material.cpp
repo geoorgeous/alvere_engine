@@ -1,7 +1,8 @@
+#include "alvere/graphics/material.hpp"
+
 #include <iostream>
 #include <sstream>
 
-#include "alvere/graphics/material.hpp"
 #include "alvere/utils/utilities.hpp"
 
 namespace alvere

@@ -8,9 +8,9 @@
 #include <freetype/freetype/ftbitmap.h>
 #include <freetype/freetype/ftmodapi.h>
 
+#include "alvere/debug/logging.hpp"
 #include "alvere/graphics/texture.hpp"
 #include "alvere/utils/shapes.hpp"
-#include "alvere/utils/logging.hpp"
 
 namespace alvere
 {

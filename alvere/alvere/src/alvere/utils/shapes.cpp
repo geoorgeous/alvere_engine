@@ -1,6 +1,6 @@
-#include <algorithm>
-
 #include "alvere/utils/shapes.hpp"
+
+#include <algorithm>
 
 namespace alvere
 {
@@ -134,6 +134,22 @@ namespace alvere
 		Vector2i size = Vector2i::max({ 0, 0 }, max - min);
 
 		return { min, size };
+	}
+
+	RectI RectI::encapsulate(RectI a, RectI b)
+	{
+		alvere::Vector2i min = alvere::Vector2i::min(a.getBottomLeft(), b.getBottomLeft());
+		alvere::Vector2i max = alvere::Vector2i::max(a.getTopRight(), b.getTopRight());
+
+		return { min, max - min };
+	}
+
+	RectI RectI::encapsulate(RectI rect, alvere::Vector2i point)
+	{
+		alvere::Vector2i min = alvere::Vector2i::min(point, rect.getBottomLeft());
+		alvere::Vector2i max = alvere::Vector2i::max(point, rect.getTopRight());
+
+		return { min, max - min };
 	}
 
 	RectI RectI::pad(RectI rect, alvere::Vector2i amount)

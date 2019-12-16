@@ -1,6 +1,5 @@
 #include "version_map.hpp"
 
-
 namespace alvere
 {
 	VersionMap::VersionMap()

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <filesystem>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -9,7 +10,7 @@
 #include <platform/windows/windows_window.hpp>
 #include <alvere\world\component\components\c_camera.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
-#include <alvere/utils/logging.hpp>
+#include <alvere/debug/logging.hpp>
 
 #include "imgui_editor.hpp"
 #include "imgui/imgui_impl_glfw.h"
@@ -26,6 +27,7 @@
 ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	: m_window(window)
 	, m_focusedMap(0)
+	, m_importer(*this, window)
 {
 	alvere::platform::windows::Window & castedWindow = (alvere::platform::windows::Window &)window;
 
@@ -40,7 +42,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-	ImGui_ImplGlfw_InitForOpenGL(castedWindow.m_windowHandle, false);
+	ImGui_ImplGlfw_InitForOpenGL(castedWindow.getHandle(), false);
 	ImGui_ImplOpenGL3_Init("#version 130");
 
 	TileWindow & tileWindow = AddWindow<TileWindow>();
@@ -49,7 +51,8 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	AddWindow<HistoryWindow>(window);
 	AddWindow<ImGui_DemoWindow>();
 
-	m_openMaps.push_back(EditorWorld::New("demo", m_window));
+	m_openMaps.push_back(EditorWorld::New("res/maps/demo.map", m_window));
+	m_openMaps.back()->m_dirty = true;
 }
 
 ImGuiEditor::~ImGuiEditor()
@@ -114,7 +117,7 @@ void ImGuiEditor::Render()
 		OpenPopup(m_currentPopup);
 	}
 
-	DrawResizePopup();
+	DrawPopups();
 
 	ImGui::End();
 
@@ -134,13 +137,14 @@ void ImGuiEditor::DrawMapTabs()
 		std::vector<int> toRemove;
 		for (int i = 0; i < m_openMaps.size(); ++i)
 		{
+			ImGui::PushID(i);
+
+			ImGuiTabItemFlags itemFlags = m_openMaps[i]->m_dirty
+				? ImGuiTabItemFlags_UnsavedDocument
+				: ImGuiTabItemFlags_None;
+
 			bool active = true;
-
-			std::string filename;
-			GetFilenameFromPath(m_openMaps[i]->m_name, filename);
-			const char * name = filename.c_str();
-
-			if (ImGui::BeginTabItem(name, &active))
+			if (ImGui::BeginTabItem(m_openMaps[i]->GetName().c_str(), &active, itemFlags))
 			{
 				m_focusedMap = m_openMaps[i].get();
 
@@ -149,15 +153,35 @@ void ImGuiEditor::DrawMapTabs()
 				ImGui::EndTabItem();
 			}
 
-			if (active == false)
+			m_openMaps[i]->m_requestClose |= !active;
+			if (m_openMaps[i]->m_requestClose)
+			{
+				if (m_openMaps[i]->m_dirty)
+				{
+					m_currentPopup = ModalPopupState::UnsavedChanges;
+				}
+				else
+				{
+					m_openMaps[i]->m_forceClose = true;
+				}
+			}
+
+			if (m_openMaps[i]->m_forceClose)
 			{
 				toRemove.push_back(i);
 			}
+
+			ImGui::PopID();
 		}
 
 		//Remove any tabs that were closed
 		for (int i = (int) toRemove.size() - 1; i >= 0; --i)
 		{
+			if (m_focusedMap == m_openMaps[toRemove[i]].get())
+			{
+				m_focusedMap = nullptr;
+			}
+
 			m_openMaps.erase(m_openMaps.begin() + toRemove[i]);
 		}
 
@@ -196,18 +220,71 @@ void ImGuiEditor::DrawFileMenu()
 
 		if (newMapValue.first)
 		{
-			m_openMaps.push_back(EditorWorld::New(newMapValue.second, m_window));
+			std::string newFilepath = newMapValue.second;
+			if (HasExtension(newFilepath) == false)
+			{
+				newFilepath += ".map";
+			}
+
+			m_openMaps.push_back(EditorWorld::New(newFilepath, m_window));
+			m_openMaps.back()->m_dirty = true;
 		}
 	}
+
+	ImGui::Separator();
 
 	if (ImGui::MenuItem("Open", NULL, false, true))
 	{
 		alvere::OpenFileDialog openFileDialog("Select a map to open", "", { "*.map" }, false);
 		auto result = openFileDialog.Show();
 
-		std::cout << result.first << std::endl;
-		if (result.first)
-			std::cout << result.second[0] << std::endl;
+		if (result.first && result.second.size() > 0)
+		{
+			std::string filepath = result.second[0];
+
+			m_openMaps.push_back(m_importer(filepath));
+		}
+	}
+
+	ImGui::Separator();
+
+	std::string mapName = "";
+	EditorWorld * world = GetFocusedWorld();
+	if (world != nullptr)
+	{
+		GetFilenameFromPath(world->m_filepath, mapName);
+	}
+
+	std::string saveLabel = (world == nullptr ? "Save" : "Save " + mapName);
+	if (ImGui::MenuItem(saveLabel.c_str(), NULL, false, world != nullptr) && world != nullptr)
+	{
+		m_exporter(world->m_filepath, *world);
+		world->m_dirty = false;
+	}
+
+	std::string saveAsLabel = ( world == nullptr ? "Save As" : "Save " + mapName + " As" );
+	if (ImGui::MenuItem(saveAsLabel.c_str(), NULL, false, world != nullptr) && world != nullptr)
+	{
+		std::wstring path = std::filesystem::absolute(world->m_filepath);
+		alvere::SaveFileDialog newMapDialog("Save Map As", std::string(path.begin(), path.end()), { "*.map" });
+
+		std::pair<bool, std::string> newMapValue = newMapDialog.Show();
+
+		if (newMapValue.first)
+		{
+			std::string newFilepath = newMapValue.second;
+			if (HasExtension(newFilepath) == false)
+			{
+				newFilepath += ".map";
+			}
+
+			//Store this new path back into the world
+			world->m_filepath = newFilepath;
+
+			m_exporter(newFilepath, *world);
+
+			world->m_dirty = false;
+		}
 	}
 
 	ImGui::EndMenu();
@@ -271,12 +348,16 @@ void ImGuiEditor::OpenPopup(ModalPopupState state)
 		case ModalPopupState::ResizeTilemap:
 			ImGui::OpenPopup("Resize Tilemap");
 			return;
+		case ModalPopupState::UnsavedChanges:
+			ImGui::OpenPopup("Unsaved Changes");
+			return;
 	}
 }
 
 void ImGuiEditor::DrawPopups()
 {
 	DrawResizePopup();
+	DrawUnsavedChangesPopup();
 }
 
 void ImGuiEditor::DrawResizePopup()
@@ -328,6 +409,56 @@ void ImGuiEditor::DrawResizePopup()
 	ImGui::EndPopup();
 }
 
+void ImGuiEditor::DrawUnsavedChangesPopup()
+{
+	EditorWorld * world = GetFocusedWorld();
+	if (world == nullptr)
+	{
+		return;
+	}
+
+	if (ImGui::BeginPopupModal("Unsaved Changes", NULL, ImGuiWindowFlags_AlwaysAutoResize) == false)
+	{
+		return;
+	}
+
+	ImGui::Text(("You have unsaved changes to " + world->GetName()).c_str());
+
+	ImGui::Separator();
+
+	if (ImGui::Button("Save", ImVec2(120, 0)))
+	{
+		m_exporter(world->m_filepath, *world);
+
+		world->m_requestClose = false;
+		world->m_forceClose = true;
+
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Don't Save", ImVec2(120, 0)))
+	{
+		world->m_requestClose = false;
+		world->m_forceClose = true;
+
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Cancel", ImVec2(120, 0)))
+	{
+		world->m_requestClose = false;
+
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
+}
+
+
 
 
 void ImGuiEditor::StartFrame()
@@ -349,4 +480,9 @@ void ImGuiEditor::EndFrame()
 EditorWorld * ImGuiEditor::GetFocusedWorld() const
 {
 	return m_focusedMap;
+}
+
+alvere::Window & ImGuiEditor::GetApplicationWindow() const
+{
+	return m_window;
 }

@@ -32,7 +32,7 @@ void TilemapRendererSystem::Render(C_Tilemap & tilemap)
 
 			alvere::RectI sourceRect = spritesheet.GetSourceRect(instance.m_spritesheetCoordinate);
 
-			m_spriteBatcher->submit(spritesheet.m_texture.get(), position, sourceRect);
+			m_spriteBatcher->submit(spritesheet.m_texture.getAssetPtr(), position, sourceRect);
 		}
 	}
 

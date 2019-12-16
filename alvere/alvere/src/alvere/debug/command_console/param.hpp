@@ -8,7 +8,7 @@
 #include <magin_enum/magic_enum.hpp>
 
 #include "alvere/graphics/text/text.hpp"
-#include "alvere/utils/command_console/arg.hpp"
+#include "alvere/debug/command_console/arg.hpp"
 
 namespace alvere::console
 {

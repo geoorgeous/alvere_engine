@@ -1,4 +1,5 @@
 #include "alvere/graphics/render_commands.hpp"
+
 #include "alvere/graphics/renderer_api.hpp"
 
 namespace alvere::render_commands
