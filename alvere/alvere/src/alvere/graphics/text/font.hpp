@@ -72,6 +72,8 @@ namespace alvere
 
 				Vector2 getTextSize(const std::string & text) const;
 
+				Vector2 getTextAdvance(const std::string & text) const;
+
 			private:
 
 				unsigned int m_glyphHeightPixels;

@@ -372,6 +372,9 @@
     <ClCompile Include="src\alvere\debug\exceptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\alvere\graphics\text\text_display.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\platform\windows\windows_window.hpp">
@@ -891,6 +894,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\alvere\debug\debug.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alvere\graphics\text\text_display.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

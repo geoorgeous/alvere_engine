@@ -221,12 +221,66 @@ namespace alvere
 	{
 		Vector2 size;
 
-		size.y = getFontFaceHeight();
+		float fontHeight = getFontFaceHeight();
 
-		for (const char & c : text)
-			size.x += getGlyph((unsigned long)c)->advance;
+		if(text.length() > 0)
+			size.y = fontHeight;
+
+		float lineWidth = 0.0f;
+
+		for(const char & c : text)
+		{
+			if(c == '\n')
+			{
+				lineWidth = 0.0f;
+				size.y += fontHeight;
+				continue;
+			}
+
+			const Font::Glyph * glyph = getGlyph((unsigned long)c);
+
+			if(glyph == nullptr)
+				continue;
+
+			lineWidth += glyph->advance;
+
+			if(lineWidth >= size.x)
+				size.x = lineWidth;
+		}
 
 		return size;
+	}
+
+	Vector2 Font::Face::Bitmap::getTextAdvance(const std::string & text) const
+	{
+		Vector2 advance;
+
+		float fontHeight = getFontFaceHeight();
+
+		float lineWidth = 0.0f;
+
+		for(const char & c : text)
+		{
+			if(c == '\n')
+			{
+				lineWidth = 0.0f;
+				advance.x = 0;
+				advance.y -= fontHeight;
+				continue;
+			}
+
+			const Font::Glyph * glyph = getGlyph((unsigned long)c);
+
+			if(glyph == nullptr)
+				continue;
+
+			lineWidth += glyph->advance;
+
+			if(lineWidth >= advance.x)
+				advance.x = lineWidth;
+		}
+
+		return advance;
 	}
 
 	Font::Face::Face(const char * fontFilepath)

@@ -51,12 +51,12 @@ namespace alvere
 
 		AssetType & operator->()
 		{
-			return m_asset.get();
+			return *m_asset;
 		}
 
 		const AssetType & operator->() const
 		{
-			return m_asset.get();
+			return *m_asset;
 		}
 
 		void freeAsset()

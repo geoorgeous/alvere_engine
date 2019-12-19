@@ -31,6 +31,7 @@ namespace alvere
 		bool m_running;
 
 		WindowCloseEvent::Handler m_windowCloseEventHandler;
+		WindowResizeEvent::Handler m_windowResizeEventHandler;
 	};
 
 	extern Application * NewApplication();
