@@ -34,18 +34,12 @@ public:
 
 	virtual void Draw() override;
 
-	virtual std::string GetName() const override
-	{
-		return "Tile Palette";
-	}
+	virtual std::string GetName() const override { return "Tile Palette"; }
 
-	EditorTile * GetSelectedTile()
-	{
-		auto iter = m_tilePositionMapping.find(m_selectedPosition);
-		return iter != m_tilePositionMapping.end()
-			? m_tiles[iter->second].get()
-			: nullptr;
-	}
+
+	EditorTile * GetSelectedTile();
+
+	Tile & GetOrAddTile(const Tile & tile);
 
 private:
 

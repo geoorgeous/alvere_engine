@@ -7,12 +7,12 @@
 
 namespace alvere
 {
-	bool MouseData::getButton(MouseButton button) const
+	MouseButtonData MouseData::getButton(MouseButton button) const
 	{
 		auto b = buttons.find(button);
 		if (b != buttons.end())
-			return b->second;
-		return false;
+			return b->second.first;
+		return MouseButtonData{};
 	}
 
 	const Window::Properties Window::Properties::s_default = 

@@ -36,8 +36,8 @@ void PlatformerScene::SpawnMap(std::unique_ptr<alvere::Scene> & scene)
 {
 	alvere::EntityHandle map = m_World.SpawnEntity<C_Tilemap>();
 
-	Spritesheet airSpritesheet = { alvere::Texture::New("res/img/tiles/air.png"), { 1, 1 } };
-	Spritesheet wallSpritesheet = { alvere::Texture::New("res/img/tiles/ground.png"), { 24, 24 } };
+	Spritesheet airSpritesheet = { alvere::AssetManager::getStatic<alvere::Texture>("res/img/tiles/air.png"), { 1, 1 } };
+	Spritesheet wallSpritesheet = { alvere::AssetManager::getStatic<alvere::Texture>("res/img/tiles/ground.png"), { 24, 24 } };
 
 	auto & tilemap = m_World.GetComponent<C_Tilemap>(map);
 	tilemap = C_Tilemap({ 25, 20 });

@@ -10,6 +10,8 @@ namespace alvere::input
 
 		KeyButton(Window & window, Key key);
 
+		KeyButton(Window & window, Key key, uint8_t modifiers);
+
 		void update() override;
 
 		bool isDown() const override;
@@ -23,7 +25,8 @@ namespace alvere::input
 		Window & m_window;
 
 		Key m_key;
-		bool m_oldState;
-		bool m_newState;
+		KeyData m_oldState;
+		KeyData m_newState;
+		uint8_t m_modifers;
 	};
 }

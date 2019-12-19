@@ -114,17 +114,14 @@ namespace alvere
 		NumPad_9,
 	};
 
-	struct KeyData
+	enum KeyModifier
 	{
-		bool isDown;
-		bool isRepeating;
-		bool justPressed;
-		bool justReleased;
-
-		inline operator bool() const
-		{
-			return isDown;
-		}
+		Shift		= 1u << 0,
+		Ctrl		= 1u << 1,
+		Alt			= 1u << 2,
+		Super		= 1u << 3,
+		CapsLock	= 1u << 4,
+		NumLock		= 1u << 5,
 	};
 
 	enum class MouseButton
@@ -142,14 +139,41 @@ namespace alvere
 		Button8,
 	};
 
+	struct KeyData
+	{
+		bool isDown;
+		bool isRepeating;
+		bool justPressed;
+		bool justReleased;
+		uint8_t modifiers;
+
+		inline operator bool() const
+		{
+			return isDown;
+		}
+	};
+
+	struct MouseButtonData
+	{
+		bool isDown;
+		bool justPressed;
+		bool justReleased;
+		uint8_t modifiers;
+
+		inline operator bool() const
+		{
+			return isDown;
+		}
+	};
+
 	struct MouseData
 	{
 		Vector2 position;
 		Vector2 delta;
 		Vector2 scrollDelta;
-		std::unordered_map<MouseButton, bool> buttons;
+		std::unordered_map<MouseButton, std::pair<MouseButtonData, MouseButtonData>> buttons;
 
-		bool getButton(MouseButton button) const;
+		MouseButtonData getButton(MouseButton button) const;
 	};
 
 	enum class CursorType

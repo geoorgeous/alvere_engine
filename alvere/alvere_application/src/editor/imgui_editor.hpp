@@ -5,6 +5,8 @@
 #include "editor_world.hpp"
 #include "editor/windows/tile_window.hpp"
 #include "editor/windows/tile_properties_window.hpp"
+#include "editor/io/world_exporter.hpp"
+#include "editor/io/world_importer.hpp"
 
 namespace alvere
 {
@@ -17,6 +19,7 @@ class ImGuiEditor
 	{
 		None,
 		ResizeTilemap,
+		UnsavedChanges,
 	};
 
 	const ImGuiWindowFlags m_windowflags = ImGuiWindowFlags_NoTitleBar
@@ -37,6 +40,9 @@ class ImGuiEditor
 
 	ModalPopupState m_currentPopup;
 
+	WorldImporter m_importer;
+	WorldExporter m_exporter;
+
 public:
 
 	ImGuiEditor(alvere::Window & window);
@@ -44,6 +50,8 @@ public:
 
 	void Update(float deltaTime);
 	void Render();
+
+	alvere::Window & GetApplicationWindow() const;
 
 	EditorWorld * GetFocusedWorld() const;
 
@@ -65,6 +73,7 @@ private:
 	void OpenPopup(ModalPopupState popup);
 	void DrawPopups();
 	void DrawResizePopup();
+	void DrawUnsavedChangesPopup();
 
 	template <typename T, typename... Args>
 	T & AddWindow(Args &&... args);

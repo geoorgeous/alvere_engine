@@ -162,6 +162,10 @@
     <ClCompile Include="src\editor\command\command_stack.cpp" />
     <ClCompile Include="src\editor\editor_world.cpp" />
     <ClCompile Include="src\editor\imgui_editor.cpp" />
+    <ClCompile Include="src\editor\io\serialization_utils.cpp" />
+    <ClCompile Include="src\editor\io\world_exporter.cpp" />
+    <ClCompile Include="src\editor\io\world_importer.cpp" />
+    <ClCompile Include="src\editor\tilemap\editor_tile.cpp" />
     <ClCompile Include="src\editor\tool\draw_tool.cpp" />
     <ClCompile Include="src\editor\utils\path_utils.cpp" />
     <ClCompile Include="src\editor\windows\history_window.cpp" />
@@ -182,6 +186,8 @@
     <ClCompile Include="src\states\gameplay_state.cpp" />
     <ClCompile Include="src\states\game_state_machine.cpp" />
     <ClCompile Include="src\tilemap\c_tilemap.cpp" />
+    <ClCompile Include="src\tilemap\spritesheet.cpp" />
+    <ClCompile Include="src\tilemap\tile.cpp" />
     <ClCompile Include="src\tilemap\tilemap_renderer_system.cpp" />
     <ClCompile Include="src\tile_drawer.cpp" />
     <ClCompile Include="src\world_cell_area.cpp" />
@@ -199,6 +205,9 @@
     <ClInclude Include="src\editor\editor_world.hpp" />
     <ClInclude Include="src\editor\imgui_demo_window.hpp" />
     <ClInclude Include="src\editor\imgui_editor.hpp" />
+    <ClInclude Include="src\editor\io\serialization_utils.hpp" />
+    <ClInclude Include="src\editor\io\world_exporter.hpp" />
+    <ClInclude Include="src\editor\io\world_importer.hpp" />
     <ClInclude Include="src\editor\tilemap\editor_tile.hpp" />
     <ClInclude Include="src\editor\tool\draw_tool.hpp" />
     <ClInclude Include="src\editor\utils\path_utils.hpp" />

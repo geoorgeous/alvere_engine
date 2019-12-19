@@ -1,4 +1,5 @@
 #include <memory>
+#include <filesystem>
 
 #include "tile_properties_window.hpp"
 #include "imgui/imgui_internal.h"
@@ -27,7 +28,9 @@ void TilePropertiesWindow::Draw()
 
 	const int textWidth = 80.0f;
 
-	std::string textureString = tile->m_spritesheet.m_texture != nullptr ? editorTile->m_texturePath : "None";
+	std::string textureString = tile->m_spritesheet.m_texture
+		? editorTile->m_tile.m_spritesheet.m_texture.getFilepath()
+		: "None";
 
 	style.ButtonTextAlign = { 0.0f, 0.5f };
 
@@ -41,7 +44,7 @@ void TilePropertiesWindow::Draw()
 		UserSetTileTexture(*editorTile);
 	}
 
-	std::unique_ptr<alvere::Texture> & texture = editorTile->m_tile.m_spritesheet.m_texture;
+	alvere::Asset<alvere::Texture> & texture = editorTile->m_tile.m_spritesheet.m_texture;
 	if (texture && ImGui::IsItemHovered())
 	{
 		ImGui::BeginTooltip();
@@ -58,7 +61,8 @@ void TilePropertiesWindow::Draw()
 
 void TilePropertiesWindow::UserSetTileTexture(EditorTile & tile)
 {
-	alvere::OpenFileDialog openFile("Select a valid spritesheet", "", { "*.PNG" }, false);
+	std::wstring defaultPath = std::filesystem::absolute("res/img/tiles/");
+	alvere::OpenFileDialog openFile("Select a valid spritesheet", std::string(defaultPath.begin(), defaultPath.end()), { "*.PNG" }, false);
 
 	std::pair<bool, std::vector<std::string>> output = openFile.Show();
 	if (output.first == false || output.second.size() == 0)
@@ -66,8 +70,8 @@ void TilePropertiesWindow::UserSetTileTexture(EditorTile & tile)
 		return;
 	}
 
-	tile.m_texturePath = output.second[0];
+	std::wstring path = std::filesystem::relative(output.second[0]);
 
-	std::unique_ptr<alvere::Texture> texture = alvere::Texture::New(output.second[0].c_str());
-	tile.m_tile.m_spritesheet = { std::move(texture), { 24, 24 } };
+	alvere::Asset<alvere::Texture> texture = alvere::AssetManager::getStatic<alvere::Texture>(std::string(path.begin(), path.end()));
+	tile.m_tile.m_spritesheet = { texture, { 24, 24 } };
 }
