@@ -76,7 +76,7 @@ namespace alvere
 
 		explicit operator bool()
 		{
-			return m_asset.get();
+			return isValid();
 		}
 
 		void freeAsset()
