@@ -1,6 +1,6 @@
 #pragma once
 
-#include "alvere/math/vector/vector_2_x.hpp"
+#include "alvere/math/vector/vec_2_x.hpp"
 
 namespace alvere
 {
