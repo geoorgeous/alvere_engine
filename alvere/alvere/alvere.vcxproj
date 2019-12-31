@@ -301,6 +301,7 @@
     <ClCompile Include="src\graphics_api\opengl\opengl_vertex_array.cpp" />
     <ClCompile Include="src\graphics_api\opengl\opengl_texture.cpp" />
     <ClCompile Include="src\platform\windows\windows_window.cpp" />
+    <ClCompile Include="src\alvere\graphics\text\text_display.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\include\luaplus\lua53-luaplus\lapi.h" />
@@ -376,7 +377,10 @@
     <ClInclude Include="src\alvere\graphics\sprite_batcher.hpp" />
     <ClInclude Include="src\alvere\graphics\texture.hpp" />
     <ClInclude Include="src\alvere\graphics\text\font.hpp" />
+    <ClInclude Include="src\alvere\graphics\text\font_texture.hpp" />
+    <ClInclude Include="src\alvere\graphics\text\glyph.hpp" />
     <ClInclude Include="src\alvere\graphics\text\text.hpp" />
+    <ClInclude Include="src\alvere\graphics\text\text_renderer.hpp" />
     <ClInclude Include="src\alvere\input\input_button.hpp" />
     <ClInclude Include="src\alvere\input\key_button.hpp" />
     <ClInclude Include="src\alvere\input\mouse_button.hpp" />
@@ -399,7 +403,7 @@
     <ClInclude Include="src\alvere\math\shapes\point_3d.hpp" />
     <ClInclude Include="src\alvere\math\shapes\rect.hpp" />
     <ClInclude Include="src\alvere\math\shapes\sphere.hpp" />
-    <ClInclude Include="src\alvere\math\vector\vector_2_x.hpp" />
+    <ClInclude Include="src\alvere\math\vector\vec_2_x.hpp" />
     <ClInclude Include="src\alvere\math\vector\vec_2_i.hpp" />
     <ClInclude Include="src\alvere\utils\assets.hpp" />
     <ClInclude Include="src\alvere\debug\command_console\arg.hpp" />
@@ -476,6 +480,7 @@
     <ClInclude Include="src\graphics_api\opengl\opengl_vertex_array.hpp" />
     <ClInclude Include="src\graphics_api\opengl\opengl_sprite_batcher.hpp" />
     <ClInclude Include="src\platform\windows\windows_window.hpp" />
+    <ClInclude Include="src\alvere\graphics\text\text_display.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\include\luaplus\LuaCall.inl" />

@@ -7,7 +7,7 @@ namespace alvere
 {
 	const Vector2 Vector2::zero{ 0.0f, 0.0f };
 
-	const Vector2 Vector2::unit{ 1.0f, 1.0f };
+	const Vector2 Vector2::identity{ 1.0f, 1.0f };
 
 	Vector2::Vector2(float f)
 		: x(f), y(f)

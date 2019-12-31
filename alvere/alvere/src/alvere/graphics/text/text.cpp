@@ -2,6 +2,103 @@
 
 namespace alvere
 {
+	Text::Text(const Formatting & formatting, const std::string & content)
+		: m_formatting(formatting), m_content(content)
+	{
+		processChanges();
+	}
+
+	const Text::Formatting & Text::getFormatting() const
+	{
+		return m_formatting;
+	}
+
+	const std::string & Text::getContent() const
+	{
+		return m_content;
+	}
+
+	const Font::Face::Bitmap * Text::getFontFaceBitmap() const
+	{
+		return m_fontFaceBitmap;
+	}
+
+	void Text::setContent(const std::string & content)
+	{
+		m_content = content;
+		m_dirty = true;
+	}
+
+	void Text::setFormatting(const Formatting & formatting)
+	{
+		m_formatting = formatting;
+		m_dirty = true;
+	}
+
+	void Text::setFont(const Font & font)
+	{
+		m_formatting.font = &font;
+		m_dirty = true;
+	}
+
+	void Text::setFontStyle(Font::Style fontStyle)
+	{
+		m_formatting.style = fontStyle;
+		m_dirty = true;
+	}
+
+	void Text::setSize(unsigned int size)
+	{
+		m_formatting.size = size;
+		m_dirty = true;
+	}
+
+	void Text::setColour(Vector4 colour)
+	{
+		m_formatting.colour = colour;
+		m_dirty = true;
+	}
+
+	Vector2 Text::getSize() const
+	{
+		if(m_dirty)
+			processChanges();
+		return m_size;
+	}
+
+	Vector2 Text::getAdvance() const
+	{
+		if(m_dirty)
+			processChanges();
+		return m_advance;
+	}
+
+	void Text::processChanges() const
+	{
+		if(m_formatting.font != nullptr)
+		{
+			const Font::Face * fontFace = m_formatting.font->getFontFace(m_formatting.style);
+
+			if(fontFace != nullptr)
+			{
+				m_fontFaceBitmap = fontFace->getBitmap(m_formatting.size);
+
+				if(m_fontFaceBitmap != nullptr)
+				{
+					m_size = m_fontFaceBitmap->getTextSize(m_content);
+					m_advance = m_fontFaceBitmap->getTextAdvance(m_content);
+
+					m_dirty = false;
+
+					return;
+				}
+			}
+		}
+
+		m_size = Vector2::zero;
+		m_advance = Vector2::zero;
+	}
+
 	CompositeText::CompositeText(Text::Formatting defaultFormat)
 		: m_defaultFormatting(defaultFormat)
 	{}
@@ -11,7 +108,7 @@ namespace alvere
 	{
 		for(int i = 0; i < m_content.size(); ++i)
 		{
-			m_contentString += m_content[i].content;
+			m_contentString += m_content[i].getContent();
 		}
 	}
 
@@ -26,7 +123,7 @@ namespace alvere
 	CompositeText & CompositeText::append(const Text & text)
 	{
 		m_content.emplace_back(text);
-		m_contentString += text.content;
+		m_contentString += text.getContent();
 
 		return *this;
 	}
@@ -50,7 +147,7 @@ namespace alvere
 	CompositeText & CompositeText::prepend(const Text & text)
 	{
 		m_content.insert(m_content.begin(), text);
-		m_contentString = text.content + m_contentString;
+		m_contentString = text.getContent() + m_contentString;
 
 		return *this;
 	}

@@ -10,6 +10,8 @@ namespace alvere::input
 
 		MouseButton(Window & window, ::alvere::MouseButton button);
 
+		MouseButton(Window & window, ::alvere::MouseButton button, uint8_t modifiers);
+
 		void update() override;
 
 		bool isDown() const override;
@@ -22,7 +24,8 @@ namespace alvere::input
 		Window & m_window;
 
 		::alvere::MouseButton m_button;
-		bool m_oldState;
-		bool m_newState;
+		MouseButtonData m_oldState;
+		MouseButtonData m_newState;
+		uint8_t m_modifers;
 	};
 }

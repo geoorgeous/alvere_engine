@@ -17,7 +17,7 @@ alvere::Texture * EditorTile::GetPreviewTexture()
 		return m_previewTexture.get();
 	}
 
-	if (m_tile.m_spritesheet.m_texture == false)
+	if ((bool)m_tile.m_spritesheet.m_texture == false)
 	{
 		return nullptr;
 	}

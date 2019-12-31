@@ -25,13 +25,18 @@ namespace alvere
 		});
 		*m_window->getEvent<WindowCloseEvent>() += m_windowCloseEventHandler;
 
+		m_windowResizeEventHandler.setFunction([](int width, int height){
+			console::gui::onWindowResize(width, height);
+		});
+		*m_window->getEvent<WindowResizeEvent>() += m_windowResizeEventHandler;
+
 		console::gui::init(m_window.get());
 
-		/*s_quitCommand = std::make_unique<console::Command>("quit", "Quits the application.", std::vector<console::IParam *>{}, [&](std::vector<const console::IArg *> args) -> std::string
+		s_quitCommand = std::make_unique<console::Command>("quit", "Quits the application.", std::vector<console::IParam *>{}, [&](std::vector<const console::IArg *> args) -> CompositeText
 		{
 			m_running = false;
-			return "";
-		});*/
+			return CompositeText(console::gui::defaultTextFormatting());
+		});
 	}
 
 	void Application::run()

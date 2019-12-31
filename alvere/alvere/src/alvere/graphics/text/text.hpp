@@ -8,18 +8,57 @@
 
 namespace alvere
 {
-	struct Text
+	class Text
 	{
+	public:
+
 		struct Formatting
 		{
-			Font * font;
+			const Font * font;
 			Font::Style style;
 			unsigned int size;
 			Vector4 colour;
 		};
 
-		Formatting format;
-		std::string content;
+		Text(const Formatting & formatting, const std::string & content);
+
+		const std::string & getContent() const;
+
+		const Formatting & getFormatting() const;
+
+		const Font::Face::Bitmap * getFontFaceBitmap() const;
+
+		Vector2 getSize() const;
+
+		Vector2 getAdvance() const;
+
+		void setContent(const std::string & content);
+
+		void setFormatting(const Formatting & formatting);
+
+		void setFont(const Font & font);
+
+		void setFontStyle(Font::Style fontStyle);
+
+		void setSize(unsigned int size);
+
+		void setColour(Vector4 colour);
+
+	private:
+
+		std::string m_content;
+
+		Formatting m_formatting;
+
+		const mutable Font::Face::Bitmap * m_fontFaceBitmap;
+		
+		mutable Vector2 m_size;
+
+		mutable Vector2 m_advance;
+
+		mutable bool m_dirty;
+
+		void processChanges() const;
 	};
 
 	class CompositeText

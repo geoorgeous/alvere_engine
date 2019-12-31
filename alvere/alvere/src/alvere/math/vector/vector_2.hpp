@@ -20,11 +20,7 @@ namespace alvere
 	struct Vector2
 	{
 		static const Vector2 zero; //!< A static Vector2 with x and y members set to 0.0f.
-		static const Vector2 unit; //!< A static Vector2 with x and y members set to 1.0f. The magnitude of this Vector2 will be 1.0f; hence a unit vector.
-		static const Vector2 posX; //!< A static Vector2 with x set to 1.0f and y set to 0.0f.
-		static const Vector2 negX; //!< A static Vector2 with x set to -1.0f and y set to 0.0f.
-		static const Vector2 posY; //!< A static Vector2 with y set to 1.0f and x set to 0.0f.
-		static const Vector2 negY; //!< A static Vector2 with y set to -1.0f and x set to 0.0f.
+		static const Vector2 identity; //!< A static Vector2 with x and y members set to 1.0f. The magnitude of this Vector2 will be 1.0f; hence a unit vector.
 
 		float x = 0.0f; //!< The first component of the Vector2. \note This component can also be accessed via aVector2[0].*/
 		float y = 0.0f; //!< The second component of the Vector2. \note This component can also be accessed via aVector2[1].*/

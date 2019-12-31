@@ -26,6 +26,10 @@ namespace alvere
 			void update(float deltaTime);
 
 			void draw();
+
+			void onWindowResize(int width, int height);
+
+			Text::Formatting & defaultTextFormatting();
 		}
 
 		CompositeText submitCommand(const std::string & command);
