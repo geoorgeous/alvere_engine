@@ -1,6 +1,7 @@
 #include <alvere/application/window.hpp>
 #include <alvere/graphics/camera.hpp>
 
+#include "imgui/imgui.h"
 #include "tilemap/c_tilemap.hpp"
 #include "editor/editor_world.hpp"
 #include "editor/imgui_editor.hpp"
@@ -26,7 +27,7 @@ void DrawTool::Update(float deltaTime)
 	UpdateDrawSize();
 
 	m_leftMouse.update();
-	if (m_leftMouse.isDown())
+	if (ImGui::GetIO().WantCaptureMouse == false && m_leftMouse.isDown())
 	{
 		UpdateDraw();
 	}
