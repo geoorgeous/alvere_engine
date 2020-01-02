@@ -243,6 +243,7 @@
     <ClCompile Include="src\alvere\graphics\sprite_batcher.cpp" />
     <ClCompile Include="src\alvere\graphics\texture.cpp" />
     <ClCompile Include="src\alvere\graphics\text\font.cpp" />
+    <ClCompile Include="src\alvere\graphics\text\font_texture.cpp" />
     <ClCompile Include="src\alvere\graphics\text\text.cpp" />
     <ClCompile Include="src\alvere\input\key_button.cpp" />
     <ClCompile Include="src\alvere\input\mouse_button.cpp" />
