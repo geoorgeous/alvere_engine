@@ -3,20 +3,26 @@
 #include <alvere\world\component\components\c_sprite.hpp>
 
 #include "entity_definitions/def_player.hpp"
-#include "components\c_gravity.hpp"
+#include "components\physics\c_gravity.hpp"
+#include "components\physics\c_tilemap_collision.hpp"
+#include "components/physics/c_velocity.hpp"
 
-alvere::EntityHandle Def_Player::SpawnInstance(alvere::World & world)
+using namespace alvere;
+
+EntityHandle Def_Player::SpawnInstance(World & world)
 {
-	alvere::EntityHandle player = world.SpawnEntity<
-		alvere::C_Transform,
-		alvere::C_Sprite,
+	EntityHandle player = world.SpawnEntity<
+		C_Transform,
+		C_Velocity,
+		C_Sprite,
+		C_TilemapCollision,
 		C_Gravity
 	>();
 
 	//Have to make this static for now as the asset going out of scope deletes my texture reference
-	static std::unique_ptr<alvere::Texture> textureAsset = alvere::Texture::New("res/img/test.png");
+	static std::unique_ptr<Texture> textureAsset = Texture::New("res/img/test.png");
 
-	alvere::C_Sprite & sprite = world.GetComponent<alvere::C_Sprite>(player);
+	C_Sprite & sprite = world.GetComponent<C_Sprite>(player);
 	sprite.m_sprite = alvere::Sprite(*textureAsset.get());
 
 	//alvere::C_Transform & transform = m_World.GetComponent<alvere::C_Transform>(player);

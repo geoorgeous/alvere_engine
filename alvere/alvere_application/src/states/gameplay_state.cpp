@@ -14,11 +14,12 @@
 #include "scenes/platformer_scene.hpp"
 
 #include "tilemap/tilemap_renderer_system.hpp"
-#include "systems/s_gravity.hpp"
+#include "systems/physics/s_tilemap_collision_resolution.hpp"
+#include "systems/physics/s_gravity.hpp"
+#include "systems/physics/s_velocity.hpp"
 
 GameplayState::GameplayState(alvere::Window & window)
 	: m_window(window), m_toggleEditor(window, alvere::Key::I), m_halfWorldUnitsOnX(32 * 0.5f)
-
 {
 	alvere::RunTests();
 
@@ -34,7 +35,9 @@ GameplayState::GameplayState(alvere::Window & window)
 	m_world.AddSystem<TilemapRendererSystem>(*m_sceneCamera);
 	m_world.AddSystem<alvere::SpriteRendererSystem>(*m_sceneCamera);
 	m_world.AddSystem<alvere::DestroySystem>();
-	m_world.AddSystem<S_Gravity>( alvere::Vector2( 0.0f, -1.0f ) );
+	m_world.AddSystem<S_Gravity>( alvere::Vector2( 1.0f, -1.0f ) );
+	m_world.AddSystem<S_TilemapCollisionResolution>(m_world);
+	m_world.AddSystem<S_Velocity>();
 
 	PlatformerScene platformerScene(m_world);
 	alvere::Scene & platformer = sceneSystem->LoadScene(platformerScene);

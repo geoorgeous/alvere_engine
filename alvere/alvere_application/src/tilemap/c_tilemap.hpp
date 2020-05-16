@@ -33,6 +33,8 @@ struct C_Tilemap : public alvere::PooledComponent<C_Tilemap>
 	alvere::Vector2i WorldToTilemap(alvere::Vector2 worldPosition) const;
 	alvere::Vector2 TilemapToWorld(alvere::Vector2i tilemapPosition) const;
 
+	alvere::Vector2 WorldToLocal(alvere::Vector2 worldPosition) const;
+	alvere::Vector2 LocalToWorld(alvere::Vector2 localPosition) const;
 
 
 	//These methods are temporary

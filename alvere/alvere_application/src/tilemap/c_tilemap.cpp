@@ -135,6 +135,16 @@ alvere::Vector2 C_Tilemap::TilemapToWorld(alvere::Vector2i tilemapPosition) cons
 	return centerPosition * m_tileSize;
 }
 
+alvere::Vector2 C_Tilemap::WorldToLocal(alvere::Vector2 worldPosition) const
+{
+	return worldPosition / m_tileSize;
+}
+
+alvere::Vector2 C_Tilemap::LocalToWorld(alvere::Vector2 worldPosition) const
+{
+	return worldPosition * m_tileSize;
+}
+
 TileDirection C_Tilemap::GetUnmatchingSurroundings(alvere::Vector2i position, bool collides) const
 {
 	return TileDirection(

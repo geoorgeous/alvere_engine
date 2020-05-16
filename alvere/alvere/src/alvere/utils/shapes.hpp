@@ -83,6 +83,14 @@ namespace alvere
 				other.getBottom() >= getTop());
 		}
 
+		inline bool contains(const Vector2i point) const
+		{
+			return getLeft() <= point[0]
+				&& getRight() > point[0]
+				&& getBottom() <= point[1]
+				&& getTop() > point[1];
+		}
+
 		explicit operator Rect() const;
 
 		static RectI overlap(RectI a, RectI b);
