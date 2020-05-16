@@ -18,6 +18,15 @@ public:
 
 private:
 
-	void SpawnPlayer(std::unique_ptr<alvere::Scene> & scene);
+	template <typename T>
+	void SpawnFromDefinition(alvere::Scene & scene);
+
 	void SpawnMap(std::unique_ptr<alvere::Scene> & scene);
 };
+
+template <typename T>
+void PlatformerScene::SpawnFromDefinition(alvere::Scene & scene)
+{
+	T definition;
+	scene.AddEntity(definition.SpawnInstance(m_World));
+}

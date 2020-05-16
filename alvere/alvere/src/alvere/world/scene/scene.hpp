@@ -12,8 +12,8 @@ namespace alvere
 
 		std::vector<EntityHandle> m_Entities;
 
-		void AddEntity(EntityHandle & entity);
+		void AddEntity(const EntityHandle & entity);
 
-		void RemoveEntity(EntityHandle & entity);
+		void RemoveEntity(const EntityHandle & entity);
 	};
 }

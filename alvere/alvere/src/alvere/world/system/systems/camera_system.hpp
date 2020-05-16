@@ -11,7 +11,7 @@ namespace alvere
 	public:
 
 		//Since the Camera class is a standalone class, the transform position needs to be pushed into it
-		void Update(C_Transform & transform, C_Camera & camera)
+		void Update(float deltaTime, C_Transform & transform, C_Camera & camera)
 		{
 			camera.setPosition(transform->getPosition());
 		}

@@ -12,7 +12,7 @@ namespace alvere
 	{
 	public:
 
-		virtual void Update(C_Transform & transform, C_Mover & mover) override
+		virtual void Update(float deltaTime, C_Transform & transform, C_Mover & mover) override
 		{
 			//alvere::LogInfo( "Mover system being updated, Position is: %.1f!\n", transform.m_X );
 			transform->move(Vector3(mover.m_Speed));

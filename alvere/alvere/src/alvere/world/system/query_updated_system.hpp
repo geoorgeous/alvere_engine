@@ -31,11 +31,11 @@ namespace alvere
 				ArchetypeProviderIterator<Components... > iterator(archetype.GetEntityCount(), archetype.GetProvider<Components>()...);
 				for (; iterator; ++iterator)
 				{
-					std::apply([this](auto && ... args) { Update(args...); }, iterator.GetComponents());
+					std::apply([this, deltaTime](auto && ... args) { Update(deltaTime, args...); }, iterator.GetComponents());
 				}
 			}
 		}
 
-		virtual void Update(Components & ...) = 0;
+		virtual void Update(float deltaTime, Components & ...) = 0;
 	};
 }

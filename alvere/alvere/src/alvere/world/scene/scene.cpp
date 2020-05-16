@@ -2,7 +2,7 @@
 
 namespace alvere
 {
-	void Scene::AddEntity(EntityHandle & entity)
+	void Scene::AddEntity(const EntityHandle & entity)
 	{
 		AlvAssert(entity.isValid(), "Invalid entity handle");
 
@@ -16,7 +16,7 @@ namespace alvere
 		m_Entities.emplace_back(entity);
 	}
 
-	void Scene::RemoveEntity(EntityHandle & entity)
+	void Scene::RemoveEntity(const EntityHandle & entity)
 	{
 		AlvAssert(entity.isValid(), "Invalid entity handle");
 

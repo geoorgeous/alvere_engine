@@ -10,7 +10,6 @@ namespace alvere
 	public:
 		class Provider;
 	};
-
 }
 
 #include "alvere/world/component/tag_component_provider.hpp"
