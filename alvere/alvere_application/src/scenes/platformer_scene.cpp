@@ -1,7 +1,5 @@
 #include <alvere/graphics/texture.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
-#include <alvere\world\component\components\c_sprite.hpp>
-#include <alvere/world/component/components/c_destroy.hpp>
 
 #include "platformer_scene.hpp"
 #include "entity_definitions/def_player.hpp"
@@ -14,8 +12,10 @@ std::unique_ptr<alvere::Scene> PlatformerScene::LoadScene()
 
 	SpawnMap(scene);
 
-	SpawnFromDefinition<Def_Player>(*scene);
-	
+	alvere::EntityHandle player = SpawnFromDefinition<Def_Player>(*scene);
+	alvere::C_Transform & playerTransform = m_World.GetComponent<alvere::C_Transform>(player);
+	playerTransform->setPosition({ 4.0f, 4.0f, 0.0f });
+
 	return std::move(scene);
 }
 

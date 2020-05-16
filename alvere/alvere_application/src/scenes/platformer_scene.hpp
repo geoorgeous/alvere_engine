@@ -2,6 +2,7 @@
 
 #include <alvere/world/world.hpp>
 #include <alvere/world/scene/scene_loader.hpp>
+#include <alvere/world/entity/entity_handle.hpp>
 
 class PlatformerScene : public alvere::SceneLoader
 {
@@ -19,14 +20,16 @@ public:
 private:
 
 	template <typename T>
-	void SpawnFromDefinition(alvere::Scene & scene);
+	alvere::EntityHandle SpawnFromDefinition(alvere::Scene & scene);
 
 	void SpawnMap(std::unique_ptr<alvere::Scene> & scene);
 };
 
 template <typename T>
-void PlatformerScene::SpawnFromDefinition(alvere::Scene & scene)
+alvere::EntityHandle PlatformerScene::SpawnFromDefinition(alvere::Scene & scene)
 {
 	T definition;
-	scene.AddEntity(definition.SpawnInstance(m_World));
+	alvere::EntityHandle entity = definition.SpawnInstance(m_World);
+	scene.AddEntity(entity);
+	return entity;
 }
