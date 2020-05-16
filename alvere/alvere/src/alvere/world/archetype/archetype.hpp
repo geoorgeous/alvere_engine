@@ -31,7 +31,7 @@ namespace alvere
 		Handle GetHandle() const;
 
 		template <typename T>
-		T& GetComponent( const EntityHandle& entity );
+		T& GetComponent( const EntityHandle& entity ) const;
 
 		void AddEntity(EntityHandle & entity );
 		void DestroyEntity(EntityHandle & entity );
@@ -56,7 +56,7 @@ namespace alvere
 	};
 
 	template <typename T>
-	T& Archetype::GetComponent( const EntityHandle & entity )
+	T& Archetype::GetComponent( const EntityHandle & entity ) const
 	{
 		auto iter = m_Providers.find( typeid( T ) );
 

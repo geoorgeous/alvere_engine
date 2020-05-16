@@ -51,7 +51,7 @@ namespace alvere
 		void RemoveComponent(EntityHandle & e);
 
 		template <typename T>
-		T & GetComponent(EntityHandle & e) const;
+		T & GetComponent(const EntityHandle & e) const;
 
 		template <typename T, typename... Args>
 		T * AddSystem( Args&&... args );
@@ -141,7 +141,7 @@ namespace alvere
 	}
 
 	template <typename T>
-	T & World::GetComponent(EntityHandle & e) const
+	T & World::GetComponent(const EntityHandle & e) const
 	{
 		return e->m_Archetype->GetComponent<T>(e);
 	}
