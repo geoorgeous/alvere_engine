@@ -157,7 +157,7 @@ namespace alvere
 			return dynamic_cast<T*>(iter->second);
 		}
 
-		T * t = new T( std::forward<Args...>( args )... );
+		T * t = new T( std::forward<Args>( args )... );
 		m_AllSystems[ systemType ] = t;
 
 
