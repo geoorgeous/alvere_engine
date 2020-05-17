@@ -41,7 +41,7 @@ EntityHandle Def_Player::SpawnInstance(World & world)
 		static std::unique_ptr<Texture> textureAsset = Texture::New("res/img/test.png");
 
 		C_Sprite & sprite = world.GetComponent<C_Sprite>(player);
-		sprite.m_sprite = alvere::Sprite(*textureAsset.get());
+		sprite.m_sprite = alvere::Sprite(*textureAsset.get(), alvere::Rect( -0.5f, 0.0f, 1.0f, 1.0f) );
 	}
 
 	return player;
