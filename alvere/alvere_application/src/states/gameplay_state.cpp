@@ -25,6 +25,7 @@
 #include "systems/physics/s_velocity.hpp"
 #include "systems/physics/s_friction.hpp"
 #include "systems/input/s_player_input.hpp"
+#include "systems/rendering/s_spritesheet.hpp"
 #include "systems/s_entity_follower.hpp"
 #include "systems/s_movement.hpp"
 #include "systems/s_jump.hpp"
@@ -57,6 +58,7 @@ GameplayState::GameplayState(alvere::Window & window)
 	m_world.AddSystem<S_EntityFollower>(m_world);
 	m_world.AddSystem<alvere::S_Camera>();
 
+	m_world.AddSystem<S_Spritesheet>();
 	m_world.AddSystem<S_TilemapRenderer>(*m_sceneCamera);
 	m_world.AddSystem<alvere::S_SpriteRenderer>(*m_sceneCamera);
 
