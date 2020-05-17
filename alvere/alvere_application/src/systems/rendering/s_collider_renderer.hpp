@@ -8,7 +8,7 @@
 
 #include "components/physics/c_collider.hpp"
 
-class S_ColliderRenderer : public alvere::QueryRenderedSystem<alvere::C_Transform, C_Collider>
+class S_ColliderRenderer : public alvere::QueryRenderedSystem<const alvere::C_Transform, const C_Collider>
 {
 	std::unique_ptr<alvere::SpriteBatcher> m_spriteBatcher;
 
@@ -22,6 +22,6 @@ public:
 
 	virtual void Render(alvere::World & world) override;
 
-	virtual void Render(alvere::C_Transform & transform, C_Collider & collider) override;
+	virtual void Render(const alvere::C_Transform & transform, const C_Collider & collider) override;
 
 };

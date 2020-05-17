@@ -10,7 +10,7 @@
 #include "components/physics/c_gravity.hpp"
 #include "components/physics/c_friction.hpp"
 
-class S_Friction : public alvere::QueryUpdatedSystem<C_Friction, C_Velocity, C_Gravity>
+class S_Friction : public alvere::QueryUpdatedSystem<const C_Friction, C_Velocity>
 {
 	alvere::Vector2 m_Friction;
 
@@ -21,7 +21,7 @@ public:
 	{
 	}
 
-	void Update(float deltaTime, C_Friction & friction, C_Velocity & velocity, C_Gravity & gravity)
+	void Update(float deltaTime, const C_Friction & friction, C_Velocity & velocity)
 	{
 		for (int i = 0; i < 2; ++i)
 		{

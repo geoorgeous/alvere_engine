@@ -6,7 +6,7 @@
 #include "components/physics/c_velocity.hpp"
 #include "components/physics/c_gravity.hpp"
 
-class S_Gravity : public alvere::QueryUpdatedSystem<C_Velocity, C_Gravity>
+class S_Gravity : public alvere::QueryUpdatedSystem<const C_Gravity, C_Velocity>
 {
 	alvere::Vector3 m_Gravity;
 
@@ -17,7 +17,7 @@ public:
 	{
 	}
 
-	void Update(float deltaTime, C_Velocity & velocity, C_Gravity & gravity)
+	void Update(float deltaTime, const C_Gravity & gravity, C_Velocity & velocity)
 	{
 		velocity.m_Velocity += m_Gravity * deltaTime;
 	}

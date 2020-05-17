@@ -7,7 +7,7 @@ S_Jump::S_Jump(float strength, float duration)
 {
 }
 
-void S_Jump::Update(float deltaTime, C_TilemapCollision & tilemapCollision, C_Movement & movement, C_Velocity & velocity)
+void S_Jump::Update(float deltaTime, const C_TilemapCollision & tilemapCollision, const C_Movement & movement, C_Velocity & velocity)
 {
 	if (movement.m_Jump == false)
 	{

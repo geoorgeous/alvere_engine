@@ -11,12 +11,12 @@ void S_ColliderRenderer::Render(alvere::World & world)
 {
 	m_spriteBatcher->begin(m_camera.getProjectionViewMatrix());
 
-	QueryRenderedSystem<alvere::C_Transform, C_Collider>::Render(world);
+	QueryRenderedSystem<const alvere::C_Transform, const C_Collider>::Render(world);
 
 	m_spriteBatcher->end();
 }
 
-void S_ColliderRenderer::Render(alvere::C_Transform & transform, C_Collider & collider)
+void S_ColliderRenderer::Render(const alvere::C_Transform & transform, const C_Collider & collider)
 {
 	for (const ColliderInstance & colliderInstance : collider.m_ColliderInstances)
 	{

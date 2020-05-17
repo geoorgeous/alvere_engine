@@ -7,7 +7,7 @@
 
 #include "components/c_entity_follower.hpp"
 
-class S_EntityFollower : public alvere::QueryUpdatedSystem<alvere::C_Transform, C_EntityFollower>
+class S_EntityFollower : public alvere::QueryUpdatedSystem<alvere::C_Transform, const C_EntityFollower>
 {
 	alvere::World & m_World;
 
@@ -18,7 +18,7 @@ public:
 	{
 	}
 
-	void Update(float deltaTime, alvere::C_Transform & transform, C_EntityFollower & follower)
+	void Update(float deltaTime, alvere::C_Transform & transform, const C_EntityFollower & follower)
 	{
 		if (follower.m_FollowTarget.isValid() == false)
 		{

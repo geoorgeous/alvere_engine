@@ -7,13 +7,13 @@
 
 namespace alvere
 {
-	class S_Renderer : public virtual QueryRenderedSystem<C_Transform, C_RenderableMesh>
+	class S_Renderer : public virtual QueryRenderedSystem<const C_Transform, const C_RenderableMesh>
 	{
 	public:
 
 		S_Renderer(Renderer & renderer);
 
-		void Render(C_Transform & transform, C_RenderableMesh & mesh) override;
+		void Render(const C_Transform & transform, const C_RenderableMesh & mesh) override;
 
 	private:
 

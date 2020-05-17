@@ -11,7 +11,7 @@
 #include "components/physics/c_velocity.hpp"
 #include "components/physics/c_collider.hpp"
 
-class S_TilemapCollisionResolution : public alvere::QueryUpdatedSystem<alvere::C_Transform, C_Velocity, C_Collider, C_TilemapCollision>
+class S_TilemapCollisionResolution : public alvere::QueryUpdatedSystem<alvere::C_Transform, C_Velocity, const C_Collider, C_TilemapCollision>
 {
 
 	alvere::World & m_World;
@@ -23,7 +23,7 @@ public:
 	{
 	}
 
-	void Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_Collider & collider, C_TilemapCollision & tilemapCollision);
+	void Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, const C_Collider & collider, C_TilemapCollision & tilemapCollision);
 
 	void ResolveCollision(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, const C_Collider & collider, alvere::C_Transform & transform, C_Velocity & velocity);
 	void ResolveCollisionWithCollider(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, const ColliderInstance & collider, alvere::C_Transform & transform, C_Velocity & velocity);

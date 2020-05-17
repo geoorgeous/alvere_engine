@@ -7,7 +7,7 @@ S_PlayerInput::S_PlayerInput(const alvere::Window & window)
 {
 }
 
-void S_PlayerInput::Update(float deltaTime, C_Player & player, C_Movement & movement)
+void S_PlayerInput::Update(float deltaTime, const C_Player & player, C_Movement & movement)
 {
 	movement.m_Jump = m_Window.getKey(alvere::Key::Space).isDown
 				   || m_Window.getKey(alvere::Key::W).isDown;

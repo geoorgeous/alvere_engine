@@ -5,7 +5,7 @@
 
 #include "s_tilemap_collision_resolution.hpp"
 
-void S_TilemapCollisionResolution::Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_Collider & collider, C_TilemapCollision & tilemapCollision)
+void S_TilemapCollisionResolution::Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, const C_Collider & collider, C_TilemapCollision & tilemapCollision)
 {
 	//Reset all physics flags
 	tilemapCollision.m_OnGround = false;

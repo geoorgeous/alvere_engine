@@ -6,7 +6,7 @@
 
 #include "components/tilemap/c_tilemap.hpp"
 
-class S_TilemapRenderer : public alvere::QueryRenderedSystem<C_Tilemap>
+class S_TilemapRenderer : public alvere::QueryRenderedSystem<const C_Tilemap>
 {
 	alvere::Camera & m_camera;
 
@@ -18,5 +18,5 @@ public:
 
 	S_TilemapRenderer(alvere::Camera & camera);
 
-	void Render(C_Tilemap & tilemap) override;
+	void Render(const C_Tilemap & tilemap) override;
 };

@@ -7,7 +7,7 @@ namespace alvere
 	{
 	}
 
-	void S_Renderer::Render(C_Transform & transform, C_RenderableMesh & renderableMesh)
+	void S_Renderer::Render(const C_Transform & transform, const C_RenderableMesh & renderableMesh)
 	{
 		m_renderer.submit(renderableMesh.m_mesh, renderableMesh.m_material, transform->getWorldMatrix());
 	}

@@ -12,12 +12,12 @@ namespace alvere
 	{
 		m_spriteBatcher->begin(m_camera.getProjectionViewMatrix());
 
-		QueryRenderedSystem<C_Transform, C_Sprite>::Render(world);
+		QueryRenderedSystem<const C_Transform, const C_Sprite>::Render(world);
 
 		m_spriteBatcher->end();
 	}
 
-	void S_SpriteRenderer::Render(C_Transform & transform, C_Sprite & sprite)
+	void S_SpriteRenderer::Render(const C_Transform & transform, const C_Sprite & sprite)
 	{
 		Rect destination = Rect{
 			transform->getPosition().x + sprite.m_sprite.bounds().m_x,

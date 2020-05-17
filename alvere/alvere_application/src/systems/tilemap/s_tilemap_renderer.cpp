@@ -9,7 +9,7 @@ S_TilemapRenderer::S_TilemapRenderer(alvere::Camera & camera)
 {
 }
 
-void S_TilemapRenderer::Render(C_Tilemap & tilemap)
+void S_TilemapRenderer::Render(const C_Tilemap & tilemap)
 {
 	m_spriteBatcher->begin(m_camera.getProjectionViewMatrix());
 

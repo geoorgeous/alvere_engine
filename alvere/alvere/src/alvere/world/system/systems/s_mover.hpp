@@ -8,11 +8,11 @@
 
 namespace alvere
 {
-	class S_Mover : public QueryUpdatedSystem<C_Transform, C_Mover>
+	class S_Mover : public QueryUpdatedSystem<C_Transform, const C_Mover>
 	{
 	public:
 
-		virtual void Update(float deltaTime, C_Transform & transform, C_Mover & mover) override
+		virtual void Update(float deltaTime, C_Transform & transform, const C_Mover & mover) override
 		{
 			//alvere::LogInfo( "Mover system being updated, Position is: %.1f!\n", transform.m_X );
 			transform->move(Vector3(mover.m_Speed));

@@ -6,11 +6,11 @@
 
 #include "components/c_direction.hpp"
 
-class S_MirrorSpriteDirection : public alvere::QueryUpdatedSystem<C_Direction, alvere::C_Sprite>
+class S_MirrorSpriteDirection : public alvere::QueryUpdatedSystem<const C_Direction, alvere::C_Sprite>
 {
 public:
 
-	void Update(float deltaTime, C_Direction & direction, alvere::C_Sprite & sprite)
+	void Update(float deltaTime, const C_Direction & direction, alvere::C_Sprite & sprite)
 	{
 		sprite.m_mirrored[0] = direction.m_Direction == Direction::Left;
 	}

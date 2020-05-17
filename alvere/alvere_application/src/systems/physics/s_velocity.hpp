@@ -5,11 +5,11 @@
 
 #include "components/physics/c_velocity.hpp"
 
-class S_Velocity : public alvere::QueryUpdatedSystem<alvere::C_Transform, C_Velocity>
+class S_Velocity : public alvere::QueryUpdatedSystem<alvere::C_Transform, const C_Velocity>
 {
 public:
 
-	void Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity)
+	void Update(float deltaTime, alvere::C_Transform & transform, const C_Velocity & velocity)
 	{
 		transform->move( velocity.m_Velocity * deltaTime );
 	}

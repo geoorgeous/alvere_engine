@@ -8,7 +8,7 @@
 
 namespace alvere
 {
-	class S_SpriteRenderer : public virtual QueryRenderedSystem<C_Transform, C_Sprite>
+	class S_SpriteRenderer : public virtual QueryRenderedSystem<const C_Transform, const C_Sprite>
 	{
 	public:
 
@@ -16,7 +16,7 @@ namespace alvere
 
 		virtual void Render(World & world) override;
 
-		virtual void Render(C_Transform & transform, C_Sprite & sprite) override;
+		virtual void Render(const C_Transform & transform, const C_Sprite & sprite) override;
 
 	private:
 

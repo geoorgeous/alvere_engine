@@ -13,5 +13,10 @@ namespace alvere
 		{
 			return &m_transform;
 		}
+
+		inline const Transform * operator->() const
+		{
+			return &m_transform;
+		}
 	};
 }

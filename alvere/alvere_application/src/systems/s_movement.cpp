@@ -6,7 +6,7 @@ S_Movement::S_Movement(float horizontalSpeed, float acceleration)
 {
 }
 
-void S_Movement::Update(float deltaTime, C_Movement & movement, C_Velocity & velocity)
+void S_Movement::Update(float deltaTime, const C_Movement & movement, C_Velocity & velocity)
 {
 	float speed = 0.0f;
 	if (movement.m_Horizontal < 0.0f)

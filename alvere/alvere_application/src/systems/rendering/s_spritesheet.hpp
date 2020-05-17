@@ -6,13 +6,13 @@
 
 #include "components/rendering/c_spritesheet.hpp"
 
-class S_Spritesheet : public alvere::QueryUpdatedSystem<C_Spritesheet, alvere::C_Sprite>
+class S_Spritesheet : public alvere::QueryUpdatedSystem<const C_Spritesheet, alvere::C_Sprite>
 {
 public:
 
-	void Update(float deltaTime, C_Spritesheet & spritesheet, alvere::C_Sprite & sprite)
+	void Update(float deltaTime, const C_Spritesheet & spritesheet, alvere::C_Sprite & sprite)
 	{
-		alvere::RectI & textureSourceRect = spritesheet.m_SourceRect;
+		const alvere::RectI & textureSourceRect = spritesheet.m_SourceRect;
 		
 		alvere::RectI & spriteSourceRect = sprite.m_sprite.textureSource();
 		spriteSourceRect = alvere::RectI(textureSourceRect.m_x + spritesheet.m_Offset[0] * textureSourceRect.m_width
