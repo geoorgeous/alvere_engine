@@ -6,6 +6,7 @@
 #include "components\physics\c_gravity.hpp"
 #include "components\physics\c_tilemap_collision.hpp"
 #include "components/physics/c_velocity.hpp"
+#include "components/c_player.hpp"
 
 using namespace alvere;
 
@@ -16,7 +17,8 @@ EntityHandle Def_Player::SpawnInstance(World & world)
 		C_Velocity,
 		C_Sprite,
 		C_TilemapCollision,
-		C_Gravity
+		C_Gravity,
+		C_Player
 	>();
 
 	//Have to make this static for now as the asset going out of scope deletes my texture reference

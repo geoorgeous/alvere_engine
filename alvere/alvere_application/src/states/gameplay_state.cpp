@@ -12,36 +12,64 @@
 #include "gameplay_state.hpp"
 #include "states/editor_state.hpp"
 #include "scenes/platformer_scene.hpp"
+#include "entity_definitions/def_camera.hpp"
+
+#include "components/c_entity_follower.hpp"
+#include "components/c_player.hpp"
 
 #include "tilemap/tilemap_renderer_system.hpp"
 #include "systems/physics/s_tilemap_collision_resolution.hpp"
 #include "systems/physics/s_gravity.hpp"
 #include "systems/physics/s_velocity.hpp"
+#include "systems/s_entity_follower.hpp"
 
 GameplayState::GameplayState(alvere::Window & window)
 	: m_window(window), m_toggleEditor(window, alvere::Key::I), m_halfWorldUnitsOnX(32 * 0.5f)
 {
 	alvere::RunTests();
 
-	//float screenRatio = (float)window.getHeight() / window.getWidth();
-	float screenRatio = window.getRenderingContext().getAspectRatio();
+	alvere::EntityHandle cameraEntity;
+	{ //Camera instance
+		float screenRatio = window.getRenderingContext().getAspectRatio();
 
-	alvere::EntityHandle cameraEntity = m_world.SpawnEntity<alvere::C_Transform, alvere::C_Camera>();
-	m_sceneCamera = &m_world.GetComponent<alvere::C_Camera>(cameraEntity);
-	m_sceneCamera->setOrthographic(-m_halfWorldUnitsOnX, m_halfWorldUnitsOnX, m_halfWorldUnitsOnX * screenRatio, -m_halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
-	m_uiCamera.setOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
+		cameraEntity = Def_Camera().SpawnInstance(m_world);
+		m_sceneCamera = &m_world.GetComponent<alvere::C_Camera>(cameraEntity);
+		m_sceneCamera->setOrthographic(-m_halfWorldUnitsOnX, m_halfWorldUnitsOnX, m_halfWorldUnitsOnX * screenRatio, -m_halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
+		m_uiCamera.setOrthographic(0, 800, 800, 0, -1.0f, 1.0f);
+	}
 
 	alvere::SceneSystem * sceneSystem = m_world.AddSystem<alvere::SceneSystem>(m_world);
 	m_world.AddSystem<TilemapRendererSystem>(*m_sceneCamera);
 	m_world.AddSystem<alvere::SpriteRendererSystem>(*m_sceneCamera);
 	m_world.AddSystem<alvere::DestroySystem>();
-	m_world.AddSystem<S_Gravity>( alvere::Vector2( 1.0f, -1.0f ) );
+	m_world.AddSystem<S_Gravity>( alvere::Vector2( 0.1f, -0.3f ) );
 	m_world.AddSystem<S_TilemapCollisionResolution>(m_world);
 	m_world.AddSystem<S_Velocity>();
+	m_world.AddSystem<S_EntityFollower>(m_world);
+	m_world.AddSystem<alvere::CameraSystem>();
 
 	PlatformerScene platformerScene(m_world);
 	alvere::Scene & platformer = sceneSystem->LoadScene(platformerScene);
 
+	{ //Camera follow setup
+		//TODO: I need some way to query for the player here. Some way of getting out the player entity handle given a PlayerTag component or something
+		alvere::Archetype::Query playerQuery;
+		playerQuery.Include<C_Player>();
+		std::vector<std::reference_wrapper<alvere::Archetype>> archetypes;
+		m_world.QueryArchetypes(playerQuery, archetypes);
+
+		if (archetypes.empty() == false)
+		{
+			const std::unordered_set<alvere::EntityHandle, alvere::EntityHandle::Hash> entities = archetypes[0].get().GetEntities();
+			for (alvere::EntityHandle entity : entities)
+			{
+				C_EntityFollower & cameraFollower = m_world.GetComponent<C_EntityFollower>(cameraEntity);
+				cameraFollower.m_FollowTarget = entity;
+				break;
+			}
+		}
+	}
+	
 	m_windowResizeEventHandler.setFunction([&](unsigned int width, unsigned int height)
 	{
 		float screenRatio = window.getRenderingContext().getAspectRatio();
