@@ -1,4 +1,5 @@
 
+#include <alvere/utils/assets.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
 #include <alvere\world\component\components\c_sprite.hpp>
 
@@ -37,11 +38,11 @@ EntityHandle Def_Player::SpawnInstance(World & world)
 	}
 	
 	{
-		//Have to make this static for now as the asset going out of scope deletes my texture reference
-		static std::unique_ptr<Texture> textureAsset = Texture::New("res/img/test.png");
+		AssetManager::loadStatic<Texture>("res/img/test.png");
+		Asset<Texture> textureAsset = AssetManager::getStatic<Texture>("res/img/test.png");
 
 		C_Sprite & sprite = world.GetComponent<C_Sprite>(player);
-		sprite.m_sprite = alvere::Sprite(*textureAsset.get(), alvere::Rect( -0.5f, 0.0f, 1.0f, 1.0f) );
+		sprite.m_sprite = alvere::Sprite(*textureAsset, alvere::Rect( -0.5f, 0.0f, 1.0f, 1.0f) );
 	}
 
 	return player;
