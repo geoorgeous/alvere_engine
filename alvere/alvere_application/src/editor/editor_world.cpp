@@ -2,17 +2,18 @@
 #include <string>
 
 #include <alvere/utils/assets.hpp>
-#include <alvere\world\system\systems\camera_system.hpp>
-#include <alvere\world\system\systems\sprite_renderer_system.hpp>
+#include <alvere\world\system\systems\s_camera.hpp>
+#include <alvere\world\system\systems\s_sprite_renderer.hpp>
 #include <alvere\world\scene\scene_system.hpp>
 #include <alvere/world/component/components/c_camera.hpp>
 #include <alvere/world/component/components/c_transform.hpp>
 #include <alvere/application/window.hpp>
-#include <tilemap\tilemap_renderer_system.hpp>
 #include <scenes\platformer_scene.hpp>
 
 #include "editor/editor_world.hpp"
 #include "editor/utils/path_utils.hpp"
+
+#include "systems/tilemap/s_tilemap_renderer.hpp"
 
 using namespace alvere;
 
@@ -40,9 +41,9 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & filepath, cons
 	editorWorld->m_tilemap->SetTiles(editorWorld->m_tilemap->GetBounds(), nullptr);
 
 	SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
-	world.AddSystem<CameraSystem>();
-	world.AddSystem<TilemapRendererSystem>(*editorWorld->m_camera);
-	world.AddSystem<SpriteRendererSystem>(*editorWorld->m_camera);
+	world.AddSystem<S_Camera>();
+	world.AddSystem<S_TilemapRenderer>(*editorWorld->m_camera);
+	world.AddSystem<S_SpriteRenderer>(*editorWorld->m_camera);
 
 	return std::move(editorWorld);
 }

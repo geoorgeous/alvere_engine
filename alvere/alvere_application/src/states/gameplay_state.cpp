@@ -1,11 +1,13 @@
 #include <alvere\application\window.hpp>
 #include <alvere/world/ecs_testing.hpp>
 #include <alvere/world/world.hpp>
-#include <alvere/world/system/systems/sprite_renderer_system.hpp>
 #include <alvere/world/scene/scene.hpp>
 #include <alvere\world\scene\scene_system.hpp>
-#include <alvere\world\system\systems\camera_system.hpp>
-#include <alvere\world\system\systems\destroy_system.hpp>
+
+#include <alvere/world/system/systems/s_sprite_renderer.hpp>
+#include <alvere\world\system\systems\s_destroy.hpp>
+#include <alvere\world\system\systems\s_camera.hpp>
+
 #include <alvere/world/component/components/c_camera.hpp>
 #include <alvere/world/component/components/c_transform.hpp>
 
@@ -17,13 +19,13 @@
 #include "components/c_entity_follower.hpp"
 #include "components/c_player.hpp"
 
-#include "tilemap/tilemap_renderer_system.hpp"
+#include "systems/tilemap/s_tilemap_renderer.hpp"
 #include "systems/physics/s_tilemap_collision_resolution.hpp"
 #include "systems/physics/s_gravity.hpp"
 #include "systems/physics/s_velocity.hpp"
 #include "systems/physics/s_friction.hpp"
-#include "systems/s_entity_follower.hpp"
 #include "systems/input/s_player_input.hpp"
+#include "systems/s_entity_follower.hpp"
 #include "systems/s_movement.hpp"
 #include "systems/s_jump.hpp"
 
@@ -44,7 +46,7 @@ GameplayState::GameplayState(alvere::Window & window)
 
 	alvere::SceneSystem * sceneSystem = m_world.AddSystem<alvere::SceneSystem>(m_world);
 
-	m_world.AddSystem<alvere::DestroySystem>();
+	m_world.AddSystem<alvere::S_Destroy>();
 	m_world.AddSystem<S_PlayerInput>(m_window);
 	m_world.AddSystem<S_Movement>(15.0f, 10.0f);
 	m_world.AddSystem<S_Jump>(20.0f, 0.2f);
@@ -53,10 +55,10 @@ GameplayState::GameplayState(alvere::Window & window)
 	m_world.AddSystem<S_Velocity>();
 	m_world.AddSystem<S_TilemapCollisionResolution>(m_world);
 	m_world.AddSystem<S_EntityFollower>(m_world);
-	m_world.AddSystem<alvere::CameraSystem>();
+	m_world.AddSystem<alvere::S_Camera>();
 
-	m_world.AddSystem<TilemapRendererSystem>(*m_sceneCamera);
-	m_world.AddSystem<alvere::SpriteRendererSystem>(*m_sceneCamera);
+	m_world.AddSystem<S_TilemapRenderer>(*m_sceneCamera);
+	m_world.AddSystem<alvere::S_SpriteRenderer>(*m_sceneCamera);
 
 	PlatformerScene platformerScene(m_world);
 	alvere::Scene & platformer = sceneSystem->LoadScene(platformerScene);

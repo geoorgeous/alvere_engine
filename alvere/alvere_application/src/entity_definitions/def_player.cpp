@@ -38,7 +38,6 @@ EntityHandle Def_Player::SpawnInstance(World & world)
 	}
 	
 	{
-		AssetManager::loadStatic<Texture>("res/img/test.png");
 		Asset<Texture> textureAsset = AssetManager::getStatic<Texture>("res/img/test.png");
 
 		C_Sprite & sprite = world.GetComponent<C_Sprite>(player);

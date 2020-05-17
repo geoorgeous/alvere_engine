@@ -5,7 +5,7 @@
 #include <alvere/graphics/camera.hpp>
 #include <alvere\world\world.hpp>
 
-#include "tilemap/c_tilemap.hpp"
+#include "components/tilemap/c_tilemap.hpp"
 
 namespace alvere
 {

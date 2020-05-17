@@ -5,9 +5,9 @@
 
 #include <alvere/utils/shapes.hpp>
 
+#include "components/tilemap/c_tilemap.hpp"
 #include "editor/command/command.hpp"
 #include "tilemap/tile.hpp"
-#include "tilemap/c_tilemap.hpp"
 
 class DrawTilesCommand : public Command
 {

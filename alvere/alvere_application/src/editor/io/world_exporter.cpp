@@ -4,7 +4,7 @@
 #include "editor/editor_world.hpp"
 #include "editor/io/world_exporter.hpp"
 #include "editor/io/serialization_utils.hpp"
-#include "tilemap/c_tilemap.hpp"
+#include "components/tilemap/c_tilemap.hpp"
 
 using namespace serialization;
 

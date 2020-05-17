@@ -4,9 +4,9 @@
 #include <alvere\graphics\sprite_batcher.hpp>
 #include <alvere\graphics\camera.hpp>
 
-#include "c_tilemap.hpp"
+#include "components/tilemap/c_tilemap.hpp"
 
-class TilemapRendererSystem : public alvere::QueryRenderedSystem<C_Tilemap>
+class S_TilemapRenderer : public alvere::QueryRenderedSystem<C_Tilemap>
 {
 	alvere::Camera & m_camera;
 
@@ -16,7 +16,7 @@ class TilemapRendererSystem : public alvere::QueryRenderedSystem<C_Tilemap>
 
 public:
 
-	TilemapRendererSystem(alvere::Camera & camera);
+	S_TilemapRenderer(alvere::Camera & camera);
 
 	void Render(C_Tilemap & tilemap) override;
 };

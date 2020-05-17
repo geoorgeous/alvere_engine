@@ -5,8 +5,8 @@
 #include <alvere/world/system/query_updated_system.hpp>
 #include <alvere/world/component/components/c_transform.hpp>
 
-#include "tilemap/c_tilemap.hpp"
 #include "tilemap/tile.hpp"
+#include "components/tilemap/c_tilemap.hpp"
 #include "components/physics/c_tilemap_collision.hpp"
 #include "components/physics/c_velocity.hpp"
 #include "components/physics/c_collider.hpp"

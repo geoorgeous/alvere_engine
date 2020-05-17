@@ -4,14 +4,16 @@
 #include "alvere/world/world.hpp"
 #include "alvere/world/entity/entity.hpp"
 
-#include "alvere/world/application/c_mover.hpp"
-#include "alvere/world/application/c_direction.hpp"
-#include "alvere/world/application/mover_system.hpp"
+#include "alvere/world/component/components/c_mover.hpp"
+#include "alvere/world/component/components/c_direction.hpp"
 #include "alvere/world/component/components/c_transform.hpp"
 #include "alvere/world/component/components/c_saveable.hpp"
-#include <alvere\world\component\components\c_destroy.hpp>
-#include <alvere\world\system\systems\destroy_system.hpp>
-#include <alvere\world\scene\scene_system.hpp>
+#include "alvere/world/component/components/c_destroy.hpp"
+
+#include "alvere/world/system/systems/s_mover.hpp"
+#include "alvere/world/system/systems/s_destroy.hpp""
+
+#include "alvere\world\scene\scene_system.hpp"
 #include "../../alvere_application/src/scenes/testing_scene.hpp"
 
 namespace alvere
@@ -50,14 +52,14 @@ namespace alvere
 			world.GetComponent<C_Transform>(player)->setPosition(Vector3(7.0f, 0.0f, 0.0f));
 		}
 
-		world.AddSystem<MoverSystem>();
-		MoverSystem* moverSystem = world.GetSystem<MoverSystem>();
+		world.AddSystem<S_Mover>();
+		S_Mover* moverSystem = world.GetSystem<S_Mover>();
 		assert( moverSystem != nullptr );
 
 		world.Update(1.0f);
 		world.Render();
 
-		world.RemoveSystem<MoverSystem>();
+		world.RemoveSystem<S_Mover>();
 
 		world.Update(1.0f);
 		world.Render();
@@ -141,7 +143,7 @@ namespace alvere
 	{
 		World world;
 
-		world.AddSystem<DestroySystem>();
+		world.AddSystem<S_Destroy>();
 
 		EntityHandle entity1 = world.SpawnEntity<C_Transform>();
 		EntityHandle entity1_copy = entity1;
@@ -179,7 +181,7 @@ namespace alvere
 		World world;
 
 		SceneSystem * sceneSystem = world.AddSystem<SceneSystem>(world);
-		world.AddSystem<DestroySystem>();
+		world.AddSystem<S_Destroy>();
 
 		TestingScene testScene(world);
 		Scene & test = sceneSystem->LoadScene(testScene);

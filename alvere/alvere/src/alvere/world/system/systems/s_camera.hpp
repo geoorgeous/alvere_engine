@@ -6,7 +6,7 @@
 
 namespace alvere
 {
-	class CameraSystem : public QueryUpdatedSystem<C_Transform, C_Camera>
+	class S_Camera : public QueryUpdatedSystem<C_Transform, C_Camera>
 	{
 	public:
 

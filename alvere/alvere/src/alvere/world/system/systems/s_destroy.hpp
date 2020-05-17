@@ -6,7 +6,7 @@
 
 namespace alvere
 {
-	class DestroySystem : public UpdatedSystem
+	class S_Destroy : public UpdatedSystem
 	{
 		Archetype::Query m_DestroyQuery;
 
@@ -14,7 +14,7 @@ namespace alvere
 
 	public:
 
-		DestroySystem();
+		S_Destroy();
 
 		virtual void Update(World & world, float deltaTime) override;
 	};

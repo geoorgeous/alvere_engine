@@ -8,11 +8,11 @@
 
 namespace alvere
 {
-	class SpriteRendererSystem : public virtual QueryRenderedSystem<C_Transform, C_Sprite>
+	class S_SpriteRenderer : public virtual QueryRenderedSystem<C_Transform, C_Sprite>
 	{
 	public:
 
-		SpriteRendererSystem(Camera & camera);
+		S_SpriteRenderer(Camera & camera);
 
 		virtual void Render(World & world) override;
 

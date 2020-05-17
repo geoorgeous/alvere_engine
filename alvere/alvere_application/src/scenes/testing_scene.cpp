@@ -1,8 +1,8 @@
 
 #include <alvere/world/scene/scene_loader.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
-#include <alvere\world\application\c_mover.hpp>
-#include <alvere\world\application\c_direction.hpp>
+#include <alvere\world\component\components\c_mover.hpp>
+#include <alvere\world\component\components\c_direction.hpp>
 
 #include "testing_scene.hpp"
 

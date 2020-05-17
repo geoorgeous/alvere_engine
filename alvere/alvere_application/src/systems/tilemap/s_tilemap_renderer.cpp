@@ -1,15 +1,15 @@
-#include "tilemap_renderer_system.hpp"
-#include "tile.hpp"
+#include "s_tilemap_renderer.hpp"
+#include "tilemap/tile.hpp"
 
 
-TilemapRendererSystem::TilemapRendererSystem(alvere::Camera & camera)
+S_TilemapRenderer::S_TilemapRenderer(alvere::Camera & camera)
 	: m_camera(camera)
 	, m_spriteBatcher(alvere::SpriteBatcher::New())
 	, m_fallbackTexture(alvere::Texture::New("res/img/tiles/missing_tile.png"))
 {
 }
 
-void TilemapRendererSystem::Render(C_Tilemap & tilemap)
+void S_TilemapRenderer::Render(C_Tilemap & tilemap)
 {
 	m_spriteBatcher->begin(m_camera.getProjectionViewMatrix());
 

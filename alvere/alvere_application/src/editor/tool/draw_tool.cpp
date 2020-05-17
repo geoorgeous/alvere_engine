@@ -2,7 +2,7 @@
 #include <alvere/graphics/camera.hpp>
 
 #include "imgui/imgui.h"
-#include "tilemap/c_tilemap.hpp"
+#include "components/tilemap/c_tilemap.hpp"
 #include "editor/editor_world.hpp"
 #include "editor/imgui_editor.hpp"
 #include "editor/command/command_stack.hpp"

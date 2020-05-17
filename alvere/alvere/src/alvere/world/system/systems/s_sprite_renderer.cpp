@@ -1,14 +1,14 @@
-#include "alvere/world/system/systems/sprite_renderer_system.hpp"
+#include "alvere/world/system/systems/s_sprite_renderer.hpp"
 
 namespace alvere
 {
-	SpriteRendererSystem::SpriteRendererSystem(Camera & camera)
+	S_SpriteRenderer::S_SpriteRenderer(Camera & camera)
 		: m_camera(camera)
 	{
 		m_spriteBatcher = SpriteBatcher::New();
 	}
 
-	void SpriteRendererSystem::Render(World & world)
+	void S_SpriteRenderer::Render(World & world)
 	{
 		m_spriteBatcher->begin(m_camera.getProjectionViewMatrix());
 
@@ -17,7 +17,7 @@ namespace alvere
 		m_spriteBatcher->end();
 	}
 
-	void SpriteRendererSystem::Render(C_Transform & transform, C_Sprite & sprite)
+	void S_SpriteRenderer::Render(C_Transform & transform, C_Sprite & sprite)
 	{
 		Rect destination = Rect{
 			transform->getPosition().x + sprite.m_sprite.bounds().m_x,

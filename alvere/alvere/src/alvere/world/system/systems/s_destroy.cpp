@@ -1,15 +1,15 @@
-#include "destroy_system.hpp"
+#include "s_destroy.hpp"
 
 #include "alvere/world/component/components/c_destroy.hpp"
 
 namespace alvere
 {
-	DestroySystem::DestroySystem()
+	S_Destroy::S_Destroy()
 		: m_DestroyQuery(Archetype::Query().Include<C_Destroy>())
 	{
 	}
 
-	void DestroySystem::Update(World & world, float deltaTime)
+	void S_Destroy::Update(World & world, float deltaTime)
 	{
 		world.QueryArchetypes(m_DestroyQuery, m_Archetypes);
 
