@@ -19,6 +19,12 @@ void WorldExporter::operator()(const std::string & filepath, const EditorWorld &
 
 void WorldExporter::ExportTilemap(std::fstream & file, const C_Tilemap & tilemap)
 {
+	//Version always comes first so we can tell if this file is compatable
+	Write(file, C_Tilemap::SAVE_VERSION);
+
+	//Need to fill the constructor info first
+	Write(file, tilemap.m_size);
+
 	int mapSize = tilemap.m_size[0] * tilemap.m_size[1];
 	TileInstance * map = tilemap.m_map.get();
 
@@ -56,7 +62,6 @@ void WorldExporter::ExportTilemap(std::fstream & file, const C_Tilemap & tilemap
 	}
 
 	//Append the map itself
-	Write(file, tilemap.m_size);
 	for (int i = 0; i < mapSize; ++i)
 	{
 		TileInstance & tileInstance = map[i];

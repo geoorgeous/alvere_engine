@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <alvere/world/world.hpp>
 #include <alvere/world/scene/scene_loader.hpp>
 #include <alvere/world/entity/entity_handle.hpp>
@@ -23,6 +25,7 @@ private:
 	alvere::EntityHandle SpawnFromDefinition(alvere::Scene & scene);
 
 	void SpawnMap(std::unique_ptr<alvere::Scene> & scene);
+	bool LoadMap(std::unique_ptr<alvere::Scene> & scene, const std::string & filepath);
 };
 
 template <typename T>

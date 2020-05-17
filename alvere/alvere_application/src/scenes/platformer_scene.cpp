@@ -1,22 +1,49 @@
+#include <fstream>
+
 #include <alvere/graphics/texture.hpp>
 #include <alvere\world\component\components\c_transform.hpp>
 
 #include "platformer_scene.hpp"
 #include "entity_definitions/def_player.hpp"
 
-#include "tilemap/c_tilemap.hpp"
+#include "components/tilemap/c_tilemap.hpp"
 
 std::unique_ptr<alvere::Scene> PlatformerScene::LoadScene()
 {
 	std::unique_ptr<alvere::Scene> scene = std::make_unique<alvere::Scene>();
 
-	SpawnMap(scene);
+	if (LoadMap(scene, "res/maps/default.map") == false)
+	{
+		SpawnMap(scene);
+	}
 
 	alvere::EntityHandle player = SpawnFromDefinition<Def_Player>(*scene);
 	alvere::C_Transform & playerTransform = m_World.GetComponent<alvere::C_Transform>(player);
 	playerTransform->setPosition({ 4.0f, 4.0f, 0.0f });
 
 	return std::move(scene);
+}
+
+bool PlatformerScene::LoadMap(std::unique_ptr<alvere::Scene> & scene, const std::string & filepath)
+{
+	std::fstream worldFile(filepath, std::ios_base::in | std::ios::binary);
+
+	if (worldFile.is_open() == false)
+	{
+		return false;
+	}
+
+	alvere::EntityHandle tilemapEntity = m_World.SpawnEntity<C_Tilemap>();
+	auto & tilemap = m_World.GetComponent<C_Tilemap>(tilemapEntity);
+	
+	if (tilemap.Load(worldFile) == false)
+	{
+		m_World.DestroyEntity(tilemapEntity);
+		return false;
+	}
+	
+	scene->AddEntity(tilemapEntity);
+	return true;
 }
 
 void PlatformerScene::SpawnMap(std::unique_ptr<alvere::Scene> & scene)

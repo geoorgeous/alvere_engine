@@ -4,7 +4,7 @@
 #include <alvere/graphics/texture.hpp>
 #include <alvere/utils/assets.hpp>
 
-#include "tilemap/c_tilemap.hpp"
+#include "components/tilemap/c_tilemap.hpp"
 #include "editor/imgui_editor.hpp"
 #include "editor/editor_world.hpp"
 #include "editor/io/world_importer.hpp"
@@ -31,8 +31,21 @@ std::unique_ptr<EditorWorld> WorldImporter::operator()(const std::string & filep
 	return std::move(world);
 }
 
-void WorldImporter::ImportTilemap(std::fstream & file, C_Tilemap & tilemap)
+bool WorldImporter::ImportTilemap(std::fstream & file, C_Tilemap & tilemap)
 {
+	//Version always comes first so we can tell if this file is compatable
+	unsigned int version;
+	Read(file, version);
+
+	if (version < C_Tilemap::OLDEST_LOADABLE_SAVE_VERSION
+	 || version > C_Tilemap::SAVE_VERSION)
+	{
+		return false;
+	}
+
+	alvere::Vector2i mapSize;
+	Read(file, mapSize);
+
 	size_t numTiles;
 	Read(file, numTiles);
 
@@ -52,9 +65,6 @@ void WorldImporter::ImportTilemap(std::fstream & file, C_Tilemap & tilemap)
 		tiles[i] = &tileWindow.GetOrAddTile(tile);
 	}
 
-	alvere::Vector2i mapSize;
-	Read(file, mapSize);
-
 	tilemap = C_Tilemap(mapSize);
 	TileInstance * map = tilemap.m_map.get();
 
@@ -72,4 +82,6 @@ void WorldImporter::ImportTilemap(std::fstream & file, C_Tilemap & tilemap)
 
 		Read(file, tileInstance.m_spritesheetCoordinate);
 	}
+
+	return true;
 }

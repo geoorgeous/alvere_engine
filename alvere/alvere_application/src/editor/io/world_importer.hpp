@@ -25,5 +25,5 @@ public:
 
 private:
 
-	void ImportTilemap(std::fstream & file, C_Tilemap & tilemap);
+	bool ImportTilemap(std::fstream & file, C_Tilemap & tilemap);
 };
