@@ -11,6 +11,7 @@
 #include "components/physics/c_friction.hpp"
 #include "components/physics/c_collider.hpp"
 #include "components/rendering/c_spritesheet.hpp"
+#include "components/c_direction.hpp"
 #include "components/c_player.hpp"
 
 using namespace alvere;
@@ -20,6 +21,7 @@ EntityHandle Def_Player::SpawnInstance(World & world)
 	EntityHandle player = world.SpawnEntity<
 		C_Player,
 		C_Transform,
+		C_Direction,
 		C_Velocity,
 		C_Friction,
 		C_TilemapCollision,

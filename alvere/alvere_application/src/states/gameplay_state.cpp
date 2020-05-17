@@ -30,6 +30,8 @@
 #include "systems/input/s_player_input.hpp"
 #include "systems/rendering/s_spritesheet.hpp"
 #include "systems/rendering/s_collider_renderer.hpp"
+#include "systems/s_mirror_sprite_direction.hpp"
+#include "systems/s_direction_from_movement.hpp"
 #include "systems/s_entity_follower.hpp"
 #include "systems/s_movement.hpp"
 #include "systems/s_jump.hpp"
@@ -54,6 +56,7 @@ GameplayState::GameplayState(alvere::Window & window)
 	m_world.AddSystem<alvere::S_Destroy>();
 	m_world.AddSystem<S_PlayerInput>(m_window);
 	m_world.AddSystem<S_Movement>(15.0f, 10.0f);
+	m_world.AddSystem<S_DirectionFromMovement>();
 	m_world.AddSystem<S_Jump>(20.0f, 0.2f);
 	m_world.AddSystem<S_Gravity>(alvere::Vector2(0.0f, -70.0f));
 	m_world.AddSystem<S_Friction>(alvere::Vector2(100.0f, 0.0f));
@@ -62,10 +65,11 @@ GameplayState::GameplayState(alvere::Window & window)
 	m_world.AddSystem<S_EntityFollower>(m_world);
 	m_world.AddSystem<alvere::S_Camera>();
 
+	m_world.AddSystem<S_MirrorSpriteDirection>();
 	m_world.AddSystem<S_Spritesheet>();
 	m_world.AddSystem<S_TilemapRenderer>(*m_sceneCamera);
 	m_world.AddSystem<alvere::S_SpriteRenderer>(*m_sceneCamera);
-	m_world.AddSystem<S_ColliderRenderer>(*m_sceneCamera, alvere::Sprite(*alvere::AssetManager::getStatic<alvere::Texture>("res/img/misc/collider.png")));
+	//m_world.AddSystem<S_ColliderRenderer>(*m_sceneCamera, alvere::Sprite(*alvere::AssetManager::getStatic<alvere::Texture>("res/img/misc/collider.png")));
 
 	PlatformerScene platformerScene(m_world);
 	alvere::Scene & platformer = sceneSystem->LoadScene(platformerScene);
