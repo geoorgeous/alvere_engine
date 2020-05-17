@@ -1,8 +1,11 @@
+#include <string>
+
 #include <alvere\application\window.hpp>
 #include <alvere/world/ecs_testing.hpp>
 #include <alvere/world/world.hpp>
 #include <alvere/world/scene/scene.hpp>
 #include <alvere\world\scene\scene_system.hpp>
+#include <alvere/utils/assets.hpp>
 
 #include <alvere/world/system/systems/s_sprite_renderer.hpp>
 #include <alvere\world\system\systems\s_destroy.hpp>
@@ -26,6 +29,7 @@
 #include "systems/physics/s_friction.hpp"
 #include "systems/input/s_player_input.hpp"
 #include "systems/rendering/s_spritesheet.hpp"
+#include "systems/rendering/s_collider_renderer.hpp"
 #include "systems/s_entity_follower.hpp"
 #include "systems/s_movement.hpp"
 #include "systems/s_jump.hpp"
@@ -61,6 +65,7 @@ GameplayState::GameplayState(alvere::Window & window)
 	m_world.AddSystem<S_Spritesheet>();
 	m_world.AddSystem<S_TilemapRenderer>(*m_sceneCamera);
 	m_world.AddSystem<alvere::S_SpriteRenderer>(*m_sceneCamera);
+	m_world.AddSystem<S_ColliderRenderer>(*m_sceneCamera, alvere::Sprite(*alvere::AssetManager::getStatic<alvere::Texture>("res/img/misc/collider.png")));
 
 	PlatformerScene platformerScene(m_world);
 	alvere::Scene & platformer = sceneSystem->LoadScene(platformerScene);
