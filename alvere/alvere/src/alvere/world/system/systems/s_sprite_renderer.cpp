@@ -25,6 +25,18 @@ namespace alvere
 			transform->getScale().x * sprite.m_sprite.bounds().m_width,
 			transform->getScale().y * sprite.m_sprite.bounds().m_height
 		};
-		m_spriteBatcher->submit(&sprite.m_sprite.getTexture(), destination, sprite.m_sprite.textureSource(), sprite.m_sprite.colour());
+
+		alvere::RectI textureSource = sprite.m_sprite.textureSource();
+
+		if (sprite.m_mirrored[0])
+		{
+			textureSource.m_width *= -1;
+		}
+		if (sprite.m_mirrored[1])
+		{
+			textureSource.m_height *= -1;
+		}
+
+		m_spriteBatcher->submit(&sprite.m_sprite.getTexture(), destination, textureSource, sprite.m_sprite.colour());
 	}
 }
