@@ -1,7 +1,10 @@
 #pragma once
 
-#include <alvere/world/component/tag_component.hpp>
+#include <alvere/world/component/pooled_component.hpp>
 
-class C_TilemapCollision : public alvere::TagComponent<C_TilemapCollision>
+class C_TilemapCollision : public alvere::PooledComponent<C_TilemapCollision>
 {
+public:
+
+	bool m_OnGround;
 };

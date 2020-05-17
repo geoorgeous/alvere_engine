@@ -24,6 +24,8 @@
 #include "systems/physics/s_friction.hpp"
 #include "systems/s_entity_follower.hpp"
 #include "systems/input/s_player_input.hpp"
+#include "systems/s_movement.hpp"
+#include "systems/s_jump.hpp"
 
 GameplayState::GameplayState(alvere::Window & window)
 	: m_window(window), m_toggleEditor(window, alvere::Key::I), m_halfWorldUnitsOnX(32 * 0.5f)
@@ -41,13 +43,15 @@ GameplayState::GameplayState(alvere::Window & window)
 	}
 
 	alvere::SceneSystem * sceneSystem = m_world.AddSystem<alvere::SceneSystem>(m_world);
-	
+
 	m_world.AddSystem<alvere::DestroySystem>();
-	m_world.AddSystem<S_PlayerInput>(m_window, 15.0f, 10.0f);
-	m_world.AddSystem<S_Gravity>( alvere::Vector2( 0.0f, -10.0f ) );
-	m_world.AddSystem<S_Friction>( alvere::Vector2( 100.0f, 0.0f ) );
-	m_world.AddSystem<S_TilemapCollisionResolution>(m_world);
+	m_world.AddSystem<S_PlayerInput>(m_window);
+	m_world.AddSystem<S_Movement>(15.0f, 10.0f);
+	m_world.AddSystem<S_Jump>(20.0f, 0.2f);
+	m_world.AddSystem<S_Gravity>(alvere::Vector2(0.0f, -70.0f));
+	m_world.AddSystem<S_Friction>(alvere::Vector2(100.0f, 0.0f));
 	m_world.AddSystem<S_Velocity>();
+	m_world.AddSystem<S_TilemapCollisionResolution>(m_world);
 	m_world.AddSystem<S_EntityFollower>(m_world);
 	m_world.AddSystem<alvere::CameraSystem>();
 
@@ -75,12 +79,12 @@ GameplayState::GameplayState(alvere::Window & window)
 			}
 		}
 	}
-	
-	m_windowResizeEventHandler.setFunction([&](unsigned int width, unsigned int height)
-	{
-		float screenRatio = window.getRenderingContext().getAspectRatio();
-		m_sceneCamera->setOrthographic(-m_halfWorldUnitsOnX, m_halfWorldUnitsOnX, m_halfWorldUnitsOnX * screenRatio, -m_halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
-	});
+
+	m_windowResizeEventHandler.setFunction([ & ](unsigned int width, unsigned int height)
+										   {
+											   float screenRatio = window.getRenderingContext().getAspectRatio();
+											   m_sceneCamera->setOrthographic(-m_halfWorldUnitsOnX, m_halfWorldUnitsOnX, m_halfWorldUnitsOnX * screenRatio, -m_halfWorldUnitsOnX * screenRatio, -1.0f, 1.0f);
+										   });
 	*m_window.getEvent<alvere::WindowResizeEvent>() += m_windowResizeEventHandler;
 }
 

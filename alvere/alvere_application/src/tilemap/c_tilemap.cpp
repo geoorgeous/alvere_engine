@@ -178,5 +178,5 @@ bool C_Tilemap::TileCollides_s(alvere::Vector2i position) const
 void C_Tilemap::DemoFill()
 {
 	SetTiles(GetBounds(), &m_tiles[1]);
-	SetTiles({ 3, 3, m_size[0] - 3, m_size[1] - 3 }, &m_tiles[0]);
+	SetTiles({ 3, 3, m_size[0] - 7, m_size[1] - 7 }, &m_tiles[0]);
 }

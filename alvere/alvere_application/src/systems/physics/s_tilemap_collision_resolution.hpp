@@ -25,7 +25,7 @@ public:
 
 	void Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_TilemapCollision & tilemapCollision);
 
-	void ResolveCollision(const C_Tilemap & tilemap, alvere::C_Transform & transform, C_Velocity & velocity);
+	void ResolveCollision(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, alvere::C_Transform & transform, C_Velocity & velocity);
 	alvere::Vector2 CalculateResolutionVectorFromTile(const C_Tilemap & level, alvere::Vector2 & position, alvere::Vector2i tilePosition);
 
 };

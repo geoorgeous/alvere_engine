@@ -6,9 +6,9 @@
 #include "components\physics\c_gravity.hpp"
 #include "components\physics\c_tilemap_collision.hpp"
 #include "components/physics/c_velocity.hpp"
-#include "components/c_player.hpp"
 #include "components/physics/c_movement.hpp"
 #include "components/physics/c_friction.hpp"
+#include "components/c_player.hpp"
 
 using namespace alvere;
 

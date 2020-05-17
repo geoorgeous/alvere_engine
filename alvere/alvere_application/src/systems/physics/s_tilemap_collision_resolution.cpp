@@ -7,6 +7,9 @@
 
 void S_TilemapCollisionResolution::Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_TilemapCollision & tilemapCollision)
 {
+	//Reset all physics flags
+	tilemapCollision.m_OnGround = false;
+
 	//Find all the tilemaps in the world
 	alvere::Archetype::Query query;
 	query.Include<C_Tilemap>();
@@ -23,12 +26,12 @@ void S_TilemapCollisionResolution::Update(float deltaTime, alvere::C_Transform &
 			auto queryTuple = iterator.GetComponents();
 			C_Tilemap & tilemap = std::get<0>(queryTuple);
 
-			ResolveCollision(tilemap, transform, velocity);
+			ResolveCollision(tilemap, tilemapCollision, transform, velocity);
 		}
 	}
 }
 
-void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, alvere::C_Transform & transform, C_Velocity & velocity)
+void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, alvere::C_Transform & transform, C_Velocity & velocity)
 {
 	alvere::Vector2 transformPosition = transform->getPosition();
 
@@ -97,15 +100,20 @@ void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, a
 		colliderCenter += resolutionVector;
 		transform->move(resolutionVector);
 
+		bool hitLeft = resolutionVector.x > 0.0f && velocity.m_Velocity.x < 0.0f;
+		bool hitRight = resolutionVector.x < 0.0f && velocity.m_Velocity.x > 0.0f;
+		bool hitFloor = resolutionVector.y > 0.0f && velocity.m_Velocity.y < 0.0f;
+		bool hitCeiling = resolutionVector.y < 0.0f && velocity.m_Velocity.y > 0.0f;
+
+		//Physics flags
+		tilemapCollision.m_OnGround |= hitFloor;
+
 		//Cancel any velocity if it is pushing the entity into the tile we are trying to correct them out of
-		if ((resolutionVector.x > 0.0f && velocity.m_Velocity.x < 0.0f)
-		 || (resolutionVector.x < 0.0f && velocity.m_Velocity.x > 0.0f))
+		if (hitLeft || hitRight)
 		{
 			velocity.m_Velocity.x = 0.0f;
 		}
-
-		if ((resolutionVector.y > 0.0f && velocity.m_Velocity.y < 0.0f)
-		 || (resolutionVector.y < 0.0f && velocity.m_Velocity.y > 0.0f))
+		if (hitFloor || hitCeiling)
 		{
 			velocity.m_Velocity.y = 0.0f;
 		}
