@@ -30,10 +30,12 @@ namespace alvere
 
 		if (sprite.m_mirrored[0])
 		{
+			textureSource.m_x += textureSource.m_width;
 			textureSource.m_width *= -1;
 		}
 		if (sprite.m_mirrored[1])
 		{
+			textureSource.m_y += textureSource.m_height;
 			textureSource.m_height *= -1;
 		}
 
