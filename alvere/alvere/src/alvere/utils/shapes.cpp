@@ -12,6 +12,13 @@ namespace alvere
 		: m_x(x), m_y(y), m_width(width), m_height(height)
 	{ }
 
+	Rect::Rect(alvere::Vector2 position, alvere::Vector2 size)
+		: m_x(position.x)
+		, m_y(position.y)
+		, m_width(size.x)
+		, m_height(size.y)
+	{ }
+
 	float Rect::getLeft() const
 	{
 		return m_x;

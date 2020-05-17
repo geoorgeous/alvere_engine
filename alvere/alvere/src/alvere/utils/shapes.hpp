@@ -20,6 +20,8 @@ namespace alvere
 
 		Rect(float x, float y, float width, float height);
 
+		Rect(alvere::Vector2 position, alvere::Vector2 size);
+
 		float getLeft() const;
 
 		float getRight() const;
