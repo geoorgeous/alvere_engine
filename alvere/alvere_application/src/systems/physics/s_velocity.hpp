@@ -11,6 +11,6 @@ public:
 
 	void Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity)
 	{
-		transform->move( velocity.m_Velocity );
+		transform->move( velocity.m_Velocity * deltaTime );
 	}
 };
