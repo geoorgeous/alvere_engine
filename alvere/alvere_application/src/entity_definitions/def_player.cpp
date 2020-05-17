@@ -11,6 +11,7 @@
 #include "components/physics/c_friction.hpp"
 #include "components/physics/c_collider.hpp"
 #include "components/rendering/c_spritesheet.hpp"
+#include "components/rendering/c_animation.hpp"
 #include "components/c_direction.hpp"
 #include "components/c_player.hpp"
 
@@ -29,6 +30,7 @@ EntityHandle Def_Player::SpawnInstance(World & world)
 		C_Movement,
 		C_Sprite,
 		C_Spritesheet,
+		C_Animation,
 		C_Collider
 	>();
 
@@ -54,6 +56,22 @@ EntityHandle Def_Player::SpawnInstance(World & world)
 		C_Spritesheet & spritesheet = world.GetComponent<C_Spritesheet>(player);
 		spritesheet.m_Offset = { 0, 0 };
 		spritesheet.m_SourceRect = { 0, 0, 21, 29 };
+	}
+
+	{ //C_Animation
+		C_Animation & animation = world.GetComponent<C_Animation>(player);
+
+		{ //Idle
+			C_Animation::Animation idle;
+			idle.m_Loop = true;
+			idle.m_Frames.emplace_back(C_Animation::Frame{ 3.2f, { 0, 4 } });
+			idle.m_Frames.emplace_back(C_Animation::Frame{ 0.1f, { 1, 4 } });
+			idle.m_Frames.emplace_back(C_Animation::Frame{ 0.1f, { 2, 4 } });
+			idle.m_Frames.emplace_back(C_Animation::Frame{ 0.1f, { 3, 4 } });
+			animation.Add("idle", idle);
+		}
+		
+		animation.Start("idle");
 	}
 
 	return player;

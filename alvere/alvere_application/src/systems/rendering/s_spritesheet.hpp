@@ -15,8 +15,8 @@ public:
 		alvere::RectI & textureSourceRect = spritesheet.m_SourceRect;
 		
 		alvere::RectI & spriteSourceRect = sprite.m_sprite.textureSource();
-		spriteSourceRect = alvere::RectI(textureSourceRect.m_x + spritesheet.m_Offset[0]
-									  , textureSourceRect.m_y + spritesheet.m_Offset[0]
+		spriteSourceRect = alvere::RectI(textureSourceRect.m_x + spritesheet.m_Offset[0] * textureSourceRect.m_width
+									  , textureSourceRect.m_y + spritesheet.m_Offset[1] * textureSourceRect.m_height
 									  , textureSourceRect.m_width
 									  , textureSourceRect.m_height);
 	}

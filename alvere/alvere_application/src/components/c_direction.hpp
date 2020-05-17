@@ -5,8 +5,8 @@
 
 enum class Direction
 {
-	Left,
-	Right
+	Right,
+	Left
 };
 
 class C_Direction : public alvere::PooledComponent<C_Direction>

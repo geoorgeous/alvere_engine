@@ -30,6 +30,7 @@
 #include "systems/input/s_player_input.hpp"
 #include "systems/rendering/s_spritesheet.hpp"
 #include "systems/rendering/s_collider_renderer.hpp"
+#include "systems/rendering/s_animation.hpp"
 #include "systems/s_mirror_sprite_direction.hpp"
 #include "systems/s_direction_from_movement.hpp"
 #include "systems/s_entity_follower.hpp"
@@ -66,6 +67,7 @@ GameplayState::GameplayState(alvere::Window & window)
 	m_world.AddSystem<alvere::S_Camera>();
 
 	m_world.AddSystem<S_MirrorSpriteDirection>();
+	m_world.AddSystem<S_Animation>();
 	m_world.AddSystem<S_Spritesheet>();
 	m_world.AddSystem<S_TilemapRenderer>(*m_sceneCamera);
 	m_world.AddSystem<alvere::S_SpriteRenderer>(*m_sceneCamera);
