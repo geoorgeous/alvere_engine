@@ -1,8 +1,9 @@
+#include <algorithm>
+
 #include <alvere/world/archetype/archetype.hpp>
 #include <alvere/world/archetype/archetype_provider_iterator.hpp>
 
 #include "s_tilemap_collision_resolution.hpp"
-#include <algorithm>
 
 void S_TilemapCollisionResolution::Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_TilemapCollision & tilemapCollision)
 {
@@ -40,8 +41,8 @@ void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, a
 	alvere::Vector2 colliderLocalUpperBound(0.5f, 0.5f);
 
 	//Get bounds in tiles
-	alvere::Vector2i lower = tilemap.WorldToTilemap(transformPosition + colliderLocalLowerBound);
-	alvere::Vector2i upper = tilemap.WorldToTilemap(transformPosition + colliderLocalUpperBound);
+	alvere::Vector2i lower = tilemap.WorldToTilemap(transformPosition + colliderLocalCenter + colliderLocalLowerBound);
+	alvere::Vector2i upper = tilemap.WorldToTilemap(transformPosition + colliderLocalCenter + colliderLocalUpperBound);
 
 	//No need to process collision if the collider isn't within the tilemap bounds
 	alvere::RectI localBounds = tilemap.GetBounds();
@@ -81,7 +82,7 @@ void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, a
 			  [ = ](alvere::Vector2i a, alvere::Vector2i b)
 			  {
 				  alvere::Vector2 aCenter = alvere::Vector2(a) + tileHalfSize;
-				  alvere::Vector2 bCenter = alvere::Vector2(a) + tileHalfSize;
+				  alvere::Vector2 bCenter = alvere::Vector2(b) + tileHalfSize;
 				  return (colliderCenter - aCenter).magnitudeSq() < (colliderCenter - bCenter).magnitudeSq();
 			  });
 
