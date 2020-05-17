@@ -21,7 +21,9 @@
 #include "systems/physics/s_tilemap_collision_resolution.hpp"
 #include "systems/physics/s_gravity.hpp"
 #include "systems/physics/s_velocity.hpp"
+#include "systems/physics/s_friction.hpp"
 #include "systems/s_entity_follower.hpp"
+#include "systems/input/s_player_input.hpp"
 
 GameplayState::GameplayState(alvere::Window & window)
 	: m_window(window), m_toggleEditor(window, alvere::Key::I), m_halfWorldUnitsOnX(32 * 0.5f)
@@ -39,14 +41,18 @@ GameplayState::GameplayState(alvere::Window & window)
 	}
 
 	alvere::SceneSystem * sceneSystem = m_world.AddSystem<alvere::SceneSystem>(m_world);
-	m_world.AddSystem<TilemapRendererSystem>(*m_sceneCamera);
-	m_world.AddSystem<alvere::SpriteRendererSystem>(*m_sceneCamera);
+	
 	m_world.AddSystem<alvere::DestroySystem>();
-	m_world.AddSystem<S_Gravity>( alvere::Vector2( 0.1f, -0.3f ) );
+	m_world.AddSystem<S_PlayerInput>(m_window, 15.0f, 10.0f);
+	m_world.AddSystem<S_Gravity>( alvere::Vector2( 0.0f, -10.0f ) );
+	m_world.AddSystem<S_Friction>( alvere::Vector2( 100.0f, 0.0f ) );
 	m_world.AddSystem<S_TilemapCollisionResolution>(m_world);
 	m_world.AddSystem<S_Velocity>();
 	m_world.AddSystem<S_EntityFollower>(m_world);
 	m_world.AddSystem<alvere::CameraSystem>();
+
+	m_world.AddSystem<TilemapRendererSystem>(*m_sceneCamera);
+	m_world.AddSystem<alvere::SpriteRendererSystem>(*m_sceneCamera);
 
 	PlatformerScene platformerScene(m_world);
 	alvere::Scene & platformer = sceneSystem->LoadScene(platformerScene);
@@ -91,6 +97,7 @@ GameState * GameplayState::Update(float deltaTime)
 		return new EditorState(m_window);
 	}
 
+	/*
 	{ //TODO: Remove these and maybe put them in a debug component?
 		alvere::Vector3 velocity;
 		alvere::Vector3 rotation;
@@ -121,6 +128,7 @@ GameState * GameplayState::Update(float deltaTime)
 
 		m_sceneCamera->rotate(alvere::Quaternion::fromEulerAngles(rotation * deltaTime));
 	}
+	*/
 
 	m_world.Update(deltaTime);
 
