@@ -5,7 +5,7 @@
 
 #include "s_tilemap_collision_resolution.hpp"
 
-void S_TilemapCollisionResolution::Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_TilemapCollision & tilemapCollision)
+void S_TilemapCollisionResolution::Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_Collider & collider, C_TilemapCollision & tilemapCollision)
 {
 	//Reset all physics flags
 	tilemapCollision.m_OnGround = false;
@@ -26,26 +26,35 @@ void S_TilemapCollisionResolution::Update(float deltaTime, alvere::C_Transform &
 			auto queryTuple = iterator.GetComponents();
 			C_Tilemap & tilemap = std::get<0>(queryTuple);
 
-			ResolveCollision(tilemap, tilemapCollision, transform, velocity);
+			ResolveCollision(tilemap, tilemapCollision, collider, transform, velocity);
 		}
 	}
 }
 
-void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, alvere::C_Transform & transform, C_Velocity & velocity)
+void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, const C_Collider & collider, alvere::C_Transform & transform, C_Velocity & velocity)
+{
+	for (const ColliderInstance & colliderInstance : collider.m_ColliderInstances)
+	{
+		ResolveCollisionWithCollider(tilemap, tilemapCollision, colliderInstance, transform, velocity);
+	}
+}
+
+void S_TilemapCollisionResolution::ResolveCollisionWithCollider(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, const ColliderInstance & collider, alvere::C_Transform & transform, C_Velocity & velocity)
 {
 	alvere::Vector2 transformPosition = transform->getPosition();
 
 	//Store positions of collided tiles
 	std::vector<alvere::Vector2i> collidedTiles;
 
-	//TODO: Add the collider component and read the bounds off of that
-	alvere::Vector2 colliderLocalCenter(0.5f, 0.5f);
-	alvere::Vector2 colliderLocalLowerBound(-0.5f, -0.5f);
-	alvere::Vector2 colliderLocalUpperBound(0.5f, 0.5f);
+	//Grab collider info
+	alvere::Vector2 colliderLocalLowerBound = collider.m_LocalBounds.getBottomLeft();
+	alvere::Vector2 colliderLocalUpperBound = collider.m_LocalBounds.getTopRight();
+	alvere::Vector2 colliderLocalSize = colliderLocalUpperBound - colliderLocalLowerBound;
+	alvere::Vector2 colliderLocalCenter = (colliderLocalLowerBound + colliderLocalUpperBound) / 2.0f;
 
 	//Get bounds in tiles
-	alvere::Vector2i lower = tilemap.WorldToTilemap(transformPosition + colliderLocalCenter + colliderLocalLowerBound);
-	alvere::Vector2i upper = tilemap.WorldToTilemap(transformPosition + colliderLocalCenter + colliderLocalUpperBound);
+	alvere::Vector2i lower = tilemap.WorldToTilemap(transformPosition + colliderLocalLowerBound);
+	alvere::Vector2i upper = tilemap.WorldToTilemap(transformPosition + colliderLocalUpperBound);
 
 	//No need to process collision if the collider isn't within the tilemap bounds
 	alvere::RectI localBounds = tilemap.GetBounds();
@@ -95,7 +104,7 @@ void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, C
 	//		transform & velocity in one go at the end. The collider center can be updated as we go still.
 	for (alvere::Vector2i & tilePosition : collidedTiles)
 	{
-		alvere::Vector2 resolutionVector = CalculateResolutionVectorFromTile(tilemap, colliderCenter, tilePosition);
+		alvere::Vector2 resolutionVector = CalculateResolutionVectorFromTile(tilemap, colliderCenter, colliderLocalSize, tilePosition);
 
 		colliderCenter += resolutionVector;
 		transform->move(resolutionVector);
@@ -120,11 +129,8 @@ void S_TilemapCollisionResolution::ResolveCollision(const C_Tilemap & tilemap, C
 	}
 }
 
-alvere::Vector2 S_TilemapCollisionResolution::CalculateResolutionVectorFromTile(const C_Tilemap & tilemap, alvere::Vector2 & colliderCenter, alvere::Vector2i tilePosition)
+alvere::Vector2 S_TilemapCollisionResolution::CalculateResolutionVectorFromTile(const C_Tilemap & tilemap, alvere::Vector2 colliderCenter, alvere::Vector2 colliderSize, alvere::Vector2i tilePosition)
 {
-	//TODO: Add the collider component and read the bounds off of that
-	alvere::Vector2 colliderSize(1.0f, 1.0f);
-
 	alvere::Vector2 tileHalfSize = tilemap.m_tileSize / 2.0f;
 	alvere::Vector2 collisionExtents = colliderSize / 2.0 + tileHalfSize;
 	alvere::Vector2 dist = colliderCenter - ( alvere::Vector2(tilePosition) + tileHalfSize );

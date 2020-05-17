@@ -9,10 +9,10 @@
 #include "tilemap/tile.hpp"
 #include "components/physics/c_tilemap_collision.hpp"
 #include "components/physics/c_velocity.hpp"
+#include "components/physics/c_collider.hpp"
 
-class S_TilemapCollisionResolution : public alvere::QueryUpdatedSystem<alvere::C_Transform, C_Velocity, C_TilemapCollision>
+class S_TilemapCollisionResolution : public alvere::QueryUpdatedSystem<alvere::C_Transform, C_Velocity, C_Collider, C_TilemapCollision>
 {
-	typedef alvere::QueryUpdatedSystem<alvere::C_Transform, C_TilemapCollision> BaseType;
 
 	alvere::World & m_World;
 
@@ -23,9 +23,10 @@ public:
 	{
 	}
 
-	void Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_TilemapCollision & tilemapCollision);
+	void Update(float deltaTime, alvere::C_Transform & transform, C_Velocity & velocity, C_Collider & collider, C_TilemapCollision & tilemapCollision);
 
-	void ResolveCollision(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, alvere::C_Transform & transform, C_Velocity & velocity);
-	alvere::Vector2 CalculateResolutionVectorFromTile(const C_Tilemap & level, alvere::Vector2 & position, alvere::Vector2i tilePosition);
+	void ResolveCollision(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, const C_Collider & collider, alvere::C_Transform & transform, C_Velocity & velocity);
+	void ResolveCollisionWithCollider(const C_Tilemap & tilemap, C_TilemapCollision & tilemapCollision, const ColliderInstance & collider, alvere::C_Transform & transform, C_Velocity & velocity);
+	alvere::Vector2 CalculateResolutionVectorFromTile(const C_Tilemap & level, alvere::Vector2 colliderCenter, alvere::Vector2 colliderSize, alvere::Vector2i tilePosition);
 
 };
