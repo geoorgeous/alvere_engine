@@ -13,6 +13,7 @@
 #include "components/rendering/c_spritesheet.hpp"
 #include "components/rendering/c_animation.hpp"
 #include "components/c_direction.hpp"
+#include "components/c_name.hpp"
 #include "components/c_player.hpp"
 
 using namespace alvere;
@@ -31,10 +32,16 @@ EntityHandle Def_Player::SpawnInstance(World & world)
 		C_Sprite,
 		C_Spritesheet,
 		C_Animation,
-		C_Collider
+		C_Collider,
+		C_Name
 	>();
 
 	alvere::Vector2 characterWorldSize(0.72f, 1.0f);
+
+	{ //C_Name
+		C_Name & name = world.GetComponent<C_Name>(player);
+		name.m_Name = "Player";
+	}
 
 	{ //C_Collider
 		//Single collider for the time being centered in the middle of the player's feet
