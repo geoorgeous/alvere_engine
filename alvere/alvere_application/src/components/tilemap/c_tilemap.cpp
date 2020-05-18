@@ -231,3 +231,14 @@ bool C_Tilemap::Load(std::fstream & file)
 
 	return true;
 }
+
+std::string C_Tilemap::to_string() const
+{
+	std::string str = "";
+
+	str += "Width: " + std::to_string(m_size[0]) + '\n';
+	str += "Height: " + std::to_string(m_size[1]) + '\n';
+	str += "Tiles: " + std::to_string(m_tiles.size()) + '\n';
+
+	return str;
+}

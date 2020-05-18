@@ -33,6 +33,9 @@ namespace alvere
 		template <typename T>
 		T& GetComponent( const EntityHandle& entity ) const;
 
+		template <typename T>
+		T* TryGetComponent(const EntityHandle & entity) const;
+
 		void AddEntity(EntityHandle & entity );
 		void DestroyEntity(EntityHandle & entity );
 		void MoveEntity(EntityHandle & entity, Archetype& other );
@@ -47,6 +50,7 @@ namespace alvere
 		typename T::Provider& GetProvider();
 
 		const std::unordered_set<EntityHandle, EntityHandle::Hash> & GetEntities() const;
+		const std::unordered_map<std::type_index, ComponentProvider *> & GetProviders() const;
 
 		std::size_t GetEntityCount() const;
 		std::size_t GetProviderCount() const;
@@ -65,6 +69,21 @@ namespace alvere
 		int mappedIndex = (int) m_VersionMap.GetMapping( entity->m_MappingHandle );
 		typename T::Provider* typedProvider = static_cast<typename T::Provider*>( iter->second );
 		return static_cast<T&>( typedProvider->GetComponent( mappedIndex ) );
+	}
+
+	template <typename T>
+	T * Archetype::TryGetComponent(const EntityHandle & entity) const
+	{
+		auto iter = m_Providers.find(typeid(T));
+
+		if (iter == m_Providers.end())
+		{
+			return nullptr;
+		}
+
+		int mappedIndex = (int) m_VersionMap.GetMapping(entity->m_MappingHandle);
+		typename T::Provider * typedProvider = static_cast<typename T::Provider *>(iter->second);
+		return static_cast<T *>(&typedProvider->GetComponent(mappedIndex));
 	}
 
 	template <typename T>

@@ -14,6 +14,7 @@ namespace alvere
 		std::vector<std::type_index> m_Types;
 
 	public:
+
 		friend struct std::hash<Archetype::Handle>;
 
 		Handle()
@@ -35,6 +36,8 @@ namespace alvere
 		template <typename T>
 		void RemoveComponent();
 		void RemoveComponent(const std::type_index & type);
+
+		const std::vector<std::type_index> & GetTypes() const;
 
 		template <typename... Components>
 		static Archetype::Handle make_handle();

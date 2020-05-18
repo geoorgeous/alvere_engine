@@ -49,6 +49,7 @@ ImGuiEditor::ImGuiEditor(alvere::Window & window)
 	AddWindow<TilePropertiesWindow>(tileWindow);
 	AddWindow<ToolWindow>(*this, window);
 	AddWindow<HistoryWindow>(window);
+	AddWindow<WorldWindow>(*this);
 	AddWindow<ImGui_DemoWindow>();
 
 	m_openMaps.push_back(EditorWorld::New("res/maps/demo.map", m_window));

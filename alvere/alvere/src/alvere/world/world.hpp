@@ -63,6 +63,7 @@ namespace alvere
 		void RemoveSystem();
 
 		void QueryArchetypes(const Archetype::Query & query, std::vector<std::reference_wrapper<Archetype>> & matchingArchetypes) const;
+		const std::unordered_map<Archetype::Handle, Archetype *> & GetArchetypes() const;
 	};
 
 	template <typename... Components>

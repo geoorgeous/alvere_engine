@@ -127,4 +127,9 @@ namespace alvere
 	{
 		return m_Entities;
 	}
+
+	const std::unordered_map<std::type_index, ComponentProvider *> & Archetype::GetProviders() const
+	{
+		return m_Providers;
+	}
 }

@@ -12,6 +12,7 @@
 
 #include "editor/editor_world.hpp"
 #include "editor/utils/path_utils.hpp"
+#include "entity_definitions/def_player.hpp"
 
 #include "systems/tilemap/s_tilemap_renderer.hpp"
 
@@ -30,6 +31,7 @@ std::unique_ptr<EditorWorld> EditorWorld::New(const std::string & filepath, cons
 	editorWorld->m_camera = &world.GetComponent<C_Camera>(cameraEntity);
 	editorWorld->m_camera->setOrthographic(-halfWorldUnitsOnX, halfWorldUnitsOnX, halfWorldUnitsOnX * window.getRenderingContext().getAspectRatio(), -halfWorldUnitsOnX * window.getRenderingContext().getAspectRatio(), -1.0f, 1.0f);
 
+	//Def_Player().SpawnInstance(world);
 
 	alvere::EntityHandle map = world.SpawnEntity<C_Tilemap>();
 

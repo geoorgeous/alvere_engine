@@ -5,6 +5,7 @@
 #include "editor_world.hpp"
 #include "editor/windows/tile_window.hpp"
 #include "editor/windows/tile_properties_window.hpp"
+#include "editor/windows/world_window.hpp"
 #include "editor/io/world_exporter.hpp"
 #include "editor/io/world_importer.hpp"
 
@@ -32,6 +33,7 @@ class ImGuiEditor
 		| ImGuiWindowFlags_NoScrollWithMouse;
 
 	alvere::Window & m_window;
+	WorldWindow * m_worldWindow;
 
 	std::vector<std::unique_ptr<ImGui_Window>> m_editorWindows;
 

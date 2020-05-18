@@ -41,6 +41,8 @@ struct C_Tilemap : public alvere::PooledComponent<C_Tilemap>
 
 	bool Load(std::fstream & file);
 
+	virtual std::string to_string() const;
+
 	//These methods are temporary
 	TileDirection GetUnmatchingSurroundings(alvere::Vector2i position, bool collides) const;
 	bool TileCollides_s(alvere::Vector2i position) const;

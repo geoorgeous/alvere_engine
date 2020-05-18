@@ -68,4 +68,9 @@ namespace alvere
 			}
 		}
 	}
+
+	const std::unordered_map<Archetype::Handle, Archetype *> & World::GetArchetypes() const
+	{
+		return m_Archetypes;
+	}
 }

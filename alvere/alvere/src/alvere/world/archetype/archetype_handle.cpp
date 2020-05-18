@@ -30,4 +30,9 @@ namespace alvere
 		m_Hash ^= type.hash_code();
 		m_Types.erase(iter);
 	}
+
+	const std::vector<std::type_index> & Archetype::Handle::GetTypes() const
+	{
+		return m_Types;
+	}
 }
