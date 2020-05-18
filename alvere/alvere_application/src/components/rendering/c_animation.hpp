@@ -39,4 +39,24 @@ public:
 	bool CurrentAnimationFinished() const; //Will return true if no animation, will never return true if animation loops
 	const Animation & CurrentAnimation() const;
 
+
+	virtual std::string to_string() const
+	{
+		std::string str = "";
+
+		str += "Current: ";
+		for (auto & animation : m_AnimationLookup)
+		{
+			if (animation.second == m_CurrentAnimation)
+			{
+				str += animation.first;
+			}
+		}
+		str += '\n';
+
+		str += "Frame: " + std::to_string( m_CurrentFrame ) + '\n';
+		str += "Runtime: " + std::to_string( m_CurrentRuntime ) + '\n';
+
+		return str;
+	}
 };

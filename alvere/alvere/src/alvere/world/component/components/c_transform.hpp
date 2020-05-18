@@ -18,5 +18,16 @@ namespace alvere
 		{
 			return &m_transform;
 		}
+
+		virtual std::string to_string() const override
+		{
+			std::string str = "";
+
+			alvere::Vector2 position = m_transform.getPosition();
+			str += "x: " + std::to_string(position.x) + '\n';
+			str += "y: " + std::to_string(position.y) + '\n';
+
+			return str;
+		}
 	};
 }

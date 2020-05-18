@@ -10,4 +10,14 @@ public:
 	//the inputs directly to the player velocity.
 	float m_Horizontal;
 	bool m_Jump;
+
+	virtual std::string to_string() const
+	{
+		std::string str = "";
+
+		str += "Horizontal: " + std::to_string(m_Horizontal) + '\n';
+		str += "Jump: " + std::to_string(m_Jump) + '\n';
+
+		return str;
+	}
 };

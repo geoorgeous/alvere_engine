@@ -10,4 +10,15 @@ public:
 
 	alvere::RectI m_SourceRect;
 	alvere::Vector2i m_Offset;
+
+
+	virtual std::string to_string() const
+	{
+		std::string str = "";
+
+		str += "x: " + std::to_string(m_Offset[0]) + '\n';
+		str += "y: " + std::to_string(m_Offset[1]) + '\n';
+
+		return str;
+	}
 };

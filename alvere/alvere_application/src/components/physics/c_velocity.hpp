@@ -8,4 +8,15 @@ class C_Velocity : public alvere::PooledComponent<C_Velocity>
 public:
 
 	alvere::Vector2 m_Velocity;
+
+
+	virtual std::string to_string() const
+	{
+		std::string str = "";
+
+		str += "x: " + std::to_string(m_Velocity.x) + '\n';
+		str += "y: " + std::to_string(m_Velocity.y) + '\n';
+
+		return str;
+	}
 };
